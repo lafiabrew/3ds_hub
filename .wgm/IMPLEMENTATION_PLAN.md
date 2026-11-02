@@ -18,6 +18,7 @@
 |---|---|---|---|---|---|
 | Plan-exit | Plan and public-paths spec | RUGGED | 2026-11-02 | `/rugged plan` rerun; `.wgm/rugged/2026-11-02-public-paths-plan.md` | T1 includes the index/inventory/diagnostic/edit-boundary checks |
 | Review T1 | Seven-file prose delta and guards | RUGGED | 2026-11-02 | Fresh `/rugged review`; `.wgm/rugged/2026-11-02-public-paths-review-t1.md` | None |
+| Review T2 | Demo and documentation handoff | RUGGED | 2026-11-02 | `/rugged review` companion protocol, coordinator; `.wgm/rugged/2026-11-02-public-paths-review-t2.md` | None |
 
 Preflight readiness: 96/100 (goal 20/20, observable success 20/20, demo coverage 19/20, backpressure 19/20, scope edges 18/20). Specs, checklist, tasks, constitution and tier-1 journey are consistent; all requirements have commands and task coverage.
 
@@ -44,7 +45,7 @@ Preflight readiness: 96/100 (goal 20/20, observable success 20/20, demo coverage
 - **Notes:** An outer coordinator will dispatch the two independent reviews, rugged review, and final holdout validation. If those cannot be independently invoked, leave status blocked, never claim self-review is independent. A headless implementer may complete edits and validation, then leave status in_progress awaiting the outer reviews. Stage only the seven authorized root prose files so the real index is sanitized before running the staged-content gate; do not stage child work. Do not push or commit before the outer review.
 
 ### T2 — Demo validation and public-tree handoff
-- **Status:** pending
+- **Status:** done
 - **Objective:** Prove portability cleanup, retained diagnostics, and unchanged package discovery on the actual workspace.
 - **Spec:** `.wgm/specs/public-paths.md`.
 - **Files/areas:** `.wgm/IMPLEMENTATION_PLAN.md`, `.wgm/rugged/`, `.wgm/docs/audit/`; actual `serve_3ds.py` CLI and all nine repository indexes.
@@ -86,3 +87,35 @@ All eight child worktrees were clean at handoff inspection. Differences from the
 - Independent tier-1 acceptance scoring: 100, 100, 98, 100, 100; mean **99.6/100**. Weakest step is hub behavior: reviewer reran discovery but relied on the coordinator's real self-test log. No regression. Nonblocking reservation: run the preservation helper with normal Python, not `-O`; these helpers are a scoped run-specific signal, not universal PII detection.
 - **Iteration-exit gate:** PASS — implementation done; exact validation exited 0; result recorded; scope/acceptance reviewed by two non-authors; one current RUGGED diff verdict recorded; plan updated; exactly T1 advanced to done. T2 remains pending.
 - No new product public API, CLI flag, or runtime behavior; seven edited public files include documentation. Validation helpers are run-specific `.wgm/` tooling. No push performed.
+- T1 committed as `7792458` (`docs: remove private workstation details from public files`).
+
+### T2 demo evidence — 2026-11-02
+- The exact T2 demo-validation command exited **0** on the real host, captured in local `.wgm/t2-validation.log`. It confirmed all nine repository indexes/working trees, eight real app packages, unchanged root source outside authorized lines and executable AST, byte-identical diagnostic exports, and ancestor-history preservation.
+- No separate product deploy pipeline or remote publication is part of this cleanup; no push is authorized or claimed. Native hardware testing and universal PII detection are not claims of this prose-only change.
+- The plan/spec and private hashes-only snapshot describe this run's local evidence; the preservation checker deliberately requires that local `.wgm/privacy-baseline.json`, not a fresh clone. Existing `.wgm/` ignore policy remains; only selected durable artifacts are explicitly staged.
+- At demo capture time, T2 still awaited the five-role audit and final reviews. Those gates are completed below.
+
+### T2 coordinator completion — 2026-11-02
+- Five-role audit completed through the installed portable dispatcher: four fresh persona contexts and a separate writer; GREEN for this privacy delta. `.wgm/docs/audit/2026-11-02T2110Z_public-repository-hygiene.md` passed the actual `scripts/audit.sh --check-report` structural checker (exit 0) before indexing in `.wgm/docs/audit/README.md`.
+- First audit attempt correctly aborted when its own redirected live log changed inside the guarded target. Exact delta showed only that log; no files were reverted. Complete rerun passed with dispatcher output outside the target tree and bytecode generation disabled. Local failure and successful external logs are retained; the lesson is in `.wgm/memories.md`.
+- Fresh non-author final spec reviewer **PASS** (`.wgm/spec-review-t2.md`); fresh non-author final quality reviewer **PASS** (`.wgm/quality-review-t2.md`). Both had the T2 RUGGED verdict in hand. Their timing reservations were resolved by waiting for both reports and explicitly filing the durable evidence.
+- Final tier-1 acceptance: 100, 100, 98, 98, 98; mean **98.8/100**, above 95. No scenario crossed below the convergence threshold. Reservations retained: some suite/hash observations came from real recorded logs rather than every reviewer repeating them; concurrent child commits are outside cleanup ownership.
+- `/rugged review` **RUGGED**, dated 2026-11-02; evidence rung 4; `.wgm/rugged/2026-11-02-public-paths-review-t2.md`.
+- Product docs required no further correction. The installed skill's `check-docs.sh` is hard-wired to its own tool source tree; an attempted help probe ran that tool self-audit and reported unrelated existing placeholder debt, not a check of this workspace. The actual project audit report's structure passed the supported `audit.sh --check-report` path; no outside-tool failure is relabeled as product success.
+- History audit: cleanup-owned commits use Conventional Commits; no root trailer requirement exists. Original root/child baselines remain ancestors. No history rewrite, push, release, deploy, or native-hardware validation was performed or claimed.
+- Anonymized single-lesson harvest was previewed, inspected, then reported upstream automatically under the enabled consent. The courier performed its own de-duplication, residual-identifier checks, and publication; exit 0. No project names, data, paths, or private identifiers were included in that report.
+- **Iteration-exit gate:** PASS — demo work done; exact validation exited 0; result recorded; two independent final reviews PASS; one current RUGGED T2 verdict; plan updated; exactly T2 advanced. All must-have tasks are done.
+
+## Nonblocking follow-up (outside this cleanup)
+- **D1 — Reconcile pre-existing product documentation.** Areas: `README.md`, `AGENTS.md`, root plan/specs/historical audit, child `meta/app.rsf`. Signal: `git grep -nE '0x0D3[D-E][0-7]|UniqueId' -- README.md AGENTS.md IMPLEMENTATION_PLAN.md specs docs` followed by each child's `make verify-3ds` and an accuracy review of broad feature claims. Acceptance: current identifiers match verified metadata; historical claims are clearly labeled rather than silently rewritten. Optional separate work, not a privacy blocker; any additional `AGENTS.md` changes need new explicit approval.
+
+## Telemetry (no estimates)
+- Total wall time to ready-to-test: **not captured**; no reliable start marker for the full interactive run.
+- Allocated lane time, parked lane time, lane counts, peak lane concurrency, and critical-path duration: **not collected**; no worktree/swarm lanes were used.
+- Active agent time and timed-versus-missing turn counts: **unavailable**; the host does not expose a summed per-turn clock here.
+- `.wgm/metrics.tsv` measured **one build invocation, 209 seconds**, from 21:01:45Z to 21:05:14Z. This is process duration, not active agent time, billing, or a speedup claim. Fresh reviewer/doc-persona calls were not instrumented as lanes or turns.
+
+## Handoff
+- Public product cleanup is seven files and ten prose-line replacements, plus the diagnostic ignore policy. All nine repositories have enabled wgm consent; five consent-only commits were authored by this cleanup, two new configs were captured in concurrent child commits, and two configs already existed.
+- Validate locally with the T1/T2 commands above; `.wgm/privacy-baseline.json` intentionally remains local/ignored for diagnostic hashes. The executable server and existing tests are unchanged by this cleanup.
+- The root tree will be committed and left clean; unrelated child work is preserved and separately reported. Historical commits still contain former text. Offer `/teach-me` or `/quiz-me` only if the maintainer wants an evidence/tooling walkthrough; no new application behavior was built.
