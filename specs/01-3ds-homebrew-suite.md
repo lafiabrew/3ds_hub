@@ -1,0 +1,40 @@
+# Specification: 3DS CFW, PKHaX & Diagnostic Homebrew Suite
+
+## 1. Goal & Job-To-Be-Done (JTBD)
+When a user who has just completed `3ds.hacks.guide` is playing Pokémon (including custom ROM hacks across 3DS, NDS, and GBA) and running homebrew on their 3DS, they need an integrated suite of on-console 3DS utilities and PC companion tools so they can:
+1. **Inspect & surgically edit Pokémon saves (`3ds_pokedash`)** in permissive **PKHaX Mode** (IVs, EVs, Nature, Shiny PID, Friendship, Level, Money, Bag items, Type/Nature/Shiny calculator) across Gen 3–7 (`Checkpoint`, `TWiLightMenu++`, and `open_agb_firm`/GBA paths) with automatic `.bak` backup and block checksum recalculation.
+2. **Inspect 3DS hardware, toggle Luma3DS LayeredFS ROM hack mods, and collect SD & crash logs (`3ds_sysdash`)** without unscrewing the 3DS backplate.
+3. **Wirelessly scan the SD card, pull crash/homebrew logs, and push/pull saves, ROMs, and LayeredFS mod packs (`3ds_drop`)** over LAN HTTP/JSON (`:8766`).
+4. **Drive the whole workflow from PC (`pc_companion/`)** via a remote/local SD & log scanner (`sd_scanner.py`), a PKHaX CLI & web UI (`pkhex_web.py`), and an `.ips`/`.bps` ROM hack patcher (`romhack_tool.py`), while `serve_3ds.py` serves scannable FBI QR codes for every `.cia`/`.3dsx`.
+
+## 2. Magic Moment
+Running one command on the PC (`python3 pc_companion/sd_scanner.py --url http://<3ds-ip>:8766`) or pressing `A` in `3ds_sysdash` / `3ds_pokedash` to instantly see every Pokémon save, ROM hack, Luma LayeredFS mod, and crash log on the 3DS SD card, surgically maxing a Pokémon's IVs or toggling a Luma ROM hack in PKHaX mode with automatic `.bak` backup and valid CRC-16 checksums, and installing any of the 4 apps via FBI QR code from `serve_3ds.py`.
+
+## 3. Smallest End-to-End Demo Path
+1. Build all 3 new C11 3DS apps (`3ds_pokedash`, `3ds_sysdash`, `3ds_drop`) for both host (`make test`) and ARM11 3DS (`make 3ds && make verify-3ds`).
+2. Start `3ds_drop` in headless daemon mode pointing at a populated mock 3DS SD card root (`sdmc/` with Gen 3/4/5/6/7 Pokémon ROM hack saves, Luma LayeredFS mods, `luma/dumps/arm11/crash_00.dmp`, `luma/errdisp.txt`, and `3ds/` homebrew logs).
+3. Run `pc_companion/sd_scanner.py` against the live `3ds_drop` HTTP server (`:8766`) to scan the SD card and pull the diagnostic log bundle.
+4. Run `3ds_pokedash` and `pc_companion/pkhex_web.py` to parse & surgically edit Pokémon saves in PKHaX mode, verifying `.bak` creation and valid block checksums.
+5. Run `serve_3ds.py --list` to confirm all 4 homebrew projects (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`) are discovered with distinct Title IDs (`0x0D3D0`..`0x0D3D3`) and valid `.cia`/`.3dsx`/`.smdh` packages.
+
+## 4. Testable Requirements (EARS Format)
+- **R1 (PKHaX Save Engine — `3ds_pokedash`):**
+  - *When* a user loads a Gen 3 (`0x20000`), Gen 4 (`0x80000` DP/Pt/HGSS), Gen 5 (`0x80000` BW/B2W2), Gen 6 (`0x65600` XY / `0x76000` ORAS), or Gen 7 (`0x6BE00` SM / `0x6CC00` USUM) save or a PKHaX slot file in `3ds_pokedash` or `pc_companion/pkhex_web.py`, *the system shall* parse Trainer metadata and Party/Box Pokémon slots (Species, Level, IVs `0-31`, EVs `0-252`, Nature `0-24`, Shiny status, Friendship, Held Item, Moves) without rejecting custom ROM-hack abilities or moves.
+- **R2 (Surgical Save Write + Backup + Checksum):**
+  - *When* a user applies a PKHaX preset (Max 31 IVs, Trick Room 0 Spe IV, Shiny PID toggle, Max Friendship, EV spread, or Max Money/Items), *the system shall* first write an exact backup to `<path>.bak`, update only the target block bytes, recalculate the Gen 3/4/5/6/7 block checksum (including the `BEEF` CRC-16-CCITT footer for Gen 6/7 and Gen 3 `0xFF4` section checksums), and atomically write via `<path>.tmp` -> `rename()`.
+- **R3 (CFW Hardware, LayeredFS Toggler & SD Diagnostic Snapshot — `3ds_sysdash`):**
+  - *When* `3ds_sysdash` scans the SD card root, *the system shall* enumerate SD capacity, installed `.3dsx`/`.cia` apps, Luma3DS LayeredFS mods (`luma/titles/<TitleID>` and `luma/titles_disabled/<TitleID>`), and crash/error logs (`luma/errdisp.txt`, `luma/dumps/**`, `3ds/**/*.log`), allow 1-button atomic toggling of LayeredFS mods between active and disabled directories, and export a complete diagnostic snapshot to `sdmc:/3ds/sysdash/diagnostic_snapshot.json` and `.log`.
+- **R4 (Wireless SD Scanner, Log Pull & File Drop Server — `3ds_drop`):**
+  - *While* `3ds_drop` is running on port `8766` (on 3DS or in host `--daemon` mode), *the system shall* serve non-blocking HTTP endpoints `GET /api/status`, `GET /api/scan`, `GET /api/logs`, `GET /api/pull?path=...`, and `POST /api/push?path=...`, rejecting any `..` path traversal with HTTP `400` and writing uploaded files atomically with `.bak` backup when overwriting saves.
+- **R5 (PC Companion Suite — `pc_companion/`):**
+  - *When* the operator runs `pc_companion/sd_scanner.py`, `pc_companion/pkhex_web.py`, or `pc_companion/romhack_tool.py`, *the system shall* support scanning a local SD mount or remote `3ds_drop` URL (`http://<3ds-ip>:8766`), pulling all 3DS logs/dumps into a local diagnostic report, inspecting/editing saves via CLI or Web UI, and applying/creating `.ips` and `.bps` ROM hack patches with CRC32 verification.
+- **R6 (ARM11 3DS Packaging & Universal FBI QR Discovery):**
+  - *When* `make 3ds && make verify-3ds` runs across the workspace, *the system shall* produce verified ARM11 `.elf`, `.smdh` (`0x36C0`), `.3dsx`, and `.cia` (`0x2020`) artifacts for all 8 projects (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`) with distinct icons, 32-byte-aligned CBMD banners, and unique Title IDs (`0x0D3E0`..`0x0D3E7`), all auto-discovered by `serve_3ds.py`.
+- **R7 (PokeRNG & Luma3DS Cheat Generator — `3ds_rngtool`):**
+  - *When* `3ds_rngtool` loads a Trainer `TID`/`SID` or seed, *the system shall* compute the exact Trainer Shiny Value (`TSV = (TID ^ SID) >> 4`, `0..4095`) and Gen 7 6-digit display ID (`G7TID = (TID | (SID << 16)) % 1000000`), search LCRNG (`seed * 0x41C64E6D + 0x6073`) and TinyMT frames for Shiny / 6×31 IV / 0-Spe Trick Room spreads, and atomically write Luma3DS Rosalina `cheats.txt` files to `<sd_root>/luma/titles/<TitleID>/cheats.txt`.
+- **R8 (Play Coin Maxer, Pedometer & StreetPass Vault — `3ds_netpass`):**
+  - *When* the user triggers Max Play Coins (`300`) or StreetPass CECD inbox backup in `3ds_netpass`, *the system shall* back up `gamecoin.dat` to `gamecoin.dat.bak`, write the 300-coin structure atomically via `.tmp` -> `rename()`, and archive/restore CECD StreetPass boxes under `<sd_root>/3ds/netpass/boxes/`.
+- **R9 (Hardware Drift, Gyro/Accel, Touch & Pixel Lab — `3ds_padtest`):**
+  - *When* `3ds_padtest` samples Circle Pad, C-Stick, Touch, Gyroscope, and Accelerometer inputs, *the system shall* compute deadzone/drift percentages, track min/max X/Y excursion, cycle full-screen dead-pixel test patterns (`RED`, `GREEN`, `BLUE`, `WHITE`, `BLACK`), and export a hardware calibration report to `<sd_root>/3ds/padtest/hardware_report.json`.
+- **R10 (`lafiabrew` GitHub Organization & Repo Synchronization):**
+  - *When* the workspace is organized for `https://github.com/orgs/lafiabrew/repositories`, *the system shall* ensure each standalone 3DS project (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`) and the root deployment/companion hub (`3ds_hub`) have clean `.gitignore` files, documentation, and synchronized `lafiabrew/<repo>` GitHub repositories.
