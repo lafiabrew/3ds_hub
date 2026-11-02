@@ -63,28 +63,22 @@ Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite under `/hom
 - **Evidence:** Exited 0 (`PASS: test_rngtool all TSV/G7TID, LCRNG shiny search, and Luma cheats.txt checks succeeded.` + `PASS: Verified 3ds_rngtool ARM11 ELF, SMDH (0x36C0), 3DSX, and CIA (0x2020) artifacts.`). Ruggedness verdict: **RUGGED**.
 
 ### T7 — `3ds_netpass`: Play Coin Maxer (300 Coins), Pedometer & StreetPass CECD Vault (`netpass`)
-- **Status:** pending
+- **Status:** done
 - **Objective:** Scaffold and implement `3ds_netpass/` (`CTR-P-SPAS`, `0x0D3E6`) to inspect/max 3DS Play Coins (`0..300`) with `.bak` backup, display Pedometer step history (`ptm:u`), and archive/restore StreetPass CECD inbox/outbox boxes (`<sd_root>/3ds/netpass/boxes/`), with custom Play Coin + StreetPass green beacon icon & banner.
 - **Files/areas:** `3ds_netpass/include/`, `3ds_netpass/src/`, `3ds_netpass/tests/`, `3ds_netpass/meta/`, `3ds_netpass/scripts/verify-3ds-build.sh`, `3ds_netpass/Makefile`
 - **Validation command:** `make -C 3ds_netpass test && make -C 3ds_netpass 3ds && make -C 3ds_netpass verify-3ds`
-- **Acceptance criteria:**
-  - Safely reads and updates Play Coin files (`gamecoin.dat`) up to 300 coins with mandatory `.bak` backup and atomic `.tmp` -> `rename()`, plus exports/imports StreetPass box archives.
-  - Host ASan/UBSan tests and ARM11 `.elf`/`.smdh`/`.3dsx`/`.cia` verification exit 0.
+- **Evidence:** Exited 0 (`PASS: test_netpass all gamecoin.dat (0x4F00), .bak backup, and CECD box archive checks succeeded.` + `PASS: Verified 3ds_netpass ARM11 ELF, SMDH (0x36C0), 3DSX, and CIA (0x2020) artifacts.`). Ruggedness verdict: **RUGGED**.
 
 ### T8 — `3ds_padtest`: Circle Pad Drift, Gyro/Accel, Touchscreen & Dead-Pixel Hardware Lab (`padtest`)
-- **Status:** pending
+- **Status:** done
 - **Objective:** Scaffold and implement `3ds_padtest/` (`CTR-P-PADT`, `0x0D3E7`) to measure Circle Pad & C-Stick center bias/drift percentage and min/max excursion, test touchscreen drawing & button matrix, cycle full-screen dead-pixel patterns (`R`/`G`/`B`/`W`/`K`), and export `<sd_root>/3ds/padtest/hardware_report.json`, with custom Crosshair/Gamepad icon & banner.
 - **Files/areas:** `3ds_padtest/include/`, `3ds_padtest/src/`, `3ds_padtest/tests/`, `3ds_padtest/meta/`, `3ds_padtest/scripts/verify-3ds-build.sh`, `3ds_padtest/Makefile`
 - **Validation command:** `make -C 3ds_padtest test && make -C 3ds_padtest 3ds && make -C 3ds_padtest verify-3ds`
-- **Acceptance criteria:**
-  - Computes Circle Pad drift percentage and deadzone recommendation from raw `(dx, dy)` samples, cycles dead-pixel screens, and atomically writes `hardware_report.json`.
-  - Host ASan/UBSan tests and ARM11 `.elf`/`.smdh`/`.3dsx`/`.cia` verification exit 0.
+- **Evidence:** Exited 0 (`PASS: test_padtest all drift calculation, min/max excursion, and JSON report checks succeeded.` + `PASS: Verified 3ds_padtest ARM11 ELF, SMDH (0x36C0), 3DSX, and CIA (0x2020) artifacts.`). Ruggedness verdict: **RUGGED**.
 
 ### T9 — `lafiabrew` GitHub Organization Sorting, Repo Creation & Full Suite Verification (`lafiabrew-sync`)
-- **Status:** pending
-- **Objective:** Update `Makefile`, `README.md`, and `pc_companion/tests/test_suite.py` to cover all 8 3DS apps (`0x0D3E0`..`0x0D3E7`), initialize clean Git histories with `.gitignore` and `README.md` in each project + root `3ds_hub`, and push/sync all repositories to `https://github.com/orgs/lafiabrew/repositories`.
+- **Status:** done
+- **Objective:** Update `Makefile`, `README.md`, and `pc_companion/tests/test_suite.py` to cover all 8 3DS apps (`0x0D3E0`..`0x0D3E7`) with concise HOME Menu titles/descriptions, initialize clean Git histories with `.gitignore` and `README.md` in each project + root `3ds_hub`, and push/sync all repositories to `https://github.com/orgs/lafiabrew/repositories`.
 - **Files/areas:** `Makefile`, `README.md`, `pc_companion/tests/test_suite.py`, `3ds_*/.gitignore`, `3ds_*/README.md`
 - **Validation command:** `make test && make verify-3ds && python3 serve_3ds.py --self-test && gh repo list lafiabrew --limit 20`
-- **Acceptance criteria:**
-  - All 8 3DS homebrew projects pass host ASan/UBSan tests, ARM11 `.cia`/`.3dsx`/`.smdh` verification, and unique icon/banner/alignment checks in `test_suite.py`.
-  - All repositories (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`, and `3ds_hub`) are cleanly pushed and organized under `https://github.com/orgs/lafiabrew/repositories`.
+- **Evidence:** Exited 0 (All 8 3DS apps pass host ASan/UBSan tests, ARM11 `.elf`/`.smdh`/`.3dsx`/`.cia` verification, and `test_suite.py`; all 9 repos `3ds_hub`, `3ds_padtest`, `3ds_netpass`, `3ds_rngtool`, `3ds_wigle`, `3ds_drop`, `3ds_sysdash`, `3ds_pokedash`, and `3ds_pieceduel` pushed to `github.com/lafiabrew`). Ruggedness verdict: **RUGGED**.
