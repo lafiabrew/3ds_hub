@@ -30,6 +30,11 @@ make list
 # Launch the Universal FBI QR & Network Installer Hub on :8765
 python3 serve_3ds.py
 
-# Wirelessly scan your 3DS SD card & harvest crash dumps/logs while 3ds_drop is open on your 3DS
+# Wirelessly scan your 3DS SD card & harvest all app logs (sdmc:/3ds/logs/*.log + Luma dumps)
 python3 pc_companion/sd_scanner.py --url http://<3ds-ip-shown-in-3ds-drop>:8766 --dump-logs ./sd_logs
+
+# Upload 3DS WiGLE wardriving CSVs to wigle.net for leaderboard points & sync rank back to 3DS
+export WIGLE_API_NAME="AID_your_api_name"
+export WIGLE_API_TOKEN="your_api_token"
+python3 pc_companion/wigle_sync.py --url http://<3ds-ip-shown-in-3ds-drop>:8766
 ```

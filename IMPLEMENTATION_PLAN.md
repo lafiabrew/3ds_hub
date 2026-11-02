@@ -82,3 +82,24 @@ Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite in this wor
 - **Files/areas:** `Makefile`, `README.md`, `pc_companion/tests/test_suite.py`, `3ds_*/.gitignore`, `3ds_*/README.md`
 - **Validation command:** `make test && make verify-3ds && python3 serve_3ds.py --self-test && gh repo list lafiabrew --limit 20`
 - **Evidence:** Exited 0 (All 8 3DS apps pass host ASan/UBSan tests, ARM11 `.elf`/`.smdh`/`.3dsx`/`.cia` verification, and `test_suite.py`; all 9 repos `3ds_hub`, `3ds_padtest`, `3ds_netpass`, `3ds_rngtool`, `3ds_wigle`, `3ds_drop`, `3ds_sysdash`, `3ds_pokedash`, and `3ds_pieceduel` pushed to `github.com/lafiabrew`). Ruggedness verdict: **RUGGED**.
+
+### T10 — Unified SD Telemetry Logger (`<sd_root>/3ds/logs/<app>.log`) & Pass/Fail Harness Across All Apps (`unified-logging-and-ux`)
+- **Status:** done
+- **Objective:** Add a shared structured logger (`pk_log_event`) to `pk_platform.h` / `platform_3ds.c` / `platform_host.c` across all 7 utility apps (`3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`) writing timestamped entries to `<sd_root>/3ds/logs/<app>.log`, overhaul `3ds_sysdash` (`SD_MAX_TITLES = 128`, sorting `[OLD]`/`0KB` black-box titles first, sliding 8-row viewport scroll + scrollbar + `D-Pad Left/Right` page jump + touch row mapping across `MODS`, `LOGS`, and `TITLES`), and add sliding viewport scrollbars + touch polish across `3ds_pokedash`, `3ds_rngtool`, `3ds_netpass`, and `3ds_padtest`.
+- **Files/areas:** `3ds_*/include/pk_platform.h`, `3ds_*/src/platform_*.c`, `3ds_sysdash/`, `3ds_pokedash/`, `3ds_rngtool/`, `3ds_netpass/`, `3ds_padtest/`, `3ds_drop/`
+- **Validation command:** `make test && make 3ds && make verify-3ds`
+- **Evidence:** Exited 0 (`test_pokedash`, `test_sysdash`, `test_drop`, `test_wigle`, `test_rngtool`, `test_netpass`, `test_padtest` all passed positive & negative checks under ASan/UBSan and wrote `<sd_root>/3ds/logs/<app>.log`). Ruggedness verdict: **RUGGED**.
+
+### T11 — WiGLE Account Sync, Multipart Upload & Rank/Points HUD (`3ds_wigle` + `pc_companion/wigle_sync.py`) (`wigle-account-sync`)
+- **Status:** done
+- **Objective:** Upgrade `3ds_wigle` to load/display WiGLE account status (`<sd_root>/3ds/wigle/wigle_account.json`: username, rank, points, discovered Wi-Fi count, last sync timestamp) with scrolling AP list + `B` button account reload, and create `pc_companion/wigle_sync.py` to pull `WigleWifi-1.4` CSVs from local SD or live `3ds_drop`, validate headers/rows, upload via `multipart/form-data` to `https://api.wigle.net/api/v2/file/upload` (with local mock server support for deterministic testing), fetch `/api/v2/stats/user`, and push `wigle_account.json` back to the 3DS.
+- **Files/areas:** `3ds_wigle/include/wg_wigle.h`, `3ds_wigle/src/wigle.c`, `3ds_wigle/src/main.c`, `3ds_wigle/tests/test_wigle.c`, `pc_companion/wigle_sync.py`, `pc_companion/tests/test_suite.py`
+- **Validation command:** `make -C 3ds_wigle test && make -C 3ds_wigle 3ds && make -C 3ds_wigle verify-3ds && python3 -m unittest discover -s pc_companion/tests -v`
+- **Evidence:** Exited 0 (`test_wigle` + `test_05_wigle_sync_pass_and_fail_and_unified_logs` in `test_suite.py` passed). Ruggedness verdict: **RUGGED**.
+
+### T12 — Multi-Persona & Multi-Round UX/Function/Vibe Audit, Docs Polish & `lafiabrew` Push (`multi-round-audit`)
+- **Status:** done
+- **Objective:** Conduct a 2-round, 5-persona review (CFW Power User · Pokémon ROM-Hack / RNG Player · Hardware/UX Designer · Systems/Security Engineer · Technical Writer Consolidator), remediate every finding discovered in Round 1, verify Round 2 reaches zero open agent actions, update all `README.md` and `docs/audit/` reports, and push all 9 repositories to `github.com/lafiabrew`.
+- **Files/areas:** `docs/audit/2026-11-02_multi-round-ux-and-function-audit.md`, `README.md`, `AGENTS.md`, `3ds_*/README.md`, `IMPLEMENTATION_PLAN.md`
+- **Validation command:** `make all && python3 serve_3ds.py --self-test`
+- **Evidence:** Exited 0 (All 8 3DS apps + 5 Python integration tests + `serve_3ds.py --self-test` passed; Round 1 & Round 2 audit committed and pushed across all 9 `lafiabrew` repositories). Ruggedness verdict: **RUGGED**.

@@ -34,6 +34,7 @@ sys.path.insert(0, os.path.join(WORKSPACE_ROOT, "pc_companion"))
 import pkhex_web  # noqa: E402
 import romhack_tool  # noqa: E402
 import sd_scanner  # noqa: E402
+import wigle_sync  # noqa: E402
 
 
 class Test3DSHomebrewSuite(unittest.TestCase):
@@ -231,6 +232,119 @@ class Test3DSHomebrewSuite(unittest.TestCase):
         self.assertEqual(len(icon_hashes), 8, "Each 3DS project must have a unique meta/icon.png")
         self.assertEqual(len(smdh_icon_hashes), 8, "Each 3DS project must have a unique SMDH 48x48 icon")
         self.assertEqual(len(bnr_cgfx_hashes), 8, "Each 3DS project must have a unique CBMD 3D top-screen banner texture")
+
+    def test_05_wigle_sync_pass_and_fail_and_unified_logs(self) -> None:
+        """Proves wigle_sync.py pass-the-pass upload/rank sync, fail-the-fail CSV/auth rejection, and unified 3ds/logs/*.log."""
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        import threading
+
+        # 1. Verify unified <proj>/build/test_sd/3ds/logs/<app>.log exists for all utility apps
+        for proj, log_name in (
+            ("3ds_pokedash", "pokedash.log"),
+            ("3ds_sysdash", "sysdash.log"),
+            ("3ds_drop", "drop.log"),
+            ("3ds_wigle", "wigle.log"),
+            ("3ds_rngtool", "rngtool.log"),
+            ("3ds_netpass", "netpass.log"),
+            ("3ds_padtest", "padtest.log"),
+        ):
+            log_path = os.path.join(WORKSPACE_ROOT, proj, "build", "test_sd", "3ds", "logs", log_name)
+            self.assertTrue(os.path.isfile(log_path), f"Missing unified telemetry log: {log_path}")
+            self.assertGreater(os.path.getsize(log_path), 15)
+
+        # 2. Fail-the-Fail: empty CSV, bad magic, zero data rows, and invalid API credentials
+        ok, reason, _ = wigle_sync.validate_wigle_csv(b"")
+        self.assertFalse(ok)
+        self.assertEqual(reason, "empty_csv")
+
+        ok, reason, _ = wigle_sync.validate_wigle_csv(b"NotWigle,1.0\nMAC,SSID\n")
+        self.assertFalse(ok)
+        self.assertEqual(reason, "invalid_preheader_magic")
+
+        header_only = (
+            b"WigleWifi-1.4,appRelease=1.0,model=Nintendo3DS\n"
+            b"MAC,SSID,AuthMode,FirstSeen,Channel,RSSI,CurrentLatitude,CurrentLongitude,AltitudeMeters,AccuracyMeters,Type\n"
+        )
+        ok, reason, _ = wigle_sync.validate_wigle_csv(header_only)
+        self.assertFalse(ok)
+        self.assertEqual(reason, "zero_observations")
+
+        with self.assertRaises(ValueError):
+            wigle_sync.upload_csv_to_wigle(header_only, "empty.csv", "AID_1", "TOK_1")
+
+        valid_csv = header_only + b"A4:2B:B0:11:22:33,LAFIA_24G,[WPA2-PSK-CCMP][ESS],2026-11-02 09:00:00,6,-48,37.774900,-122.419400,18.0,6.5,WIFI\n"
+        with self.assertRaises(ValueError):
+            wigle_sync.upload_csv_to_wigle(valid_csv, "good.csv", "", "")
+
+        # 3. Pass-the-Pass: Mock WiGLE API v2 server (/api/v2/file/upload & /api/v2/stats/user)
+        class MockWiGLEHandler(BaseHTTPRequestHandler):
+            def log_message(self, format: str, *args: object) -> None:
+                pass
+
+            def do_POST(self) -> None:
+                auth = self.headers.get("Authorization", "")
+                if not auth.startswith("Basic ") or self.path != "/api/v2/file/upload":
+                    self.send_error(401)
+                    return
+                clen = int(self.headers.get("Content-Length", "0"))
+                body = self.rfile.read(clen)
+                assert b"WigleWifi-1.4" in body and b"LAFIA_24G" in body
+                resp = json.dumps({"success": True, "results": {"transid": "20261102-00001"}}).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(resp)))
+                self.end_headers()
+                self.wfile.write(resp)
+
+            def do_GET(self) -> None:
+                auth = self.headers.get("Authorization", "")
+                if not auth.startswith("Basic ") or self.path != "/api/v2/stats/user":
+                    self.send_error(401)
+                    return
+                resp = json.dumps(
+                    {
+                        "success": True,
+                        "user": "lafiabrew",
+                        "statistics": {
+                            "userName": "lafiabrew",
+                            "rank": 312,
+                            "monthRank": 14,
+                            "discoveredWiFi": 9842,
+                        },
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(resp)))
+                self.end_headers()
+                self.wfile.write(resp)
+
+        srv = HTTPServer(("127.0.0.1", 0), MockWiGLEHandler)
+        port = srv.server_address[1]
+        t = threading.Thread(target=srv.serve_forever, daemon=True)
+        t.start()
+        try:
+            with tempfile.TemporaryDirectory() as tmp_sd:
+                wdir = os.path.join(tmp_sd, "3ds", "wigle")
+                os.makedirs(wdir, exist_ok=True)
+                with open(os.path.join(wdir, "wigle_3ds_session.csv"), "wb") as fp:
+                    fp.write(valid_csv)
+
+                res = wigle_sync.sync_3ds_wigle(
+                    sd_root=tmp_sd,
+                    api_name="AID_LAFIA_99",
+                    api_token="SECRET_TOKEN",
+                    api_base=f"http://127.0.0.1:{port}",
+                )
+                self.assertEqual(res["status"], "ok")
+                self.assertEqual(res["account"]["username"], "LAFIABREW")
+                self.assertEqual(res["account"]["rank"], 312)
+                self.assertEqual(res["account"]["discovered_wifi"], 9842)
+                self.assertEqual(res["account"]["total_uploads"], 1)
+                self.assertTrue(os.path.isfile(os.path.join(wdir, "wigle_account.json")))
+        finally:
+            srv.shutdown()
+            srv.server_close()
 
 
 if __name__ == "__main__":
