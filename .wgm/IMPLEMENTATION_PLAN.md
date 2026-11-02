@@ -17,6 +17,7 @@
 | When | Scope | Verdict | Date | Producer | Follow-up |
 |---|---|---|---|---|---|
 | Plan-exit | Plan and public-paths spec | RUGGED | 2026-11-02 | `/rugged plan` rerun; `.wgm/rugged/2026-11-02-public-paths-plan.md` | T1 includes the index/inventory/diagnostic/edit-boundary checks |
+| Review T1 | Seven-file prose delta and guards | RUGGED | 2026-11-02 | Fresh `/rugged review`; `.wgm/rugged/2026-11-02-public-paths-review-t1.md` | None |
 
 Preflight readiness: 96/100 (goal 20/20, observable success 20/20, demo coverage 19/20, backpressure 19/20, scope edges 18/20). Specs, checklist, tasks, constitution and tier-1 journey are consistent; all requirements have commands and task coverage.
 
@@ -34,7 +35,7 @@ Preflight readiness: 96/100 (goal 20/20, observable success 20/20, demo coverage
 
 ## Tasks
 ### T1 — Sanitize public workspace text without altering behavior
-- **Status:** pending
+- **Status:** done
 - **Objective:** Replace personal workstation paths and incidental operator identity with relative workspace descriptions.
 - **Spec:** `.wgm/specs/public-paths.md`; `.wgm/specs/CONSTITUTION.md`.
 - **Files/areas:** `AGENTS.md` (heading only), `README.md` (heading/introduction), `Makefile` (opening comment), `serve_3ds.py` (module docstring only), `IMPLEMENTATION_PLAN.md` (overview and incidental handle), `specs/CONSTITUTION.md` (heading only), `docs/audit/2026-11-02_3ds-homebrew-suite-audit.md` (scope only); `.wgm/validate_public_hygiene.py`, `.wgm/verify_preservation.py`, and `.wgm/test_public_hygiene_guards.py` for the named validation-signal remediation.
@@ -56,3 +57,32 @@ Preflight readiness: 96/100 (goal 20/20, observable success 20/20, demo coverage
 - Enabled consent was verified in all nine repositories.
 - Headless capability probe exited 0 with READY. No plugin metadata was discovered. Use Copilot CLI for fresh context; record unavailable capabilities honestly.
 - All run-specific logs, snapshots, and review raw outputs are local ignored scratch; the durable plan/spec and consolidated audit may be explicitly added despite the existing `.wgm/` ignore rule.
+
+### T1 implementer handoff — 2026-11-02
+- **State:** T1 remains `in_progress`; T2 remains `pending`. Stop after this one implementation iteration. No commit, push, child edit/staging, or STOP sentinel was performed.
+- **Root review HEAD:** `732ffba`; original prose baseline remains `ed47dbf` in Git only. The hashes-only snapshot remains `.wgm/privacy-baseline.json`; no copy of private baseline prose was written.
+- **Implemented:** Sanitized exactly the seven authorized root prose files (10 replaced lines). `AGENTS.md` changed only its heading. Server source outside its module docstring, executable AST, unrelated root files, links, attribution, and existing tests are preserved.
+- **Guards:** `.wgm/validate_public_hygiene.py` requires the fixed root-plus-eight inventory and matching Makefile app list, scans tracked working-tree bytes and staged blobs, checks both consent surfaces, and rejects indexed diagnostic exports, including forced additions. Findings print categories, not private matched text. `.wgm/verify_preservation.py` checks root working-tree/index lines against Git, preserves source outside the server docstring, verifies diagnostic hashes and discovery/history, and reports child changes without requiring old child file hashes.
+- **Fixture signal:** `.wgm/test_public_hygiene_guards.py` contains 10 passing tests. Constructed synthetic paths/handles exercise working-tree and staged-only leaks, all nine indexes, missing inventory, forced diagnostic staging, staged consent, every authorized line boundary, unauthorized index/disk edits, server source/AST preservation, and concurrent child development. Fixture repositories are disposable and cleaned automatically.
+- **Backpressure:** The exact T1 Validation command above exited **0** after final guard edits: 10 fixture tests; 187 tracked files across all nine repositories; preservation checks; hub self-test discovering eight packages; four PC integration tests; `git diff --check`. `git diff --cached --check` also exited 0. An in-memory scan of the seven original Git blobs reproduced seven privacy failures without printing or persisting their content.
+- **Local diff review:** PASS for the authorized root lines and the three task-owned helper/test files; no existing test was edited. This is author review only, not an independent correctness or ruggedness verdict.
+- **Index:** Exactly the seven authorized root prose files are staged. The task plan and two existing helpers remain unstaged; the new fixture test is an ignored, on-disk `.wgm/` file deliberately left unstaged. The coordinator must retain that file for review and later authorized staging.
+- **Validation environment:** Commands ran on the actual Python/Git host, including existing self-test/integration service checks. No OCI/Podman or holdout-service validation was run or claimed. No diagnostic content or holdout scenario was opened during Analyze/Implement; diagnostics were accessed only by the hash-preservation check during Validate.
+- **Outstanding gates:** Coordinator must run fresh spec-compliance and quality reviews, `/rugged review`, and independent holdout judging (target >=95). No satisfaction score or diff ruggedness verdict is claimed by this implementer. Do not mark T1 done until those gates pass; do not begin T2 in this iteration.
+
+#### Child work — reported separately, not owned by T1
+All eight child worktrees were clean at handoff inspection. Differences from the older snapshot are committed preparation/concurrent work, not edits made by this implementer:
+- `3ds_drop`, `3ds_netpass`, `3ds_padtest`, `3ds_pokedash`, `3ds_rngtool`: consent configuration and `src/platform_3ds.c` (two paths each).
+- `3ds_pieceduel`: `src/platform/platform_3ds.c` (one path).
+- `3ds_sysdash`: `include/sd_app.h`, `include/sd_sysdash.h`, `meta/app.rsf`, `src/app.c`, `src/platform_3ds.c`, `src/sysdash.c` (six paths).
+- `3ds_wigle`: `src/platform_3ds.c` (one path).
+
+**Implementer handoff gate (historical):** Independent reviews and holdout scoring were still pending when the implementer stopped; it correctly left T1 in_progress at that time.
+
+### T1 coordinator completion — 2026-11-02
+- The coordinator reran the exact T1 validation command; exit **0**, recorded in local `.wgm/t1-validation.log`: 10 guard fixtures, four PC integration tests, nine-repository index/working-tree scan, preservation checks, hub self-test, and whitespace gate.
+- Fresh non-author spec reviewer **PASS** (`.wgm/spec-review-t1.md`); fresh non-author code-quality reviewer **PASS** (`.wgm/quality-review-t1.md`). Both had the RUGGED verdict in hand. They inspected real artifacts and independently reran lightweight checks. Independence is fresh context and role, not different model/tooling.
+- `/rugged review` **RUGGED**, dated 2026-11-02; evidence rung 4; `.wgm/rugged/2026-11-02-public-paths-review-t1.md`.
+- Independent tier-1 acceptance scoring: 100, 100, 98, 100, 100; mean **99.6/100**. Weakest step is hub behavior: reviewer reran discovery but relied on the coordinator's real self-test log. No regression. Nonblocking reservation: run the preservation helper with normal Python, not `-O`; these helpers are a scoped run-specific signal, not universal PII detection.
+- **Iteration-exit gate:** PASS — implementation done; exact validation exited 0; result recorded; scope/acceptance reviewed by two non-authors; one current RUGGED diff verdict recorded; plan updated; exactly T1 advanced to done. T2 remains pending.
+- No new product public API, CLI flag, or runtime behavior; seven edited public files include documentation. Validation helpers are run-specific `.wgm/` tooling. No push performed.

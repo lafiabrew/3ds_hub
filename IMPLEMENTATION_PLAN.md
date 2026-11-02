@@ -1,7 +1,7 @@
 # IMPLEMENTATION_PLAN.md — 3DS CFW, PKHaX & Diagnostic Homebrew Suite
 
 ## Overview
-Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite under `/home/lafiamafia/homebrew/3ds`:
+Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite in this workspace:
 1. **`3ds_pokedash/`** (`CTR-P-PKDS`, `0x0D3D1`): On-3DS PKHaX Save Inspector & Surgical Editor (Gen 3/4/5/6/7 + ROM hacks across `Checkpoint`, `TWiLightMenu++`, and `open_agb_firm`/GBA paths) + Dual-Screen Type Matchup, Nature, Shiny Odds & EV Calculator, with automatic `.bak` backup and block checksum recalculation.
 2. **`3ds_sysdash/`** (`CTR-P-SYSD`, `0x0D3D2`): CFW Hardware/Battery/SD Dashboard, 1-button Luma3DS LayeredFS ROM-Hack Mod Toggler (`sdmc:/luma/titles/<TitleID>` <-> `titles_disabled`), and SD & Crash Log Snapshot Exporter (`luma/errdisp.txt`, `luma/dumps/arm11/*.dmp`, homebrew `.log` files).
 3. **`3ds_drop/`** (`CTR-P-DROP`, `0x0D3D3`): Wireless LAN HTTP/JSON SD Card Scanner, Log Harvester, and Atomic Save/ROM/Mod File Drop Server (`:8766`) with path-traversal protection and cooperative non-blocking `poll()` sockets.
@@ -12,7 +12,7 @@ Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite under `/hom
 - **Scope:** `specs/01-3ds-homebrew-suite.md` and `IMPLEMENTATION_PLAN.md` (Plan-exit gate)
 - **Source:** `/rugged plan` recorded in `.wgm/rugged/2026-11-02-plan-exit.md`
 - **Current Verdict:** **RUGGED**
-  1. **Actual operator & environment:** Solo CFW 3DS operator (`@SchwartzKamel`) running Luma3DS, Checkpoint, and TWiLightMenu++ with custom Pokémon ROM hacks on a FAT32 microSD card over 2.4 GHz 3DS Wi-Fi, plus a Linux x86_64 host with rootless Podman (`localhost/pieceduel-3ds-toolchain:latest`).
+  1. **Actual operator & environment:** Solo CFW 3DS operator running Luma3DS, Checkpoint, and TWiLightMenu++ with custom Pokémon ROM hacks on a FAT32 microSD card over 2.4 GHz 3DS Wi-Fi, plus a Linux x86_64 host with rootless Podman (`localhost/pieceduel-3ds-toolchain:latest`).
   2. **Bottleneck decomposition:** *Intrinsic design constraint* (ROM-hack save layouts vary outside standard Pokémon party/box blocks) · *User capacity* (diagnosing crashes or LayeredFS conflicts on a 3DS without pulling the SD card is painful) · *Operational stress* (**Dominant**: in-place save writes or bad checksums corrupt saves; blocking sockets freeze `aptMainLoop()`; unsanitized HTTP paths risk directory traversal).
   3. **Simplify:** Use surgical block-only PKHaX edits (leaving unknown ROM-hack event/script blocks untouched) + mandatory `.bak` copy + atomic `.tmp`->`rename()`; use non-blocking `O_NONBLOCK` + `poll()` ($\le 250\text{ ms}$) in `3ds_drop`; use pure-Python CBMD `.bnr` generation inside `meta/generate_assets.py` so container builds never fail on `bannertool` glibc mismatches.
   4. **Exact check:** Every task runs host `gcc -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined` unit/UI tests, rootless Podman `devkitARM` cross-compilation (`make 3ds && make verify-3ds`), and end-to-end live daemon/HTTP/checksum/traversal tests (`python3 -m unittest discover -s pc_companion/tests -v`).

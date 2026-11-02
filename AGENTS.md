@@ -1,4 +1,4 @@
-# AGENTS.md — 3DS CFW & ROM-Hack Homebrew Suite (`/home/lafiamafia/homebrew/3ds`)
+# AGENTS.md — 3DS CFW & ROM-Hack Homebrew Suite
 
 ## Workspace Structure
 - `3ds_pieceduel/` — Strategy board game homebrew (`CTR-P-PD3D`, UniqueId `0x0D3D0`).

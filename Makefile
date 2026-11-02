@@ -1,4 +1,4 @@
-# Root Makefile for 3DS CFW & ROM-Hack Homebrew Suite (/home/lafiamafia/homebrew/3ds)
+# Root Makefile for 3DS CFW & ROM-Hack Homebrew Suite
 
 PROJECTS := 3ds_pokedash 3ds_sysdash 3ds_drop 3ds_wigle 3ds_rngtool 3ds_netpass 3ds_padtest 3ds_pieceduel
 

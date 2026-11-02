@@ -1,4 +1,4 @@
-# Constitution — 3DS CFW & ROM-Hack Homebrew Suite (`/home/lafiamafia/homebrew/3ds`)
+# Constitution — 3DS CFW & ROM-Hack Homebrew Suite
 
 ## Core Principles
 

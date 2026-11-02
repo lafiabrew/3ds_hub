@@ -1,7 +1,7 @@
 # Consolidated Documentation Audit Report — 3DS CFW, PKHaX & Diagnostic Homebrew Suite
 
 - **Date:** 2026-11-02
-- **Scope:** `/home/lafiamafia/homebrew/3ds` (`README.md`, `AGENTS.md`, `specs/`, `IMPLEMENTATION_PLAN.md`)
+- **Scope:** Workspace root (`README.md`, `AGENTS.md`, `specs/`, `IMPLEMENTATION_PLAN.md`)
 - **Mode:** 5-role persona review (Junior Dev · Senior Dev · Principal Dev · PM · Technical Writer Consolidator)
 - **Independence Note:** Consolidated in-session across the four persona lenses.
 

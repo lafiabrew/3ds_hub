@@ -1,6 +1,6 @@
-# 3DS Homebrew, PKHaX & Diagnostic Workspace (`/home/lafiamafia/homebrew/3ds`)
+# 3DS Homebrew, PKHaX & Diagnostic Workspace
 
-System-scoped Nintendo 3DS CFW homebrew workspace under `/home/lafiamafia/homebrew/` (alongside future console directories like `ps3/`, `ps4/`, `vita/`, `xbox360/`, `wiiu/`, etc.) tracked under the [**`lafiabrew`** GitHub Organization](https://github.com/orgs/lafiabrew/repositories).
+System-scoped Nintendo 3DS CFW homebrew workspace in this repository (alongside future console directories like `ps3/`, `ps4/`, `vita/`, `xbox360/`, `wiiu/`, etc.) tracked under the [**`lafiabrew`** GitHub Organization](https://github.com/orgs/lafiabrew/repositories).
 
 ## All 8 Nintendo 3DS Homebrew Apps (`lafiabrew`)
 

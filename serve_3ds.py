@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Universal 3DS Homebrew FBI QR & Network Server (/home/lafiamafia/homebrew/3ds/serve_3ds.py)
+Universal 3DS Homebrew FBI QR & Network Server (serve_3ds.py)
 
 Automatically discovers all .cia, .3dsx, and .smdh artifacts across every project in
-/home/lafiamafia/homebrew/3ds/ (or a specified directory), parses SMDH title/author metadata,
+the workspace (or a specified directory), parses SMDH title/author metadata,
 prints a scannable terminal QR code for FBI (Remote Install -> Scan QR Code), and hosts a
 multi-game web dashboard with SVG QR codes and one-click FBI network push (port 5000).
 """
