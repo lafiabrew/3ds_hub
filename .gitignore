@@ -1,12 +1,5 @@
-#Standalone 3DS app repositories (tracked individually in https://github.com/orgs/lafiabrew/repositories)
-3ds_pieceduel/
-3ds_pokedash/
-3ds_sysdash/
-3ds_drop/
-3ds_wigle/
-3ds_rngtool/
-3ds_netpass/
-3ds_padtest/
+# Standalone 3DS app repositories (tracked individually in https://github.com/orgs/lafiabrew/repositories)
+3ds_*/
 sd_logs_*/
 
 # Local SD diagnostic exports (may contain device and network details)

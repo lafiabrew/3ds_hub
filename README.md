@@ -2,6 +2,26 @@
 
 System-scoped Nintendo 3DS CFW homebrew workspace in this repository (alongside future console directories like `ps3/`, `ps4/`, `vita/`, `xbox360/`, `wiiu/`, etc.) tracked under the [**`lafiabrew`** GitHub Organization](https://github.com/orgs/lafiabrew/repositories).
 
+- **Architecture & Mermaid Ecosystem Diagrams:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Human Step-by-Step Quick-Start & SOPs:** [`docs/SOP.md`](docs/SOP.md)
+- **Agent Operational Guide:** [`AGENTS.md`](AGENTS.md)
+
+## System & Ecosystem Overview
+
+```mermaid
+flowchart LR
+    PC["PC Host (3ds_hub)<br/>• serve_3ds.py (:8765)<br/>• sd_scanner.py<br/>• pkhex_web.py<br/>• romhack_tool.py<br/>• wigle_sync.py"]
+    FBI["3DS FBI Installer<br/>QR Camera / TCP :5000"]
+    DROP["3DS Drop (:8766)<br/>Web UI + JSON API"]
+    APPS["On-3DS Apps<br/>• PokeDash (PKHaX)<br/>• SysDash (CFW/Mods/Titles)<br/>• WiGLE 3DS (Wardriver)<br/>• PokeRNG (RNG/Cheats)<br/>• NetPass (300 Coins)<br/>• PadTest (Drift/Screen)<br/>• PieceDuel (3D Strategy)"]
+    WIGLE["WiGLE.net API v2<br/>Leaderboard & Points"]
+
+    PC -->|".cia / .3dsx QR"| FBI
+    PC <-->|"Pull Logs & Saves / Push Edits"| DROP
+    DROP <-->|"sdmc:/3ds/logs/*.log & Saves"| APPS
+    PC -->|"Upload WigleWifi-1.4 CSV"| WIGLE
+```
+
 ## All 8 Nintendo 3DS Homebrew Apps (`lafiabrew`)
 
 | Project / Repo | Short Title | Short Description | UniqueId | Product Code | Purpose |

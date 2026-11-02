@@ -1,0 +1,6 @@
+# Smith project configuration (auto-detected)
+project_type: make
+root: /home/lafiamafia/homebrew/3ds
+check_command: make test
+autonomy: build
+# remote: https://github.com/user/repo.git  # uncomment and set to enable auto-push

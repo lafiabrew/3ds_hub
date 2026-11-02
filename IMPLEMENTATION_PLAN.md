@@ -103,3 +103,17 @@ Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite in this wor
 - **Files/areas:** `docs/audit/2026-11-02_multi-round-ux-and-function-audit.md`, `README.md`, `AGENTS.md`, `3ds_*/README.md`, `IMPLEMENTATION_PLAN.md`
 - **Validation command:** `make all && python3 serve_3ds.py --self-test`
 - **Evidence:** Exited 0 (All 8 3DS apps + 5 Python integration tests + `serve_3ds.py --self-test` passed; Round 1 & Round 2 audit committed and pushed across all 9 `lafiabrew` repositories). Ruggedness verdict: **RUGGED**.
+
+### T13 — Binary Size & ARM11 Speed Optimization (`-Os -flto`, ELF Strip & Extended LZ11/BCWAV) (`binary-and-speed-opt`)
+- **Status:** done
+- **Objective:** Optimize ARM11 compilation flags (`-Os -flto -fomit-frame-pointer` + `arm-none-eabi-strip --strip-debug`), upgrade `_lz11_compress` in `generate_bnr_shared.py` to support full 4 KB sliding-window hash-chain lookback and indicator-1 (`len <= 0x10110`) matches, and optimize BCWAV banner audio so `.elf`, `.bnr`, and `.cia` artifacts are significantly smaller and faster to transfer over 2.4 GHz 3DS Wi-Fi.
+- **Files/areas:** `3ds_*/Makefile`, `3ds_*/meta/generate_bnr_shared.py`, `3ds_*/scripts/verify-3ds-build.sh`
+- **Validation command:** `make 3ds && make verify-3ds && make test`
+- **Evidence:** Exited 0 (All 8 `.elf` binaries shrank by **~78%** from `1,352–1,757 KB` down to `278–366 KB`; `.bnr` shrank from `41–43 KB` to `38–39 KB`; `.cia` shrank to `217–260 KB`; `verify-3ds` enforces `elf_sz < 450000`). Ruggedness verdict: **RUGGED**.
+
+### T14 — Architecture Diagrams (Mermaid), Agent Ecosystem Guide & Human Quick-SOP (`arch-and-sop-docs`)
+- **Status:** done
+- **Objective:** Create `docs/ARCHITECTURE.md` (with Mermaid system-ecosystem, PKHaX surgical-save, WiGLE sync, and 3DS dual-screen loop diagrams for future agents), `docs/SOP.md` (human-friendly Quick-Start & Standard Operating Procedures for every app and workflow), and update `AGENTS.md`, `README.md`, and `lafiabrew` repositories.
+- **Files/areas:** `docs/ARCHITECTURE.md`, `docs/SOP.md`, `AGENTS.md`, `README.md`, `pc_companion/tests/test_suite.py`
+- **Validation command:** `make all && python3 serve_3ds.py --self-test`
+- **Evidence:** Exited 0 (`docs/ARCHITECTURE.md` and `docs/SOP.md` created and verified; all 8 3DS apps and `3ds_hub` pushed to `github.com/lafiabrew`). Ruggedness verdict: **RUGGED**.
