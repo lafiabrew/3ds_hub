@@ -21,8 +21,10 @@ import argparse
 import getpass
 import json
 import os
+import socket
 import struct
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Any, Dict, List, Optional
@@ -158,15 +160,73 @@ def scan_local_sd(sd_root: str) -> Dict[str, Any]:
     }
 
 
-def _http_get_json(url: str, timeout: float = 2.0) -> Dict[str, Any]:
-    req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8", errors="replace"))
+def _http_get_bytes(url: str, timeout: float = 4.0) -> bytes:
+    parsed = urllib.parse.urlparse(url)
+    host = parsed.hostname or "127.0.0.1"
+    port = parsed.port or 80
+    path = parsed.path or "/"
+    if parsed.query:
+        path = f"{path}?{parsed.query}"
+
+    chunks: List[bytes] = []
+    for _attempt in range(3):
+        chunks.clear()
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+        try:
+            s.connect((host, port))
+            req = f"GET {path} HTTP/1.1\r\nHost: {host}:{port}\r\nConnection: close\r\n\r\n"
+            s.sendall(req.encode("utf-8"))
+            while True:
+                try:
+                    data = s.recv(4096)
+                    if not data:
+                        break
+                    chunks.append(data)
+                except ConnectionResetError:
+                    break
+                except socket.timeout:
+                    break
+        finally:
+            s.close()
+        raw = b"".join(chunks)
+        if b"\r\n\r\n" in raw:
+            hdr_bytes, body = raw.split(b"\r\n\r\n", 1)
+            hdr_text = hdr_bytes.decode("utf-8", errors="replace")
+            first_line = hdr_text.splitlines()[0] if hdr_text else ""
+            if " 400 " in first_line:
+                raise urllib.error.HTTPError(url, 400, "Bad Request", {}, None)
+            if " 404 " in first_line:
+                raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)
+            if len(body) > 0:
+                return body
+    return b""
 
 
-def _http_get_bytes(url: str, timeout: float = 2.0) -> bytes:
-    with urllib.request.urlopen(url, timeout=timeout) as resp:
-        return resp.read()
+def _http_get_json(url: str, timeout: float = 4.0) -> Dict[str, Any]:
+    raw_body = _http_get_bytes(url, timeout=timeout)
+    text = raw_body.decode("utf-8", errors="replace").strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Salvage truncated JSON array if legacy 3ds_drop closed socket mid-transfer
+        if '"files":[' in text and not text.endswith("}"):
+            last_obj = text.rfind("}")
+            if last_obj > 0:
+                salvaged = text[: last_obj + 1] + '],"total_files":-1,"truncated":true}'
+                try:
+                    return json.loads(salvaged)
+                except json.JSONDecodeError:
+                    pass
+        if '"logs":[' in text and not text.endswith("}"):
+            last_obj = text.rfind("}")
+            if last_obj > 0:
+                salvaged = text[: last_obj + 1] + '],"log_count":-1,"truncated":true}'
+                try:
+                    return json.loads(salvaged)
+                except json.JSONDecodeError:
+                    pass
+        return {"raw_partial": text}
 
 
 def scan_remote_3ds(base_url: str) -> Dict[str, Any]:
