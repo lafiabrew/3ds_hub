@@ -1,0 +1,19 @@
+name: public-checkout-without-private-workstation-details
+description: Maintainer reviews a portable public tree while preserving local diagnostics and working installer discovery.
+tier: 1
+target:
+  kind: cli
+  start: python3 serve_3ds.py --list
+setup:
+  - Use the actual workspace with all eight independently tracked app repositories.
+steps:
+  - action: Scan every repository's tracked files using the public-hygiene checker.
+    expect: No user-home paths or incidental personal handles; all nine consent configurations enable reporting.
+  - action: Inspect the public headings, server description, and historical audit scope.
+    expect: Descriptions name the repository or workspace rather than the maintainer's workstation; project branding and URLs remain valid.
+  - action: Run the hub self-test and list discovery with the existing artifacts.
+    expect: Both commands exit zero, and discovery retains all eight apps; executable server AST differs only in the module docstring.
+  - action: Compare pre-run local SD diagnostic file hashes and check Git ignore behavior.
+    expect: Exports are byte-identical and ignored; no private diagnostic file is tracked or deleted.
+  - action: Inspect the nine repositories' diffs and commit ranges.
+    expect: App product files, license attribution, tests, and existing history remain intact; child changes contain only authorized consent configs.

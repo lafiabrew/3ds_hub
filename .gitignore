@@ -8,6 +8,9 @@
 3ds_netpass/
 3ds_padtest/
 
+# Local SD diagnostic exports (may contain device and network details)
+/sd_logs*/
+
 # Python & temporary artifacts
 __pycache__/
 *.pyc
