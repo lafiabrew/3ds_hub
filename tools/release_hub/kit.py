@@ -84,7 +84,9 @@ def policy(data, repo):
     p = load(data)
     require(isinstance(p, dict) and set(p) == POLICY_KEYS, 'policy schema keys')
     require(type(p['schema']) is int and p['schema'] == 1, 'policy schema version')
-    require(p['repo'] == repo, 'policy repository mismatch')
+    # Context is strictly fully qualified above; schema-1 policy stores ONLY
+    # the exact bare slug. Do not normalize foreign contexts or fullslug policy.
+    require(p['repo'] == repo.split('/')[1], 'policy repository mismatch (expected bare slug)')
     require(type(p['publish_enabled']) is bool and type(p['extra_engine_check']) is bool,
             'policy booleans must be booleans')
     require(p['channel'] in ('stable', 'wip'), 'policy channel')

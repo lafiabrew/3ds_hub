@@ -52,7 +52,7 @@ stable channel, not approval. All generated policies start false.
 ```json
 {
   "schema": 1,
-  "repo": "lafiabrew/3ds_padtest",
+  "repo": "3ds_padtest",
   "publish_enabled": false,
   "channel": "stable",
   "reason": "Exact-source QA and license/history/banner clearance are pending",
@@ -65,7 +65,15 @@ stable channel, not approval. All generated policies start false.
 }
 ```
 
-`repo` must be the exact `lafiabrew/3ds_<name>` slug (hub excluded).
+Policy `repo` must be the exact **bare** `3ds_<name>` slug (hub excluded),
+matching the repository component of a strictly validated full context.
+A full `lafiabrew/3ds_<name>` value in policy is rejected, not normalized;
+foreign owners, malformed contexts and mismatched bare slugs also fail before
+app commands. CLI `--repo`, workflow/OIDC context, `release.json` and approval
+records **remain fully qualified** `lafiabrew/3ds_<name>`. This is the original
+schema-1 rollout contract, not a schema change. `tests/releasefixtures/public_profiles.json`
+records the bare-policy example and all 28 observed native profiles; production
+CLI bundle/validate regressions exercise them without claiming native builds.
 `cia_asset` is exactly `<name>.cia` including the `3ds_` prefix. Commands are argv,
 never shell snippets. The current bounded profiles admit exactly `make test`,
 then `make <native_target>` and `make verify-3ds`; native target is `3ds-native`
@@ -343,8 +351,13 @@ upload dispatch, host/native failure-stop, malformed/stale/HTML/symlink/oversize
 archives and wrong source/tag/kit/policy/identity/hash controls. Exact inline
 OIDC bootstrap is executed with replaced transport, not claimed as live OIDC.
 A real public PadTest frozen-source SDK smoke was run using this new recipe,
-networkless/tokenless containers and the shared native queue. Artifacts remain
-local; its old banner provenance remains **uncleared**. Full private logs,
+networkless/tokenless containers and the shared native queue. The corrective
+bare-policy iteration reuses only the unchanged source/artifacts proven by that
+smoke: it checks source cleanliness and artifact hashes again and produces a
+**new** disabled-policy bundle/validation receipt because policy bytes changed.
+It does not rebuild native code or mutate the cached SDK image. Historical
+fullslug-policy evidence is retained, not relabeled as corrected evidence.
+Artifacts remain local; its old banner provenance remains **uncleared**. Full private logs,
 exits and source/artifact hashes are retained by the coordinator, not shipped
 as binaries or personal paths in this repository.
 

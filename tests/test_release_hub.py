@@ -26,7 +26,7 @@ APPROVAL_REF = 'e' * 40  # Data commit R1 AFTER A0; no caller repin.
 
 
 def policy(enabled=False):
-    return {'schema': 1, 'repo': REPO, 'publish_enabled': enabled, 'channel': 'stable',
+    return {'schema': 1, 'repo': '3ds_padtest', 'publish_enabled': enabled, 'channel': 'stable',
             'reason': '' if enabled else 'Independent QA/provenance approval absent',
             'native_target': '3ds-native', 'artifact_dir': 'build/3ds', 'cia_asset': '3ds_padtest.cia',
             'host_commands': [['make', 'test']], 'native_commands': [['make', '3ds-native'], ['make', 'verify-3ds']],
@@ -205,6 +205,55 @@ class ReleaseProcessTests(unittest.TestCase):
         real.rename(self.artifacts)
         os.link(self.artifacts / '3ds_padtest.cia', self.root / 'hardlink')
         self.make_bundle(success=False)
+
+    def test_actual28_bare_policy_full_context_cli_bundle_and_validate(self):
+        fixture = json.loads((ROOT / 'tests/releasefixtures/public_profiles.json').read_text())
+        for name in fixture['native_3ds_native'] + fixture['native_3ds_intentionally_failing_stubs']:
+            with self.subTest(repo=name):
+                target = '3ds-native' if name in fixture['native_3ds_native'] else '3ds'
+                # Independent fixture contract, not the policy() test helper.
+                p = dict(fixture['policy_example'], repo=name, cia_asset=name+'.cia',
+                         native_target=target,
+                         native_commands=[['make', target], ['make', 'verify-3ds']],
+                         extra_engine_check=name in fixture['extra_engine_check'],
+                         channel='stable' if target == '3ds-native' and name != '3ds_foldquest' else 'wip')
+                self.config.write_bytes(kit.encode(p))
+                artifact = self.artifacts / (name + '.cia')
+                # Synthetic structure test, NOT 28 native builds/identity approvals.
+                for old in self.artifacts.iterdir():
+                    old.unlink()
+                artifact.write_bytes(cia())
+                output = self.root / ('bundle-' + name)
+                repo = 'lafiabrew/' + name
+                for command, args in [('bundle', ['--artifacts', str(self.artifacts), '--output', str(output),
+                            '--started-ns', str(self.started), '--kit-ref', KIT]),
+                            ('validate', ['--bundle', str(output)])]:
+                    result = subprocess.run([sys.executable, str(self.script), command, '--repo', repo,
+                        '--tag', TAG, '--source-sha', SOURCE, '--config', str(self.config), *args],
+                        env=self.env, capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                    manifest = json.loads(result.stdout)
+                    self.assertEqual(manifest['repo'], repo)
+                    self.assertEqual(manifest['policy_sha256'], kit.digest(self.config.read_bytes()))
+                self.assertFalse(p['publish_enabled'])
+        self.assert_no_writes()
+
+    def test_policy_identity_rejections_stop_before_actual_host_command(self):
+        app = self.artifacts.parent.parent
+        (app / 'Makefile').write_text('test:\n\t@touch host-command-executed\n')
+        for policy_repo, context_repo in [('lafiabrew/3ds_padtest', REPO),
+                ('3ds_drop', REPO), ('3ds_padtest', 'foreign/3ds_padtest'),
+                ('3ds_padtest', '3ds_padtest'), ('3ds_padtest', 'lafiabrew/3ds_padtest/extra'),
+                ('3ds_hub', 'lafiabrew/3ds_hub')]:
+            with self.subTest(policy_repo=policy_repo, context_repo=context_repo):
+                self.config.write_bytes(kit.encode(dict(policy(), repo=policy_repo)))
+                result = subprocess.run([sys.executable, str(self.script), 'run', '--repo', context_repo,
+                    '--config', str(self.config), '--cwd', str(app), '--phase', 'host'],
+                    env=self.env, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn('BLOCKED:', result.stderr)
+                self.assertFalse((app / 'host-command-executed').exists())
+        self.assert_no_writes()
 
     def test_strict_policy_process_controls(self):
         base = policy()
@@ -468,8 +517,8 @@ class WorkflowBoundaryTests(unittest.TestCase):
         self.assertEqual(len(set(native + stubs)), 28)
         for name in native + stubs:
             repo = 'lafiabrew/' + name
-            p = policy()
-            p.update(repo=repo, cia_asset=name+'.cia', native_target='3ds-native' if name in native else '3ds',
+            p = dict(fixture['policy_example'])
+            p.update(repo=name, cia_asset=name+'.cia', native_target='3ds-native' if name in native else '3ds',
                      native_commands=[['make', '3ds-native' if name in native else '3ds'], ['make', 'verify-3ds']],
                      extra_engine_check=name in fixture['extra_engine_check'],
                      channel='stable' if name in native and name != '3ds_foldquest' else 'wip')
@@ -477,6 +526,12 @@ class WorkflowBoundaryTests(unittest.TestCase):
                 actual = kit.policy(kit.encode(p), repo)
                 self.assertFalse(actual['publish_enabled'])
                 self.assertEqual(actual['host_commands'], [['make', 'test']])
+                self.assertEqual(actual['repo'], name)
+                for bad_policy, bad_context in [(dict(p, repo=repo), repo),
+                        (dict(p, repo='3ds_drop' if name != '3ds_drop' else '3ds_padtest'), repo),
+                        (p, 'foreign/' + name)]:
+                    with self.assertRaises(kit.GateError):
+                        kit.policy(kit.encode(bad_policy), bad_context)
 
     def test_both_immutable_refs_production_validator(self):
         pin = 'a'*40

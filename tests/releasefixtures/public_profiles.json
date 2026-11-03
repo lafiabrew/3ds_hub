@@ -3,5 +3,19 @@
   "origin": "Actual public Makefiles, corrected BUILD_PROFILES audit; target presence is not build acceptance",
   "native_3ds_native": ["3ds_chip8", "3ds_drop", "3ds_foldquest", "3ds_mahjong", "3ds_netpass", "3ds_padtest", "3ds_picross", "3ds_pieceduel", "3ds_pokedash", "3ds_pokedex", "3ds_rngtool", "3ds_roulette", "3ds_sandlab", "3ds_sokoban", "3ds_solitaire", "3ds_sysdash", "3ds_wigle"],
   "native_3ds_intentionally_failing_stubs": ["3ds_capturekit", "3ds_cartdash", "3ds_gridblast", "3ds_neverball", "3ds_orrery", "3ds_pinball", "3ds_pockettracker", "3ds_rhythm", "3ds_supaplex", "3ds_tuxpuck", "3ds_voxeltoy"],
-  "extra_engine_check": ["3ds_foldquest"]
+  "extra_engine_check": ["3ds_foldquest"],
+  "policy_contract": "Schema 1 stores exact BARE repo slug; CLI/context/manifest/approval/OIDC use full lafiabrew/3ds_slug. Profile lists above come from actual public Makefiles, not successful builds.",
+  "policy_example": {
+    "schema": 1,
+    "repo": "3ds_padtest",
+    "publish_enabled": false,
+    "channel": "stable",
+    "reason": "Exact-source QA and license/history/banner clearance are pending",
+    "native_target": "3ds-native",
+    "artifact_dir": "build/3ds",
+    "cia_asset": "3ds_padtest.cia",
+    "host_commands": [["make", "test"]],
+    "native_commands": [["make", "3ds-native"], ["make", "verify-3ds"]],
+    "extra_engine_check": false
+  }
 }
