@@ -1,0 +1,16 @@
+name: twelve-independent-native-first-slices
+description: Real playable/useful feature candidates, genuine ports, honest public status and retrievable data rather than twelve boot screens.
+tier: 1
+setup:
+  - Use immutable completed candidates with source/license/gate records, not initial WIP runtime baselines.
+steps:
+  - action: Start each original app and drive its named core/native session through meaningful inputs and reset/stop/export.
+    expect: Actual feature state changes, objective/query/record/player works; native main calls the real feature, not only a static console or unused linked library.
+  - action: Build source ports and the module-audio engine with their declared upstream versions and data.
+    expect: Actual compiled reachable engine source and preserved code/asset licenses, same-architecture launcher negative control, visible errors for unavailable/corrupt data, no imitation or proprietary asset bundle.
+  - action: Run recorded app tests and native verifiers on final source.
+    expect: Named behavioral and recovery cases are selected/passed without weakening/skipping; real unique ARM artifacts exist; host/mock/compiled/device evidence tiers remain separate.
+  - action: Export each actual session log and retrieve it with the real Drop host daemon.
+    expect: Correct app/build/seed/clock/capabilities and bounded journal-backed JSONL, discovery plus byte-identical full pull, no default private media/IDs/upload, source/log freshness.
+  - action: Inspect public repo source status and timing/acceptance ledger.
+    expect: One real lafiabrew repo per project, WIP never release-labeled, reviews on exact pins, blocked scope retained, total setup/author/review/retry timings measured with missing data explicit and no unsupported serial-speedup claim.

@@ -1,0 +1,253 @@
+{
+  "run_id": "nextwave-20261103T171608Z",
+  "start_utc": "2026-11-03T17:16:08Z",
+  "start_observation_epoch": 1793726656.961065,
+  "start_observation_monotonic": 228635.009245042,
+  "phase": "setup",
+  "product_acceptance": false,
+  "lanes": [
+    {
+      "repo": "3ds_pinball",
+      "title": "Pinball",
+      "code": "CTR-P-PNBL",
+      "unique_id": "0x0D3F4",
+      "model": "claude-opus-5.5",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "2aafbdeb9da4c76864cc38406d4546323f859c90",
+      "publication": {
+        "repo": "3ds_pinball",
+        "exit": 0,
+        "duration_s": 9.482369248988107,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "2aafbdeb9da4c76864cc38406d4546323f859c90",
+        "local_sha": "1a3ebf81a3f9125aaaaeb9e598e426d0941ec136",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_rhythm",
+      "title": "Rhythm",
+      "code": "CTR-P-RHYT",
+      "unique_id": "0x0D3F5",
+      "model": "gpt-6.1-sol",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "0e84d6a3db44e87c7e05aebd5a3392d0d927dc27",
+      "publication": {
+        "repo": "3ds_rhythm",
+        "exit": 0,
+        "duration_s": 8.988966475008056,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "0e84d6a3db44e87c7e05aebd5a3392d0d927dc27",
+        "local_sha": "cc31033f69909fb63902e962a879d7db0b1186df",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_gridblast",
+      "title": "GridBlast",
+      "code": "CTR-P-GRBL",
+      "unique_id": "0x0D3F6",
+      "model": "gpt-5.3-codex",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "3dac2a4d50831fb7206db8c2b1919ebc0f9932ec",
+      "publication": {
+        "repo": "3ds_gridblast",
+        "exit": 0,
+        "duration_s": 10.658508676016936,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "3dac2a4d50831fb7206db8c2b1919ebc0f9932ec",
+        "local_sha": "3593b58fad6b8c47d7f9d218f9693bb4766b9a46",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_foldquest",
+      "title": "FoldQuest",
+      "code": "CTR-P-FOLD",
+      "unique_id": "0x0D3F7",
+      "model": "claude-sonnet-5.5",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "3b2ea256f771821a6fae49efc9b62fe3a75638fe",
+      "publication": {
+        "repo": "3ds_foldquest",
+        "exit": 0,
+        "duration_s": 8.43071344398777,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "3b2ea256f771821a6fae49efc9b62fe3a75638fe",
+        "local_sha": "7fc32ff015d7b10f3da42feb44d69b26ba3c64a0",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_voxeltoy",
+      "title": "VoxelToy",
+      "code": "CTR-P-VOXL",
+      "unique_id": "0x0D3F8",
+      "model": "claude-opus-5.5",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "248d005b417df206b640a75c4923dda722406896",
+      "publication": {
+        "repo": "3ds_voxeltoy",
+        "exit": 0,
+        "duration_s": 8.683989395009121,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "248d005b417df206b640a75c4923dda722406896",
+        "local_sha": "27c546ec5f754aaebaf61f3917b8b9b922e9812a",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_orrery",
+      "title": "Orrery",
+      "code": "CTR-P-ORRY",
+      "unique_id": "0x0D3F9",
+      "model": "gpt-6.1-sol",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "5ef27da64578a551ee6fb00eef8b01c9462d4086",
+      "publication": {
+        "repo": "3ds_orrery",
+        "exit": 0,
+        "duration_s": 13.25042532599764,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "5ef27da64578a551ee6fb00eef8b01c9462d4086",
+        "local_sha": "d3f8baa820b7770758c870b7cffefa1a174b64f0",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_capturekit",
+      "title": "CaptureKit",
+      "code": "CTR-P-CAPT",
+      "unique_id": "0x0D3FA",
+      "model": "gpt-6.1-sol",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "e6c6ce407af4a9bb083749188ea18073c16afff3",
+      "publication": {
+        "repo": "3ds_capturekit",
+        "exit": 0,
+        "duration_s": 8.235118023992982,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "e6c6ce407af4a9bb083749188ea18073c16afff3",
+        "local_sha": "92d209cbf077e825fb68c08f374aea0fea175106",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_cartdash",
+      "title": "CartDash",
+      "code": "CTR-P-CART",
+      "unique_id": "0x0D3FB",
+      "model": "claude-sonnet-5.5",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": false,
+      "base_sha": "f6722ba7d1bc319f503d657ba86fcb4090f0c35b",
+      "publication": {
+        "repo": "3ds_cartdash",
+        "exit": 0,
+        "duration_s": 7.931186697998783,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "f6722ba7d1bc319f503d657ba86fcb4090f0c35b",
+        "local_sha": "45f7ac1b42057af3c5c9c717b3605f138e453095",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_pockettracker",
+      "title": "PocketTracker",
+      "code": "CTR-P-TRKR",
+      "unique_id": "0x0D3FC",
+      "model": "claude-opus-5.5",
+      "state": "ready_for_author_gates",
+      "port": false,
+      "data_or_audio_engine": true,
+      "base_sha": "39ffb288e2bb233faef95ee90d9e29fb3570b2bd",
+      "publication": {
+        "repo": "3ds_pockettracker",
+        "exit": 0,
+        "duration_s": 9.639853925997159,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "39ffb288e2bb233faef95ee90d9e29fb3570b2bd",
+        "local_sha": "d87a55cb2d526cd9f51f98d2d6718a617ac3b4a7",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_neverball",
+      "title": "Neverball",
+      "code": "CTR-P-NVBL",
+      "unique_id": "0x0D3FD",
+      "model": "claude-opus-5.5",
+      "state": "ready_for_author_gates",
+      "port": true,
+      "data_or_audio_engine": false,
+      "base_sha": "daa4338858d3d892e9f6790e2aa7b8bee96ff8d4",
+      "publication": {
+        "repo": "3ds_neverball",
+        "exit": 0,
+        "duration_s": 9.906989356008125,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "daa4338858d3d892e9f6790e2aa7b8bee96ff8d4",
+        "local_sha": "bcfe5b16cdfd32700a7f52a9b6f4ef69cae38dde",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_tuxpuck",
+      "title": "TuxPuck",
+      "code": "CTR-P-TUXP",
+      "unique_id": "0x0D3FE",
+      "model": "gpt-6.1-sol",
+      "state": "ready_for_author_gates",
+      "port": true,
+      "data_or_audio_engine": false,
+      "base_sha": "f190e281c3d15620c4f2c6a8922ec7539e74606f",
+      "publication": {
+        "repo": "3ds_tuxpuck",
+        "exit": 0,
+        "duration_s": 9.660132663993863,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "f190e281c3d15620c4f2c6a8922ec7539e74606f",
+        "local_sha": "de7fb7f20cb054442b79614486719882eb17f71f",
+        "remote_verified": true
+      }
+    },
+    {
+      "repo": "3ds_supaplex",
+      "title": "Supaplex",
+      "code": "CTR-P-SPPX",
+      "unique_id": "0x0D3FF",
+      "model": "claude-sonnet-5.5",
+      "state": "ready_for_author_gates",
+      "port": true,
+      "data_or_audio_engine": false,
+      "base_sha": "9545cc12c4ac33020e55e2490dc8fdb2129fdd0d",
+      "publication": {
+        "repo": "3ds_supaplex",
+        "exit": 0,
+        "duration_s": 9.660308346996317,
+        "publication_kind": "WIP source/runtime baseline, not app acceptance",
+        "remote_sha": "9545cc12c4ac33020e55e2490dc8fdb2129fdd0d",
+        "local_sha": "879f596e45e003e4f444e145d4f3d0f5a8586061",
+        "remote_verified": true
+      }
+    }
+  ],
+  "plan_rugged": "RUGGED",
+  "baseline_docs": "AMBER/no RED; engineering defaults and four named plan gaps resolved",
+  "readiness_score": 94
+}
