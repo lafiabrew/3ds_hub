@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "platform": "linux/amd64",
+  "sdk_index": "docker.io/devkitpro/devkitarm@sha256:116afba8df8453961de2936ffab20dd441edf4d682856c1ec8b0e53d7ed0bbf5",
+  "sdk_platform_manifest": "sha256:15b79ce75822c289538d8153da5fa7aafe5e6adc32ad8a575a197beca0f0761b",
+  "makerom_url": "https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.18.4/makerom-v0.18.4-ubuntu_x86_64.zip",
+  "makerom_sha256": "dd596854718c195c6e3229286be485b122921715555af8ae5cf8e9a465d9f970",
+  "makerom_archive_member": "makerom",
+  "makerom_unpacked_size": 741008,
+  "node_url": "https://nodejs.org/dist/v22.16.0/node-v22.16.0-linux-x64.tar.xz",
+  "node_sha256": "f4cb75bb036f0d0eddf6b79d9596df1aaab9ddccd6a20bf489be5abe9467e84e",
+  "node_prefix": "node-v22.16.0-linux-x64/",
+  "node_member": "bin/node",
+  "bannertool": "not installed or required by this kit; applications needing it fail visibly"
+}
