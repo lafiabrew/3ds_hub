@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "repo": "{{REPO}}",
+  "publish_enabled": false,
+  "channel": "{{CHANNEL}}",
+  "reason": "{{REASON}}",
+  "native_target": "{{NATIVE_TARGET}}",
+  "artifact_dir": "build/3ds",
+  "cia_asset": "{{REPO}}.cia",
+  "host_commands": [
+    ["make", "test"]
+  ],
+  "native_commands": [
+    ["make", "{{NATIVE_TARGET}}"],
+    ["make", "verify-3ds"]
+  ],
+  "extra_engine_check": {{EXTRA_ENGINE_CHECK}}
+}

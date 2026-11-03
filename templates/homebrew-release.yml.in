@@ -1,0 +1,28 @@
+name: Homebrew release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run build/verify only; do not publish"
+        required: true
+        default: true
+        type: boolean
+      release_tag:
+        description: "Optional stable SemVer tag (for manual publish only after approval)"
+        required: false
+        type: string
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: lafiabrew/3ds_hub/.github/workflows/homebrew-release.yml@{{KIT_SHA}}
+    with:
+      kit_ref: {{KIT_SHA}}
+      release_tag: ${{ github.event_name == 'push' && github.ref_name || inputs.release_tag }}
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
