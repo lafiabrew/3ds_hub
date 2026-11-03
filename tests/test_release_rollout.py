@@ -14,7 +14,6 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / 'tools' / 'rollout_release.py'
 FIX = ROOT / 'tests' / 'rolloutfixtures'
-WORK_BASE = FIX / '_work'
 KIT = 'e' * 40
 OWNED = {'.github/workflows/homebrew-release.yml', '.github/homebrew-release.json', 'docs/RELEASING.md'}
 
@@ -51,12 +50,34 @@ def mk_repo(path: Path, branch: str = 'main') -> str:
 
 
 class RolloutPlannerTests(unittest.TestCase):
+    @staticmethod
+    def source_snapshot():
+        status = run_cmd(['/usr/bin/git', 'status', '--porcelain=v1', '--untracked-files=all']).stdout
+        paths = run_cmd(['/usr/bin/git', 'ls-files', '-co', '--exclude-standard', '-z']).stdout.split('\0')
+        content = {}
+        for rel in set(paths) - {''}:
+            path = ROOT / rel
+            if path.is_symlink():
+                content[rel] = ('symlink', os.readlink(path))
+            elif path.is_file():
+                content[rel] = (path.stat().st_mode, hashlib.sha256(path.read_bytes()).hexdigest())
+        return status, content
+
     @classmethod
-    def setUpClass(cls) -> None:
-        WORK_BASE.mkdir(parents=True, exist_ok=True)
+    def setUpClass(cls):
+        cls.source_before = cls.source_snapshot()
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.source_before != cls.source_snapshot():
+            raise AssertionError('suite modified guarded source status/content')
 
     def setUp(self) -> None:
-        self.workdir = Path(tempfile.mkdtemp(prefix='rr-', dir=WORK_BASE))
+        # TMPDIR is coordinator-provided on the project volume; public CI uses
+        # the standard system temporary directory. Never create source scratch.
+        self.workdir = Path(tempfile.mkdtemp(prefix='rr-')).absolute()
+        self.assertNotIn(ROOT, self.workdir.parents)
+        self.work_identity = (self.workdir.stat().st_dev, self.workdir.stat().st_ino)
         self.root = self.workdir / 'repos'
         self.cfg_path = self.workdir / 'transport.json'
         self.cfg = {'remotes': {}}
@@ -78,7 +99,13 @@ class RolloutPlannerTests(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.env.stop()
+        self.assertFalse(self.workdir.is_symlink())
+        self.assertEqual((self.workdir.stat().st_dev, self.workdir.stat().st_ino), self.work_identity)
         shutil.rmtree(self.workdir)
+        self.assertFalse(self.workdir.exists(), 'owned temporary directory cleanup failed')
+
+    def new_receipt(self):
+        self.output = self.workdir / ('receipt-' + str(len(list(self.workdir.glob('receipt*.json')))) + '.json')
 
     def git(self, repo, *args):
         cp = run_cmd(['/usr/bin/git', '-C', str(self.root / repo), *args])
@@ -169,13 +196,28 @@ class RolloutPlannerTests(unittest.TestCase):
         self.assertIn('verify-3ds', cp.stderr)
 
     def test_plan_works_on_real_28_repo_inputs(self):
-        pages = Path(os.environ['PAGES_RUN'])
-        cp = run_cmd(['python3', str(TOOL), 'plan', '--audit', str(pages / 'reports/REPO_AUDIT.json'),
-                      '--profiles', str(pages / 'reports/BUILD_PROFILES.json'), '--readiness', str(pages / 'reports/RELEASE_READINESS.json'),
+        public = FIX / 'public28'
+        provenance = json.loads((public / 'provenance.json').read_text())
+        for name, digest in provenance['fixture_sha256'].items():
+            self.assertEqual(hashlib.sha256((public / name).read_bytes()).hexdigest(), digest)
+        cp = run_cmd(['python3', str(TOOL), 'plan', '--audit', str(public / 'audit.json'),
+                      '--profiles', str(public / 'profiles.json'), '--readiness', str(public / 'readiness.json'),
                       '--kit-ref', KIT, '--output', str(self.plan_path)])
         self.assertEqual(cp.returncode, 0, cp.stderr)
         data = json.loads(self.plan_path.read_text())
         self.assertEqual(len(data['repos']), 28)
+        self.assertEqual(len(provenance['sources']), 28)
+        self.assertEqual({r['repo']: r['source_sha'] for r in data['repos']},
+                         {r['repo']: r['source_sha'] for r in provenance['sources']})
+        self.assertEqual(sum(r['published_existing'] for r in data['repos']), 16)
+        self.assertEqual(sum(r['current_version'] == 'untagged' for r in data['repos']), 12)
+        self.assertEqual(sum(r['expected_commands']['native_commands'][0] == ['make', '3ds-native'] for r in data['repos']), 17)
+        self.assertEqual(sum(r['expected_commands']['native_commands'][0] == ['make', '3ds'] for r in data['repos']), 11)
+        for source in provenance['sources']:
+            self.assertEqual(source['public_owner'], 'lafiabrew')
+            self.assertIn('/' + source['source_sha'] + '/Makefile', source['makefile_url'])
+            self.assertRegex(source['makefile_git_blob'], r'^[a-f0-9]{40}$')
+            self.assertRegex(source['makefile_sha256'], r'^[a-f0-9]{64}$')
         self.assertIn('3ds_drop', {r['repo'] for r in data['repos']})
         self.assertIn('3ds_supaplex', {r['repo'] for r in data['repos']})
         engine_repos = {row['repo'] for row in data['repos'] if json.loads(row['rendered_contents']['.github/homebrew-release.json'])['extra_engine_check']}
@@ -198,10 +240,15 @@ class RolloutPlannerTests(unittest.TestCase):
         self.assertEqual(before, self.snapshot())
         data = json.loads(self.output.read_text())
         self.assertEqual({c['path'] for c in data['receipts'][0]['changes']}, OWNED)
+        first_receipt = self.output.read_bytes()
+        first_output = self.output
+        self.new_receipt()
         cp = self.apply()
         self.assertEqual(cp.returncode, 0, cp.stderr)
         applied = self.snapshot()
+        self.new_receipt()
         cp = self.apply()
+        self.assertEqual(first_output.read_bytes(), first_receipt)
         self.assertEqual(cp.returncode, 0, cp.stderr)
         self.assertEqual(applied, self.snapshot())
         status = self.git('3ds_fixture', 'ls-files', '--others', '--exclude-standard').splitlines()
@@ -424,6 +471,7 @@ class RolloutPlannerTests(unittest.TestCase):
         self.rejected_unchanged(contains='cap')
         cp = self.apply('--repo', '3ds_a', '--dry-run')
         self.assertEqual(cp.returncode, 0, cp.stderr)
+        self.new_receipt()
         self.cfg['gh_fail'] = True
         write_json(self.cfg_path, self.cfg)
         self.rejected_unchanged(contains='probe failed')
@@ -518,6 +566,145 @@ class RolloutPlannerTests(unittest.TestCase):
             self.assertNotIn('/home/person', text)
             self.assertNotIn('raw-session.log', text)
 
+    def test_immutable_plan_and_receipt_outputs_before_api(self):
+        self.add_repo()
+        self.good_plan()
+        original_plan = self.plan_path.read_bytes()
+        self.assertEqual(self.plan().returncode, 2)
+        self.assertEqual(self.plan_path.read_bytes(), original_plan)
+        self.cfg['gh_fail'] = True  # refusal must precede all API preflights
+        write_json(self.cfg_path, self.cfg)
+        for kind in ['regular', 'dangling', 'ancestor', 'source']:
+            with self.subTest(kind=kind):
+                self.output = self.workdir / ('old-' + kind + '.json')
+                if kind == 'regular':
+                    self.output.write_bytes(b'prior immutable receipt')
+                elif kind == 'dangling':
+                    self.output.symlink_to(self.workdir / 'missing')
+                elif kind == 'ancestor':
+                    link = self.workdir / 'output-link'
+                    link.symlink_to(self.workdir, target_is_directory=True)
+                    self.output = link / 'new.json'
+                else:
+                    self.output = TOOL
+                before = self.snapshot()
+                cp = self.apply()
+                self.assertEqual(cp.returncode, 2, cp.stderr)
+                self.assertNotIn('probe failed', cp.stderr)
+                self.assertEqual(before, self.snapshot())
+                if kind == 'regular':
+                    self.assertEqual(self.output.read_bytes(), b'prior immutable receipt')
+                elif kind == 'dangling':
+                    self.assertTrue(self.output.is_symlink())
+                # Same actual CLI parser/plan command rejects these output paths.
+                old_plan_path = self.plan_path
+                self.plan_path = self.output
+                cp = self.plan()
+                self.plan_path = old_plan_path
+                self.assertEqual(cp.returncode, 2, cp.stderr)
+                self.assertEqual(original_plan, self.plan_path.read_bytes())
+
+    def test_new_output_in_guarded_source_refused(self):
+        self.add_repo()
+        self.good_plan()
+        self.output = ROOT / 'never-create-rollout-output.json'
+        self.assertFalse(os.path.lexists(self.output))
+        self.rejected_unchanged(contains='guarded tool source')
+        self.plan_path = self.output
+        cp = self.plan()
+        self.assertEqual(cp.returncode, 2, cp.stderr)
+        self.assertIn('guarded tool source', cp.stderr)
+        self.assertFalse(os.path.lexists(self.output))
+
+    def test_late_receipt_existence_and_symlink_races_before_repo_writes(self):
+        self.add_repo()
+        self.good_plan()
+        outside = self.workdir / 'outside'
+        outside.mkdir()
+        for kind in ['regular', 'symlink', 'ancestor']:
+            with self.subTest(kind=kind):
+                self.output = self.workdir / ('late-' + kind + '.json')
+                if kind == 'ancestor':
+                    self.output = self.workdir / 'late-parent' / 'receipt.json'
+                self.cfg.update(output_race_at=2, output_race_kind=kind,
+                                output_race_path=str(self.output), output_race_target=str(outside), remote_probes=0)
+                write_json(self.cfg_path, self.cfg)
+                before = self.snapshot()
+                cp = self.apply()
+                self.assertEqual(cp.returncode, 2, cp.stderr)
+                self.assertIn('partial local I/O', cp.stderr)
+                self.assertEqual(before, self.snapshot())
+                self.assertEqual(list(outside.iterdir()), [])
+                if kind == 'regular':
+                    self.assertEqual(self.output.read_bytes(), b'late competing output')
+                elif kind == 'symlink':
+                    self.assertTrue(self.output.is_symlink())
+                else:
+                    self.assertTrue(self.output.parent.is_symlink())
+
+    def test_plan_late_creation_controls_actual_main(self):
+        self.add_repo()
+        self.good_plan()
+        # Invoke production main/parser with only a local filesystem boundary
+        # fault seam, never a production test flag or replacement planner.
+        for kind in ['regular', 'symlink', 'ancestor']:
+            target = self.workdir / ('late-plan-' + kind + '.json')
+            outside = self.workdir / ('outside-' + kind)
+            outside.mkdir()
+            if kind == 'ancestor':
+                target = self.workdir / 'late-plan-parent' / 'plan.json'
+            script = '''
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import rollout_release as tool
+real = tool._open_exclusive
+kind, target, outside = sys.argv[2:5]
+def race(path):
+    p = Path(target)
+    if kind == 'regular': p.write_bytes(b'late plan bytes')
+    elif kind == 'symlink': p.symlink_to(outside)
+    else: p.parent.symlink_to(outside, target_is_directory=True)
+    return real(path)
+tool._open_exclusive = race
+sys.exit(tool.main(sys.argv[5:]))
+'''
+            cp = run_cmd(['python3', '-B', '-c', script, str(TOOL.parent), kind, str(target), str(outside),
+                          'plan', '--audit', str(self.workdir / 'audit.json'), '--profiles', str(self.workdir / 'profiles.json'),
+                          '--readiness', str(self.workdir / 'readiness.json'), '--kit-ref', KIT, '--output', str(target)])
+            self.assertEqual(cp.returncode, 2, cp.stderr)
+            self.assertIn('partial local I/O', cp.stderr)
+            self.assertEqual(list(outside.iterdir()), [])
+            if kind == 'regular':
+                self.assertEqual(target.read_bytes(), b'late plan bytes')
+
+    def test_private_archived_rollout_prs_count_and_visibility_fail_closed(self):
+        self.add_repo()
+        self.good_plan()
+        # Synthetic transport identity only; no private production name/payload.
+        self.cfg.update(private_repos=['3ds_hidden_fixture'], private_open_count=1, open_count=4)
+        write_json(self.cfg_path, self.cfg)
+        self.rejected_unchanged(contains='cap')  # 4 public + 1 private + pending 1 > 5
+        self.cfg['open_count'] = 3
+        write_json(self.cfg_path, self.cfg)
+        cp = self.apply('--dry-run')
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        receipt = json.loads(self.output.read_text())
+        self.assertEqual(receipt['open_prs_seen'] + receipt['pending_batch'], 5)
+        for settings in [{'private_total_unavailable': True}, {'private_total_unavailable': False, 'private_total': 2}]:
+            self.new_receipt()
+            self.cfg.update(settings)
+            write_json(self.cfg_path, self.cfg)
+            self.rejected_unchanged(contains='global PR cap unproven')
+
+    def test_global_cap_includes_noncaller_repository_namespace(self):
+        self.add_repo()
+        self.good_plan()
+        self.cfg.update(private_repos=['noncaller-hidden-fixture'], private_open_count=5)
+        write_json(self.cfg_path, self.cfg)
+        self.rejected_unchanged(contains='cap')
+        self.assertFalse((self.root / '3ds_fixture/.github').exists())
+
     def test_prepared_branch_publish_boundary_positive_and_negative(self):
         self.add_repo()
         self.good_plan()
@@ -527,12 +714,14 @@ class RolloutPlannerTests(unittest.TestCase):
         self.git('3ds_fixture', 'add', *sorted(OWNED))
         self.git('3ds_fixture', 'commit', '-m', 'Configure release metadata')
         before = self.snapshot()
+        self.new_receipt()
         cp = self.apply('--repo', '3ds_fixture', verify=True)
         self.assertEqual(cp.returncode, 0, cp.stderr)
         self.assertEqual(before, self.snapshot())
         (self.root / '3ds_fixture/README.md').write_text('extra source edit')
         self.git('3ds_fixture', 'add', 'README.md')
         self.git('3ds_fixture', 'commit', '--amend', '--no-edit')
+        self.new_receipt()
         cp = self.apply('--repo', '3ds_fixture', verify=True)
         self.assertEqual(cp.returncode, 2, cp.stderr)
         self.assertIn('exactly the three', cp.stderr)
