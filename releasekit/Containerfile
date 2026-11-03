@@ -1,0 +1,22 @@
+# Build context MUST be the trusted pinned hub releasekit/ directory.
+# Index inspected 2026-11-03: linux/amd64 child 15b79ce75822c289538d8153da5fa7aafe5e6adc32ad8a575a197beca0f0761b.
+FROM --platform=linux/amd64 docker.io/devkitpro/devkitarm@sha256:116afba8df8453961de2936ffab20dd441edf4d682856c1ec8b0e53d7ed0bbf5
+COPY inputs.json /opt/releasekit-inputs.json
+# No apt/latest installer, opaque banner, silently missing makerom or tar extract.
+# python -c is intentional: older rootless Podman does not parse RUN heredocs.
+RUN python3 -c 'import hashlib,io,json,os,platform,tarfile,urllib.request,zipfile; \
+ p=json.load(open("/opt/releasekit-inputs.json")); assert platform.machine()=="x86_64"; \
+ data=urllib.request.urlopen(p["makerom_url"],timeout=60).read(2*1024*1024); \
+ assert hashlib.sha256(data).hexdigest()==p["makerom_sha256"]; \
+ z=zipfile.ZipFile(io.BytesIO(data)); assert z.namelist()==[p["makerom_archive_member"]]; \
+ tool=z.read(p["makerom_archive_member"]); assert len(tool)==p["makerom_unpacked_size"] and tool[:4]==b"\x7fELF"; \
+ open("/usr/local/bin/makerom","wb").write(tool); os.chmod("/usr/local/bin/makerom",0o755); \
+ data=urllib.request.urlopen(p["node_url"],timeout=60).read(64*1024*1024); \
+ assert hashlib.sha256(data).hexdigest()==p["node_sha256"]; \
+ t=tarfile.open(fileobj=io.BytesIO(data),mode="r:xz"); m=t.getmember(p["node_prefix"]+p["node_member"]); \
+ assert m.isfile() and m.size<128*1024*1024; node=t.extractfile(m).read(); assert node[:4]==b"\x7fELF"; \
+ open("/usr/local/bin/node","wb").write(node); os.chmod("/usr/local/bin/node",0o755)'
+RUN test -x /usr/bin/gcc && test -x /usr/bin/make && test -x /usr/bin/python3 && test -x /usr/local/bin/makerom && test -x /usr/local/bin/node && test -x /opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc
+ENV DEVKITPRO=/opt/devkitpro DEVKITARM=/opt/devkitpro/devkitARM
+ENV PATH=/usr/local/bin:/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:/usr/bin:/bin
+WORKDIR /app

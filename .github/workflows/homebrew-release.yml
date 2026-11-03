@@ -1,0 +1,179 @@
+name: Qualified immutable homebrew release
+on:
+  workflow_call:
+    inputs:
+      kit_ref:
+        description: Same full 40-hex hub SHA as this reusable workflow reference
+        required: true
+        type: string
+      release_tag:
+        description: Existing stable tag for publication; empty manual candidate uses v0.1.0
+        default: ''
+        type: string
+      dry_run:
+        description: Default builds locally without tag/release/binary transfer
+        default: true
+        type: boolean
+      approval_id:
+        description: SHA256 of independent approval DATA record in approval_ref
+        default: ''
+        type: string
+      approval_ref:
+        description: Separate full hub commit containing reviewed approval DATA, never executed
+        default: ''
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: homebrew-release-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  identity:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      kit: ${{ steps.pin.outputs.kit }}
+      tag: ${{ steps.pin.outputs.tag }}
+      source: ${{ steps.pin.outputs.source }}
+      repo: ${{ steps.pin.outputs.repo }}
+    steps:
+      - name: Authenticate executed reusable workflow pin before any checkout
+        id: pin
+        env:
+          KIT_REF: ${{ inputs.kit_ref }}
+          CANDIDATE_TAG: ${{ inputs.release_tag }}
+        shell: python
+        run: |
+          import base64, json, os, re, time, urllib.parse, urllib.request
+          e = os.environ
+          kit = e['KIT_REF']
+          assert re.fullmatch('[0-9a-f]{40}', kit), 'immutable kit SHA required'
+          url = urllib.parse.urlsplit(e['ACTIONS_ID_TOKEN_REQUEST_URL'])
+          assert url.scheme == 'https' and url.hostname.endswith('.actions.githubusercontent.com')
+          audience = 'homebrew-release-kit'
+          request = urllib.request.Request(e['ACTIONS_ID_TOKEN_REQUEST_URL'] + '&audience=' + audience,
+              headers={'Authorization': 'bearer ' + e['ACTIONS_ID_TOKEN_REQUEST_TOKEN']})
+          # JWT is obtained directly over authenticated TLS from GitHub's runner
+          # endpoint, never accepted from an app/input/artifact. No unsigned JWT
+          # from the caller is trusted. The endpoint supplies its signed claims.
+          with urllib.request.urlopen(request, timeout=20) as response:
+              token = json.load(response)['value']
+          part = token.split('.')[1]
+          c = json.loads(base64.urlsafe_b64decode(part + '=' * (-len(part) % 4)))
+          assert c['iss'] == 'https://token.actions.githubusercontent.com'
+          assert c['aud'] == audience and c['exp'] > time.time()
+          assert c['job_workflow_ref'] == 'lafiabrew/3ds_hub/.github/workflows/homebrew-release.yml@' + kit
+          assert c['job_workflow_sha'] == kit
+          assert c['repository'] == e['GITHUB_REPOSITORY'] and c['sha'] == e['GITHUB_SHA']
+          assert re.fullmatch('lafiabrew/3ds_(?!hub$)[a-z0-9]+', c['repository'])
+          assert re.fullmatch('[0-9a-f]{40}', c['sha'])
+          tag = e['GITHUB_REF'][10:] if e['GITHUB_REF'].startswith('refs/tags/') else (e['CANDIDATE_TAG'] or 'v0.1.0')
+          assert re.fullmatch(r'v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)', tag)
+          with open(e['GITHUB_OUTPUT'], 'a') as output:
+              for name, value in {'kit': kit, 'tag': tag, 'source': c['sha'], 'repo': c['repository']}.items():
+                  output.write(name + '=' + value + '\n')
+  build:
+    needs: identity
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: lafiabrew/3ds_hub
+          ref: ${{ needs.identity.outputs.kit }}
+          path: kit
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ needs.identity.outputs.repo }}
+          ref: ${{ needs.identity.outputs.source }}
+          path: app
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Check frozen source, clean output and strict policy
+        env:
+          REPO: ${{ needs.identity.outputs.repo }}
+          SOURCE: ${{ needs.identity.outputs.source }}
+        run: |
+          test "$(git -C app rev-parse HEAD)" = "$SOURCE"
+          test -z "$(git -C app status --porcelain --untracked-files=all)"
+          test ! -e app/build/3ds
+          python3 - <<'PY'
+          import os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'kit')
+          from tools.release_hub.kit import regular, policy
+          raw = regular('app/.github/homebrew-release.json', 65536)
+          policy(raw, os.environ['REPO'])
+          Path('frozen-policy.json').write_bytes(raw)
+          PY
+      - name: Independent remote admission BEFORE any binary transfer
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ needs.identity.outputs.repo }}
+          TAG: ${{ needs.identity.outputs.tag }}
+          SOURCE: ${{ needs.identity.outputs.source }}
+          APPROVAL: ${{ inputs.approval_id }}
+          APPROVAL_REF: ${{ inputs.approval_ref }}
+          KIT_REF: ${{ needs.identity.outputs.kit }}
+        run: python3 kit/tools/release_hub/kit.py admit --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE" --approval-id "$APPROVAL" --approval-ref "$APPROVAL_REF" --kit-ref "$KIT_REF"
+      - name: Build trusted pinned SDK (no app Dockerfile)
+        run: docker build --platform linux/amd64 -t releasekit-local -f kit/releasekit/Containerfile kit/releasekit
+      - name: Tokenless isolated actual host/native gates
+        env:
+          REPO: ${{ needs.identity.outputs.repo }}
+        run: |
+          python3 -c 'import time; print(time.time_ns())' > started-ns
+          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges --pids-limit 512 --user "$(id -u):$(id -g)" --read-only --tmpfs /tmp:rw,exec,nosuid,size=1g -e HOME=/tmp -v "$PWD/app:/app:rw" -v "$PWD/kit:/kit:ro" -v "$PWD/frozen-policy.json:/policy.json:ro" releasekit-local python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase host
+          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges --pids-limit 512 --user "$(id -u):$(id -g)" --read-only --tmpfs /tmp:rw,exec,nosuid,size=1g -e HOME=/tmp -v "$PWD/app:/app:rw" -v "$PWD/kit:/kit:ro" -v "$PWD/frozen-policy.json:/policy.json:ro" releasekit-local python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase native
+          git -C app diff --exit-code
+      - name: Make deterministic local bundle and validate it
+        env:
+          REPO: ${{ needs.identity.outputs.repo }}
+          TAG: ${{ needs.identity.outputs.tag }}
+          SOURCE: ${{ needs.identity.outputs.source }}
+          KIT_REF: ${{ needs.identity.outputs.kit }}
+          APPROVAL: ${{ inputs.approval_id }}
+          APPROVAL_REF: ${{ inputs.approval_ref }}
+        run: |
+          python3 kit/tools/release_hub/kit.py bundle --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE" --config frozen-policy.json --artifacts app/build/3ds --output bundle --started-ns "$(<started-ns)" --kit-ref "$KIT_REF" --approval-id "$APPROVAL" --approval-ref "$APPROVAL_REF"
+          python3 kit/tools/release_hub/kit.py validate --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE" --config frozen-policy.json --bundle bundle
+      - name: Transfer only a publication-admitted bundle (NEVER a dry run)
+        if: ${{ !inputs.dry_run }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: qualified-release-bundle
+          path: bundle/
+          if-no-files-found: error
+          retention-days: 1
+  publisher:
+    needs: [identity, build]
+    if: ${{ !inputs.dry_run && needs.build.result == 'success' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: lafiabrew/3ds_hub
+          ref: ${{ needs.identity.outputs.kit }}
+          path: kit
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: qualified-release-bundle
+          path: incoming
+      - name: Trusted publisher revalidates remote source/policy/approval/binary hashes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ needs.identity.outputs.repo }}
+          TAG: ${{ needs.identity.outputs.tag }}
+          SOURCE: ${{ needs.identity.outputs.source }}
+          APPROVAL: ${{ inputs.approval_id }}
+          APPROVAL_REF: ${{ inputs.approval_ref }}
+          KIT_REF: ${{ needs.identity.outputs.kit }}
+        run: python3 kit/tools/release_hub/kit.py publish --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE" --approval-id "$APPROVAL" --approval-ref "$APPROVAL_REF" --kit-ref "$KIT_REF" --bundle incoming
