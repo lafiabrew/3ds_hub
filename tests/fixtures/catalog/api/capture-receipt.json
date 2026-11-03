@@ -1,0 +1,353 @@
+{
+  "captured_utc": "2026-11-03T22:52:35.738665+00:00",
+  "requests": [
+    {
+      "path": "/orgs/lafiabrew/repos?type=public&per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:36 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "59"
+      },
+      "sha256": "9dfad328facc2a12ca6ab301c1a1b05739cadd96d1c0c4e5c4b1f7669e1236d6",
+      "file": "org-repos-page1.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_capturekit/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:37 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "58"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_capturekit.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_cartdash/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:37 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "57"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_cartdash.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_chip8/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:38 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "56"
+      },
+      "sha256": "bb9f36586ba8923e521f2ead86b43e7953feb28feac995fd9631aaeb774cc414",
+      "file": "releases-3ds_chip8.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_drop/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:38 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "55"
+      },
+      "sha256": "d8a85bbc87cfb6e4738e3960a34df4f84fc54e99ede2a0936b15738090a4252b",
+      "file": "releases-3ds_drop.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_foldquest/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:39 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "54"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_foldquest.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_gridblast/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:39 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "53"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_gridblast.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_mahjong/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:40 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "52"
+      },
+      "sha256": "4b3f345b7206c5c1eb6d40d2ace1df34d090d6f2b3efd7a3784a81d261bd3fba",
+      "file": "releases-3ds_mahjong.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_netpass/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:41 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "51"
+      },
+      "sha256": "07ea5cbf04d3a903e00b1aca5defdc25b19670036a66ef08d5e44c96e351ecb6",
+      "file": "releases-3ds_netpass.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_neverball/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:42 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "50"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_neverball.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_orrery/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:42 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "49"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_orrery.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_padtest/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:43 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "48"
+      },
+      "sha256": "fe73353b299f0b102007a01b50c939c0c964e56e00be86d2bb635503dbe20709",
+      "file": "releases-3ds_padtest.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_picross/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:44 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "47"
+      },
+      "sha256": "d915d38812e0644064983f615ada8c974136a5f1edc100cfd568fc2cdf86d7ad",
+      "file": "releases-3ds_picross.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_pieceduel/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:45 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "46"
+      },
+      "sha256": "37b76bde796eaa20ac214e8fb2ed4e648759f8c6b4cca9e8e18cd2b271d6a9e3",
+      "file": "releases-3ds_pieceduel.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_pinball/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:45 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "45"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_pinball.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_pockettracker/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:46 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "44"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_pockettracker.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_pokedash/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:47 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "43"
+      },
+      "sha256": "40edfd74abb2035babe692892d7d99ad52e037c51391b92c64f5a65cbcf68859",
+      "file": "releases-3ds_pokedash.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_pokedex/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:47 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "42"
+      },
+      "sha256": "1166736016892f933314960e8959bcd65a1f27c01c90ebb1df6eea0c2ea4946c",
+      "file": "releases-3ds_pokedex.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_rhythm/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:48 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "41"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_rhythm.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_rngtool/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:48 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "40"
+      },
+      "sha256": "c0f1661c6ca4821d0875ebe11d85e8b5c7bb729feff3d803ac38d43afb01237d",
+      "file": "releases-3ds_rngtool.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_roulette/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:49 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "39"
+      },
+      "sha256": "0fac7cd5d6895173eb0b74e3185f0846e9e0e0a596c80cb19931283df24b90c3",
+      "file": "releases-3ds_roulette.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_sandlab/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:49 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "38"
+      },
+      "sha256": "75d706f4931a8ebee519fa5b9d098ccdacc6fbed833b23caf465206ccdabade7",
+      "file": "releases-3ds_sandlab.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_sokoban/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:50 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "37"
+      },
+      "sha256": "f941cc1a8743b0cb894a36c80812eafddb2a96f9181533f161d74e58f035eb17",
+      "file": "releases-3ds_sokoban.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_solitaire/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:50 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "36"
+      },
+      "sha256": "e53cc3240dd8cbeb36d95a3f8fc3b68e9d3dbf1067677baec104367e0d243f25",
+      "file": "releases-3ds_solitaire.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_supaplex/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:51 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "35"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_supaplex.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_sysdash/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:51 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "34"
+      },
+      "sha256": "4e55420087174dff824fd68905cf24a65af2d3d2c7f1f157ff99d7dbefed57d6",
+      "file": "releases-3ds_sysdash.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_tuxpuck/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:52 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "33"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_tuxpuck.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_voxeltoy/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:52 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "32"
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "file": "releases-3ds_voxeltoy.json"
+    },
+    {
+      "path": "/repos/lafiabrew/3ds_wigle/releases?per_page=100&page=1",
+      "status": 200,
+      "headers": {
+        "date": "Tue, 03 Nov 2026 22:52:53 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "31"
+      },
+      "sha256": "50280dd6add46e24cbf77f9e7ce8553a6aaa74dfa47b98c778895b8845386223",
+      "file": "releases-3ds_wigle.json"
+    }
+  ]
+}

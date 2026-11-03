@@ -1,0 +1,92 @@
+/* lafiabrew 3DS hub — static catalogue styles. No external fonts, images or scripts. */
+:root {
+  --bg: #f6f7f9;
+  --fg: #111418;
+  --muted: #4a525c;
+  --card: #ffffff;
+  --line: #c9ced6;
+  --link: #0645ad;
+  --ok-bg: #e5f4ea;
+  --ok-fg: #0b4d22;
+  --wip-bg: #fff3d6;
+  --wip-fg: #5c3b00;
+  --focus: #ffbf47;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151a;
+    --fg: #eef1f5;
+    --muted: #b7c0cb;
+    --card: #1b2028;
+    --line: #3a4350;
+    --link: #8cb4ff;
+    --ok-bg: #123321;
+    --ok-fg: #b9f0cc;
+    --wip-bg: #3a2c0b;
+    --wip-fg: #ffe2a3;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font: 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+a { color: var(--link); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+.skip { position: absolute; left: -999px; top: 0; padding: 0.5rem 1rem; background: var(--card); }
+.skip:focus { left: 0.5rem; z-index: 10; }
+.top, main, footer { max-width: 72rem; margin: 0 auto; padding: 1rem; }
+.top h1 { font-size: 1.6rem; margin: 0.5rem 0; }
+.meta, .hint, .repo, footer { color: var(--muted); }
+.howto, nav { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.5rem 1rem; margin-bottom: 1rem; }
+.jump { columns: 14rem auto; padding-left: 1.2rem; margin: 0.25rem 0 0.75rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: 1rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; min-width: 0; }
+.card-head { display: flex; gap: 0.75rem; align-items: center; }
+.card-head h3 { margin: 0; font-size: 1.2rem; }
+.card-head p { margin: 0; }
+.icon { flex: none; border-radius: 10px; }
+.desc { margin: 0.75rem 0; }
+.badge { display: inline-block; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px; margin: 0.25rem 0; }
+.badge.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.badge.wip { background: var(--wip-bg); color: var(--wip-fg); }
+/* The QR always sits on pure white, independent of colour scheme, and is never smoothed. */
+.qr { margin: 0.75rem 0; text-align: center; }
+.qr img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 22rem;
+  height: auto;
+  background: #ffffff;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.qr figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; }
+.url, .hash { word-break: break-all; }
+.install {
+  display: block;
+  text-align: center;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: #0b5cad;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  min-height: 44px;
+}
+.install:hover { background: #084a8c; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 0.75rem; margin: 0.75rem 0; font-size: 0.95rem; }
+.facts dt { font-weight: 600; }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.notes { white-space: pre-line; }
+.reason { margin: 0.5rem 0; }
+@media (max-width: 30rem) {
+  .facts { grid-template-columns: 1fr; }
+  .facts dd { margin-bottom: 0.4rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }

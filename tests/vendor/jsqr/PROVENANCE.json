@@ -1,0 +1,24 @@
+{
+  "name": "jsQR",
+  "source": "https://github.com/cozmo/jsQR",
+  "commit": "8e6a036beafa7053dd44b1b76ac578d22b1b3311",
+  "license": "Apache-2.0",
+  "license_file": "LICENSE",
+  "notice_file": "none upstream at this commit (repository root listing checked: no NOTICE file)",
+  "modified": false,
+  "purpose": "Test/probe-only independent QR decoder. Never shipped in the Pages site artifact, never installed via npm, never an app asset.",
+  "files": {
+    "jsQR.js": {
+      "upstream_path": "dist/jsQR.js",
+      "git_blob": "99ea9df26907009e5553233ffe03c529c1521739",
+      "sha256": "3325b0888fa4745c4e6940897d8c4f426fbaae76901fcbfe1871a04e90a51655",
+      "bytes": 256723
+    },
+    "LICENSE": {
+      "upstream_path": "LICENSE",
+      "git_blob": "8f71f43fee3f78649d238238cbde51e6d7055c82",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "bytes": 11358
+    }
+  }
+}
