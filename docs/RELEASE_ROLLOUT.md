@@ -1,102 +1,206 @@
-# Release rollout planner (P3)
+# Metadata release rollout: plan, local preparation, coordinator publication
 
-This lane owns a **declarative rollout planner** for metadata-only release onboarding across audited public `3ds_*` repositories.
+This tool onboards audited public `lafiabrew/3ds_*` repositories, excluding the
+hub, without app runtime edits. Its only generated repository outputs are:
 
-## Scope and ownership
+1. `.github/workflows/homebrew-release.yml`
+2. `.github/homebrew-release.json`
+3. `docs/RELEASING.md`
 
-Owned files in this lane:
+**Neither `apply` nor `verify-publish` pushes, creates a PR, merges, tags, releases
+or uploads.** An apply receipt means local preparation, not remote installation,
+CI execution, review, publication or physical FBI testing. Author iterations never
+run remote publication commands. Coordinator publication remains independently
+gated on the reviewed immutable source and current app-coordinator notification.
 
-- `tools/rollout_release.py`
-- `templates/homebrew-release.yml.in`
-- `templates/homebrew-release.json`
-- `templates/RELEASING.md`
-- `tests/test_release_rollout.py`
-- `tests/rolloutfixtures/*`
-- `docs/RELEASE_ROLLOUT.md`
+## Read-only plan
 
-Planner output is for exactly three per-repo paths:
+From the reviewed hub checkout, with `PAGES_RUN` pointing to the private evidence
+run and `KIT_SHA` the full reviewed **public** executable hub commit:
 
-- `.github/workflows/homebrew-release.yml`
-- `.github/homebrew-release.json`
-- `docs/RELEASING.md`
-
-No tag/release/API writes are performed by this author iteration.
-
-## CLI contract
-
-### Plan (read-only default)
-
-```bash
+```sh
 python3 tools/rollout_release.py plan \
   --audit "$PAGES_RUN/reports/REPO_AUDIT.json" \
   --profiles "$PAGES_RUN/reports/BUILD_PROFILES.json" \
   --readiness "$PAGES_RUN/reports/RELEASE_READINESS.json" \
-  --kit-ref "<40hex kit sha>" \
+  --kit-ref "$KIT_SHA" \
   --output "$PAGES_RUN/runtime/rollout-plan.json"
 ```
 
-Required invariants before any output is written:
+Plan performs no network writes (indeed no network calls). It reads three explicit
+inputs and writes only the requested private plan, including full rendered
+contents, paths, byte counts, SHA256, source pins, status, blockers and commands.
+Review/hash this artifact before use; it contains private input locations and is
+not a public release asset. Repository sets must match and be nonempty; all pins
+must be full lowercase hex and agree. Admitted names cannot contain slashes,
+traversal, whitespace or foreign owners. Explicit archived/private/foreign rows
+are rejected. Audited branch must be main. Current public audit has 28 repos;
+profiles correct the old multitarget parser: 17 `3ds-native`, 11 `3ds` profiles.
+Every native, host-test and verify target must actually be present in the profile.
+WIP target stubs deliberately fail; target presence is **not** a passing build.
+Current-public `extra_engine_check:true` applies **only to FoldQuest**, requiring
+regular nonempty `tests/test_contract.py` and actual nonzero collection with no
+failures/skips in the kit. Its generated build flow explicitly runs
+`python3 -m unittest discover -s tests -p test_contract.py -v` between make test and
+native build. Other public profiles are false: the original four private-engine
+candidate list is stale and does not establish public coverage. PieceDuel's own
+make test already includes its engine/node checks. Re-audit engine obligations
+when private candidates are promoted; never inherit a public stub's false flag.
 
-1. The repository sets in audit/profiles/readiness match exactly.
-2. `profiles.rows[*].source_sha == audit.rows[*].head_sha` for every repo.
-3. `readiness.rows[*].source_sha == audit.rows[*].head_sha` for every repo.
-4. `--kit-ref` is an explicit full 40-hex SHA (no `@main`, no placeholders).
-5. Each profile provides `native_target` and includes `verify-3ds` target.
+Only installed trusted templates are supported. All initial policies are schema 1,
+`publish_enabled:false`; existing stable releases do not grant approval. Caller
+workflow and `kit_ref` use the identical full immutable SHA, never `main` or a tag.
+Apply independently regenerates **all** rows from embedded admitted inputs and
+its installed templates, comparing exact schema/types/paths/content/hashes/policy/
+caller pin. Editing contents and recomputing hashes cannot authorize new output.
+The plan is an operator-reviewed source-pin authorization, not a signed approval
+for app publication. A real public kit pin is a coordinator prerequisite; syntactic
+full-SHA acceptance in a read-only author demonstration is not proof the kit is
+public/reviewed. Apply additionally probes public hub identity, compares kit SHA
+against actual central main (base and merge-base must both be that SHA, status
+ahead/identical), and requires a regular nonempty reusable workflow at that exact
+ref. Unreachable/foreign-object/missing-workflow pins block. Independent review is
+still an external coordinator gate, not inferred from object existence. Live app
+repository admission is also independently checked on apply.
 
-If any invariant fails, command exits nonzero and does not emit a plan.
+## Explicit local preparation
 
-### Apply (explicit, local-safe)
+Use standalone isolated clean clones, each checked out on actual default `main`,
+under `REPOS_ROOT`. Exact public origin must be either canonical HTTPS `.git` or
+canonical GitHub SSH `.git`, with no alternate push URL. No linked worktrees,
+nested Git roots, staged/unstaged tracked changes, unrelated untracked files,
+symlink roots/ancestors/outputs, dangling links or special-file outputs. Existing
+identical untracked generated files are allowed for idempotent retry; conflicts
+are never overwritten. Ignored build products are not app-source changes.
 
-```bash
+Select at most five repos (repeat `--repo`) from the full plan. Example one-repo
+batch, after coordinator notification and exclusive coordinator rollout admission:
+
+```sh
 python3 tools/rollout_release.py apply \
-  --plan "$PAGES_RUN/runtime/rollout-plan.json" \
-  --kit-ref "<same 40hex kit sha>" \
-  --repos-root /path/to/local/public/repos \
-  --expected-heads /path/to/expected-heads.json \
-  --open-prs-json /path/to/open-prs.json \
-  --max-open-prs 5 \
-  --expected-branch main \
-  --dry-run \
-  --output "$PAGES_RUN/runtime/rollout-apply.json"
+  --plan "$PAGES_RUN/runtime/rollout-plan.json" --kit-ref "$KIT_SHA" \
+  --repos-root "$REPOS_ROOT" --repo 3ds_padtest \
+  --dry-run --output "$PAGES_RUN/runtime/rollout-preflight-padtest.json"
 ```
 
-Apply safety gates:
+Remove `--dry-run` only for authorized **local preparation**. Receipts must be
+outside `REPOS_ROOT`. Optional `--expected-heads` is an additional assertion,
+never a way to override plan source pins. Only main is admitted by apply.
 
-- Clean working tree required for each target repo.
-- Checked-out branch must match expected (`main` by default).
-- Optional expected-head pins are checked before application.
-- Existing conflicting files cause a hard fail (no clobber).
-- Existing identical files are idempotent (`unchanged`).
-- Re-probes `HEAD` immediately before hypothetical remote operations.
-- Global open rollout PR cap enforced (`<=5`).
-- Refuses symlink overwrites.
+Before the first file/receipt write, **two complete global preflights** check all
+selected clones, every output path/content, local branch/source/index, live public
+GitHub repo identity/default branch, and `git ls-remote --symref origin HEAD
+refs/heads/main`. Local HEAD/origin-main cache is not remote freshness. Both live
+remote checks must equal the plan source pin. Missing/changed identity or remote
+SHA aborts without output/index/source/remote mutation. Conflict in repo 2/path 3
+cannot leave repo 1/path 1 behind. Dry-run also rejects symlinks.
 
-## Policy/document semantics generated per repo
+Both passes query current organization rollout PRs via supported read-only
+`gh api --paginate --slurp` endpoints: organization repositories then each
+`3ds_*` repo's open pulls. No optional JSON counter, default-zero fallback or
+token output. Canonical rollout heads use reserved prefix
+`rollout/homebrew-release`; coordinator must use that namespace for every rollout
+PR. Current count **plus the entire pending batch** must be <=5 (`--max-open-prs`
+may lower, never raise, the cap). At five open, even one new preparation is blocked.
+Incomplete/API/auth/rate/transport failures block rather than assume zero.
 
-- `publish_enabled` defaults to `false` for all repos.
-- `channel` is `stable` only if a stable release exists in readiness ledger; otherwise `wip`.
-- `reason` is non-empty while disabled.
-- `native_target` is profile-driven (`3ds-native` or `3ds`).
-- Commands are argv arrays, not shell strings.
-- WIP repos remain blocked and visible as blocked.
-- Existing versions are taken from actual readiness tags; untagged repos remain untagged with initial recommendation `v0.1.0`.
+### Honest concurrency and I/O limits
 
-## Testing
+Preflight rejection is nonmutating. This is **not** an all-or-nothing I/O
+transaction: disk-full, process termination or post-preflight filesystem changes
+may leave newly created files/directories. Creation is exclusive/no-clobber and
+walks ancestor descriptors with `O_NOFOLLOW`; no force/reset/stash/delete or
+rollback is attempted. Inspect and preserve partial work, resolve the cause and
+retry identical outputs. A remote can change after the last read; local preparation
+never claims a remote lock. Coordinator must serialize batches globally and rerun
+checks at actual remote boundaries, below. External concurrent PR creation cannot
+be atomically locked by a read-only API probe; do not run multiple publishers.
 
-Run:
+## Separate coordinator remote publication (not author execution)
 
-```bash
+After exact-source independent review of the public kit and plan, notify the app
+coordinator **before** changing metadata heads. For each selected repo, inspect
+local changes then create one normal commit on the reserved topic branch. Example
+for `REPO=3ds_padtest`, after successful apply, from its standalone clone:
+
+```sh
+git switch -c rollout/homebrew-release &&
+git add -- .github/workflows/homebrew-release.yml .github/homebrew-release.json docs/RELEASING.md &&
+git commit -m "Configure pinned homebrew release workflow"
+```
+
+Back in the reviewed hub checkout, run the real boundary check. It requires a
+clean topic branch with exactly one commit whose parent is the approved source,
+exactly the three changed paths and byte-identical rendered files. It repeats
+actual remote-main/identity/cap checks; output is read-only except the receipt.
+
+```sh
+python3 tools/rollout_release.py verify-publish \
+  --plan "$PAGES_RUN/runtime/rollout-plan.json" --kit-ref "$KIT_SHA" \
+  --repos-root "$REPOS_ROOT" --repo "$REPO" \
+  --output "$PAGES_RUN/runtime/before-push.json" &&
+git -C "$REPOS_ROOT/$REPO" push origin rollout/homebrew-release &&
+python3 tools/rollout_release.py verify-publish \
+  --plan "$PAGES_RUN/runtime/rollout-plan.json" --kit-ref "$KIT_SHA" \
+  --repos-root "$REPOS_ROOT" --repo "$REPO" \
+  --output "$PAGES_RUN/runtime/before-pr.json" &&
+gh pr create --repo "lafiabrew/$REPO" --base main --head rollout/homebrew-release \
+  --title "Configure pinned homebrew release workflow" \
+  --body "Metadata only; publishing disabled; app QA/provenance remains blocked."
+```
+
+These are actual separate Git/gh operations, **not fictional apply push flags**.
+No automatic merge. Normal topic-branch push never modifies main; on a remote race,
+stop and preserve both source histories/topic branch. Do not retry by force or
+repin stale approval. Protected branch/permissions/scopes failures remain blockers.
+Before a separately authorized merge, refresh main, PR head/checks and review
+source; confirm the main pin still matches, request fresh review if any source
+changed, and use the exact PR-head match guard supported by `gh pr merge
+--match-head-commit`. Do not bypass protections. Record old/new public main heads,
+three-path diff, PR/run IDs and actual checks; notify app coordinator afterward.
+Refresh audit/profiles/readiness at new source before any subsequent rollout.
+Count existing rollout PRs before the next batch; pause/consolidate at five.
+
+## Caller and exact-source approval contract
+
+P2/P3 additive contract explicitly acknowledged: reusable inputs are `kit_ref`,
+`release_tag` (empty default), `dry_run` (true default), `approval_id` and
+`approval_ref` (both empty default). Caller exposes and forwards these exact keys.
+Default token permissions read-only; only the reusable caller job grants required
+contents/id-token permissions, while P2 isolates the writer from app build code.
+Tag pushes are safe dry-runs by default. Empty approval inputs cannot publish.
+
+Future qualified publication uses A0 app source with enabled stable policy after
+all tests/reviews/provenance gates; executable caller+kit stay immutable K0.
+Separately reviewed, public-central-main-reachable R1 carries approval **data**
+binding exact A0/K0/policy/tag/native identity/assets and evidence. Dispatch at A0's
+existing annotated tag supplies R1 and SHA256 record ID without mutating A0 or
+repinning K0. No approval data code executes. This avoids the central-kit/caller
+source cycle; P2 enforces the trusted data-plane verification. No approval is
+created by this planner, and no initial policy is enabled.
+
+Generated docs distinguish audited prior CI state from configured-after-install;
+CI execution/review/published legacy/device tiers remain separate. They include
+actual version/blockers, qualified initial v0.1.0, fail-fast build/test/native,
+manual dry-run, independent approvals, annotated no-move tags, immutable assets,
+hub refresh, FBI/update/save-backup and conservative rollback. Metadata is escaped;
+private paths/session-shaped data are omitted from public generated prose.
+Canonical hub: https://lafiabrew.github.io/3ds_hub/ .
+
+## Tests and evidence
+
+```sh
 python3 -m unittest discover -s tests -p test_release_rollout.py -v
 ```
 
-The suite uses real `git` repositories in fixtures under project volume and validates:
-
-- required CLI flags and `--help`
-- bogus flag rejection
-- stale/mismatched input rejection
-- profile target/schema failures
-- 28-repo readonly plan generation
-- conflict/idempotent apply behavior
-- dirty repo, branch mismatch, head-race safety
-- cross-check that only the three owned target paths are handled
-- max-5 open PR cap
+Fixtures live on project volume under `tests/rolloutfixtures/_work/`. The explicit
+offline process seam replaces only GH transport and redirects `ls-remote` to real
+bare repos; all source/index/origin/branch operations use actual Git. No production
+fixture flags or JSON PR-count bypass exist. Tests retain earlier scenarios and
+add tampered-plan/hash/policy/pin/extra-output, full input admission, correct apply
+and retry, dirty staged/unstaged, wrong origin/default/remote races, full-batch
+nonmutation, symlinks/dangling links, cap including pending, failed current probe
+and prepared-commit boundary controls. Process logs can be captured with
+`ROLLOUT_PROCESS_LOG` (private evidence only). Actionlint must run on actual
+rendered callers, not the unexpanded template. Passing local tests is not
+independent approval, remote installation or a real workflow/device run.
