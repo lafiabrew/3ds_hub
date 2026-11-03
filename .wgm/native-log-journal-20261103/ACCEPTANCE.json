@@ -1,0 +1,21 @@
+{
+  "scope": "native diagnostic journal first slice only",
+  "accepted": true,
+  "final_pin": "7446e605aeca206733262ab563e7b4a4a43e60f5",
+  "reviewed_runtime_pin": "748fce8d1e9ec3b8e88dc256c1c1e9304712db69",
+  "runtime_fingerprint_unchanged": true,
+  "ready_to_test_utc": "2026-11-03T07:14:16.459962+00:00",
+  "ready_epoch": 1793690056.459945,
+  "utc_wall_s_second_precision_start": 5737.459944963455,
+  "whole_app_accepted": false,
+  "whole_fleet_accepted": false,
+  "physical_sd_or_powerloss_tested": false,
+  "save_config_guarantees_changed": false,
+  "docs_audit": "four personas+writer, prior RED fixed; AMBER history + scoped closure PASS",
+  "reviews": {
+    "rugged-j1.md": "44b1954812e24a1816b2478f62bf3f6da645f7779b8d1e56ad2d75aae7a98afa",
+    "spec-j1.md": "e634d870549cbe073c8f000e7859bcdddeb9a33b1a7f0ceb88342ee08becedaa",
+    "quality-j1.md": "258f3ac9e9220a7999828ac0a27f7ae0350c257fee76201f686a7c926ac1daa4",
+    "docs-closure-r5.md": "41bf79a6fa582e887707f571193d1082f4d22170ce6f5bca08413672e4f298ba"
+  }
+}

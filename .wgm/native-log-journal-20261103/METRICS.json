@@ -1,0 +1,45 @@
+{
+  "scope": "completed instrumented child invocations in this R5 slice, main orchestration/probe timings missing",
+  "utc_wall_to_slice_gate_s": 5737.459944963455,
+  "precision": "UTC run start to seconds; not reconstructed initial monotonic clock",
+  "child_phases": {
+    "planning": {
+      "invocations": 7,
+      "invocation_s": 189.4118640179513,
+      "observed_active_turn_s_lower_bound": 186.49999099300476,
+      "timed_turns": 33,
+      "missing_turns": 0,
+      "failed_invocations": 0
+    },
+    "implementation": {
+      "invocations": 2,
+      "invocation_s": 1448.4506145130144,
+      "observed_active_turn_s_lower_bound": 1447.6456280629209,
+      "timed_turns": 59,
+      "missing_turns": 0,
+      "failed_invocations": 0
+    },
+    "review": {
+      "invocations": 3,
+      "invocation_s": 370.33012746999157,
+      "observed_active_turn_s_lower_bound": 367.44615244306624,
+      "timed_turns": 62,
+      "missing_turns": 0,
+      "failed_invocations": 0
+    },
+    "audit": {
+      "invocations": 11,
+      "invocation_s": 307.4395092360792,
+      "observed_active_turn_s_lower_bound": 299.91220705694286,
+      "timed_turns": 57,
+      "missing_turns": 0,
+      "failed_invocations": 0
+    }
+  },
+  "main_agent_time": "unavailable",
+  "unmetered_readiness_probe_count": 1,
+  "original_fleet_clock": "separate, not reset or mixed with lost historical monotonic telemetry",
+  "causal_speedup_claim": false,
+  "peak_observed_child_invocation_concurrency": 2,
+  "completed_instrumented_invocations": 23
+}

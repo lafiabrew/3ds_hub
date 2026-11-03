@@ -1,0 +1,26 @@
+[
+  {
+    "public_copy": "2026-11-03T0602Z_native-log-journal-plan.md",
+    "raw_sha256": "07e65d61eb30d8a09fc366a94d672683f40c4a81036382a8dd40e561f86d1105",
+    "public_copy_sha256": "07e65d61eb30d8a09fc366a94d672683f40c4a81036382a8dd40e561f86d1105",
+    "normalization": "trailing empty lines only; original private/hash-bound report retained"
+  },
+  {
+    "public_copy": "2026-11-03T0657Z_native-journal-first-slice.md",
+    "raw_sha256": "5ddbd9829ff37bdd6d78ce0c8c3a3ae00aefe311648913284dee0e752f89bc08",
+    "public_copy_sha256": "5ddbd9829ff37bdd6d78ce0c8c3a3ae00aefe311648913284dee0e752f89bc08",
+    "normalization": "trailing empty lines only; original private/hash-bound report retained"
+  },
+  {
+    "public_copy": "2026-11-03T0705Z_native-journal-docs-corrected.md",
+    "raw_sha256": "94f6a9d9f362e0210b0a8657cbe4af66cdffd9524fedc576ea346ba164c5726d",
+    "public_copy_sha256": "94f6a9d9f362e0210b0a8657cbe4af66cdffd9524fedc576ea346ba164c5726d",
+    "normalization": "trailing empty lines only; original private/hash-bound report retained"
+  },
+  {
+    "public_copy": "2026-11-03_native-journal-docs-closure.md",
+    "raw_sha256": "41bf79a6fa582e887707f571193d1082f4d22170ce6f5bca08413672e4f298ba",
+    "public_copy_sha256": "41bf79a6fa582e887707f571193d1082f4d22170ce6f5bca08413672e4f298ba",
+    "normalization": "trailing empty lines only; original private/hash-bound report retained"
+  }
+]
