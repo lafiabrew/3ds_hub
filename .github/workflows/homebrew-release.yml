@@ -90,7 +90,7 @@ jobs:
         with:
           repository: ${{ needs.identity.outputs.repo }}
           ref: ${{ needs.identity.outputs.source }}
-          path: app
+          path: app-source
           persist-credentials: false
           fetch-depth: 1
       - name: Check frozen source, clean output and strict policy
@@ -98,18 +98,19 @@ jobs:
           REPO: ${{ needs.identity.outputs.repo }}
           SOURCE: ${{ needs.identity.outputs.source }}
         run: |
-          test "$(git -C app rev-parse HEAD)" = "$SOURCE"
-          test -z "$(git -C app status --porcelain --untracked-files=all)"
-          test ! -e app/build/3ds
+          test "$(git -C app-source rev-parse HEAD)" = "$SOURCE"
+          test -z "$(git -C app-source status --porcelain --untracked-files=all)"
+          test ! -e app-source/build/3ds
           python3 - <<'PY'
           import os, sys
           from pathlib import Path
           sys.path.insert(0, 'kit')
           from tools.release_hub.kit import regular, policy
-          raw = regular('app/.github/homebrew-release.json', 65536)
+          raw = regular('app-source/.github/homebrew-release.json', 65536)
           policy(raw, os.environ['REPO'])
           Path('frozen-policy.json').write_bytes(raw)
           PY
+          python3 kit/tools/release_hub/tracked.py prepare --source app-source --app app --snapshot tracked-snapshot.json
       - name: Independent remote admission BEFORE any binary transfer
         if: ${{ !inputs.dry_run }}
         env:
@@ -130,7 +131,7 @@ jobs:
           python3 -c 'import time; print(time.time_ns())' > started-ns
           docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges --pids-limit 512 --user "$(id -u):$(id -g)" --read-only --tmpfs /tmp:rw,exec,nosuid,size=1g -e HOME=/tmp -v "$PWD/app:/app:rw" -v "$PWD/kit:/kit:ro" -v "$PWD/frozen-policy.json:/policy.json:ro" releasekit-local python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase host
           docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges --pids-limit 512 --user "$(id -u):$(id -g)" --read-only --tmpfs /tmp:rw,exec,nosuid,size=1g -e HOME=/tmp -v "$PWD/app:/app:rw" -v "$PWD/kit:/kit:ro" -v "$PWD/frozen-policy.json:/policy.json:ro" releasekit-local python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase native
-          git -C app diff --exit-code
+          python3 kit/tools/release_hub/tracked.py verify --app app --snapshot tracked-snapshot.json
       - name: Make deterministic local bundle and validate it
         env:
           REPO: ${{ needs.identity.outputs.repo }}

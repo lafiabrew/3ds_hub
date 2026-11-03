@@ -293,6 +293,73 @@ class ReleaseProcessTests(unittest.TestCase):
         mutations = [c[:2] for c in self.calls() if c[0] == 'release']
         self.assertEqual(mutations, [['release', 'create'], ['release', 'upload'], ['release', 'edit']])
         self.assertTrue(all('--clobber' not in c and '--target' not in c and '--force' not in c for c in self.calls()))
+        endpoints = [c[3] for c in self.calls() if c[:3] == ['api', '--method', 'GET']]
+        self.assertNotIn(f'repos/{REPO}/releases/tags/{TAG}', endpoints)
+        self.assertIn(f'repos/{REPO}/releases/101', endpoints)
+        upload = next(i for i, c in enumerate(self.calls()) if c[:2] == ['release', 'upload'])
+        self.assertTrue(any('/releases?' in c[-1] for c in self.calls()[upload+1:]))
+
+    def test_draft_published_only_endpoint_is_404_numeric_endpoint_works(self):
+        self.approved()
+        self.state['release'] = {'id': 101, 'tag_name': TAG, 'draft': True, 'assets': []}
+        self.save_state()
+        p = subprocess.run(['gh', 'api', '--method', 'GET', f'repos/{REPO}/releases/tags/{TAG}'],
+                           env=self.env, capture_output=True, text=True)
+        self.assertEqual(p.returncode, 44)
+        self.assertIn('404', p.stderr)
+        p = subprocess.run(['gh', 'api', '--method', 'GET', f'repos/{REPO}/releases/101'],
+                           env=self.env, capture_output=True, text=True)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertEqual(json.loads(p.stdout)['id'], 101)
+        self.assert_no_writes()
+
+    def test_draft_discovery_failures_and_collisions_never_change_visibility(self):
+        self.approved()
+        baseline = dict(self.state)
+        for field, value in [('fail_draft_lookup', True), ('omit_draft_lookup', True),
+                ('missing_draft_id', True), ('wrong_draft_id', 0), ('wrong_draft_id', True),
+                ('wrong_draft_id', '101'), ('wrong_draft_id', 999), ('draft_collision', True),
+                ('draft_id_collision', True),
+                ('inventory_not_draft', True), ('inventory_wrong_tag', True),
+                ('fail_numeric_lookup', True), ('missing_numeric_id', True),
+                ('numeric_id', 999), ('numeric_id', True), ('numeric_tag_name', 'v9.9.9'),
+                ('numeric_draft', False), ('bad_remote_size', True),
+                ('bad_remote_digest_name', '3ds_padtest.cia'),
+                ('bad_remote_digest_name', 'SHA256SUMS'), ('bad_remote_digest_name', 'release.json'),
+                ('change_source_after_upload', True), ('collision_after_upload', True)]:
+            with self.subTest(field=field, value=value):
+                self.state = dict(baseline, **{field: value})
+                self.save_state()
+                self.publish(success=False)
+                state = json.loads((self.root / 'state.json').read_text())
+                self.assertTrue(state['release']['draft'])
+                self.assertFalse(any(c[:2] == ['release', 'edit'] for c in self.calls()))
+                self.assertFalse(any(c[:2] == ['release', 'delete'] for c in self.calls()))
+
+    def test_draft_inventory_cross_page_collision_and_bound_fail_closed(self):
+        self.approved()
+        baseline = dict(self.state)
+        release = {'id': 101, 'tag_name': TAG, 'draft': True, 'assets': []}
+        filler = [{'id': n + 1000, 'tag_name': 'other-' + str(n), 'draft': False} for n in range(99)]
+        for pages in ({'1': [release, *filler], '2': [dict(release, id=102)]},
+                      {str(n): filler + [{'id': n + 2000, 'tag_name': 'unrelated'}] for n in range(1, 11)}):
+            with self.subTest(pages=len(pages)):
+                self.state = dict(baseline, inventory_pages=pages)
+                self.save_state()
+                self.publish(success=False)
+                self.assertTrue(json.loads((self.root / 'state.json').read_text())['release']['draft'])
+                self.assertFalse(any(c[:2] == ['release', 'upload'] for c in self.calls()))
+                self.assertFalse(any(c[:2] == ['release', 'edit'] for c in self.calls()))
+
+    def test_leftover_draft_blocks_retry_without_delete_resume_or_upload(self):
+        self.approved()
+        self.state['bad_remote_digest'] = True
+        self.save_state()
+        self.publish(success=False)
+        before = len(self.calls())
+        self.publish(success=False)
+        self.assertFalse(any(c[0] == 'release' for c in self.calls()[before:]))
+        self.assertTrue(json.loads((self.root / 'state.json').read_text())['release']['draft'])
 
     def test_disabled_policy_never_dispatches_even_with_approval(self):
         self.approved()
@@ -505,6 +572,123 @@ class ReleaseProcessTests(unittest.TestCase):
         p = self.invoke('run', '--config', self.config, '--cwd', app, '--phase', 'native', success=False)
         self.assertIn('genuine-native-command', p.stdout)
         self.assert_no_writes()
+
+
+class PostBuildHostCanaryTests(unittest.TestCase):
+    """Run shipped shell commands, not a reimplementation of the boundary."""
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.source = self.root / 'app-source'
+        self.source.mkdir()
+        self.app = self.root / 'app'
+        shutil.copytree(ROOT / 'tools/release_hub', self.root / 'kit/tools/release_hub',
+                        ignore=shutil.ignore_patterns('__pycache__'))
+        self.sentinel = self.root / 'HOST-EXECUTED'
+        self.network = self.root / 'NETWORK-DISPATCHED'
+        self.payload = self.root / 'fsmonitor-payload'
+        self.payload.write_text('#!/bin/sh\ntouch "' + str(self.sentinel) + '"\ncurl blocked.invalid\n')
+        self.payload.chmod(0o755)
+        bin_dir = self.root / 'bin'
+        bin_dir.mkdir()
+        curl = bin_dir / 'curl'
+        curl.write_text('#!/bin/sh\ntouch "' + str(self.network) + '"\n')
+        curl.chmod(0o755)
+        self.env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ['PATH'],
+                        REPO=REPO, TAG=TAG, SOURCE=SOURCE, KIT_REF=KIT, APPROVAL='', APPROVAL_REF='')
+        (self.source / 'tracked.txt').write_text('trusted source\n')
+        (self.source / 'empty').touch()
+        (self.source / '.gitattributes').write_text('tracked.txt diff=attack\n')
+        # Actual application command installs attacker-controlled Git config.
+        (self.source / 'Makefile').write_text('test:\n\t@git init -q .\n'
+            '\t@git config core.fsmonitor "' + str(self.payload) + '"\n'
+            '\t@git config diff.attack.command "' + str(self.payload) + '"\n'
+            '\t@git config diff.attack.textconv "' + str(self.payload) + '"\n'
+            '\t@git config core.hooksPath "' + str(self.root) + '"\n')
+        for args in (['init', '-q'], ['add', '.'], ['-c', 'user.name=Test', '-c',
+                'user.email=test@example.invalid', 'commit', '-qm', 'trusted source']):
+            subprocess.run(['git', '-C', str(self.source), *args], check=True, capture_output=True)
+        self.workflow = (ROOT / '.github/workflows/homebrew-release.yml').read_text()
+        self.prepare = next(x.strip() for x in self.workflow.splitlines() if 'tracked.py prepare ' in x)
+        self.verify = next(x.strip() for x in self.workflow.splitlines() if 'tracked.py verify ' in x)
+        block = self.workflow.split('      - name: Make deterministic local bundle and validate it', 1)[1]
+        block = block.split('        run: |\n', 1)[1].split('      - name:', 1)[0]
+        self.bundle_commands = '\n'.join(x[10:] for x in block.splitlines() if x.strip())
+        self.shell(self.prepare, True)
+        (self.root / 'frozen-policy.json').write_bytes(kit.encode(policy()))
+        (self.root / 'started-ns').write_text(str(time.time_ns() - 1_000_000_000))
+        (self.app / 'build/3ds').mkdir(parents=True)
+        (self.app / 'build/3ds/3ds_padtest.cia').write_bytes(cia())
+
+    def shell(self, command, success):
+        result = subprocess.run(['bash', '-euc', command], cwd=self.root, env=self.env,
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode == 0, success, result.stdout + result.stderr)
+        return result
+
+    def assert_no_host_dispatch(self):
+        self.assertFalse(self.sentinel.exists(), 'host fsmonitor/diff/textconv executed')
+        self.assertFalse(self.network.exists(), 'host network tool dispatched')
+        self.assertFalse((self.source / '.git/config').read_text().find('fsmonitor') >= 0)
+
+    def test_exact_postbuild_positive_commands_do_not_invoke_git(self):
+        self.shell(self.verify + '\n' + self.bundle_commands, True)
+        self.assertTrue((self.root / 'bundle/release.json').is_file())
+        self.assert_no_host_dispatch()
+        # No host Git after app code, including no checkout-action cleanup of
+        # the writable copy: only app-source is registered with checkout.
+        post = self.workflow.split('      - name: Tokenless isolated actual host/native gates', 1)[1]
+        self.assertNotIn('git -C', post)
+        self.assertIn('path: app-source', self.workflow)
+        for line in post.splitlines():
+            if 'docker run' in line:
+                self.assertNotIn('app-source', line)
+
+    def test_real_app_config_injection_cannot_execute_host_canary(self):
+        self.shell('make -C app test', True)
+        config = (self.app / '.git/config').read_text()
+        for value in ('fsmonitor', 'textconv', 'command', 'hooksPath'):
+            self.assertIn(value, config)
+        self.shell(self.verify + '\n' + self.bundle_commands, False)
+        self.assertFalse((self.root / 'bundle').exists())
+        self.assert_no_host_dispatch()
+        # Prove this is an executable attack, not a harmless config fixture.
+        # Deliberately run the OLD vulnerable command only as a negative control.
+        self.shell('git -C app diff --exit-code', True)
+        self.assertTrue(self.sentinel.exists())
+        self.assertTrue(self.network.exists())  # local stub, never actual network
+
+    def test_tracked_content_metadata_symlink_and_fifo_replacements_block(self):
+        path = self.app / 'tracked.txt'
+        original = path.read_bytes()
+        original_mode = path.stat().st_mode & 0o777
+        for mutation in ('content', 'mode', 'symlink', 'fifo', 'parent-symlink'):
+            with self.subTest(mutation=mutation):
+                if mutation == 'content':
+                    path.write_bytes(b'changed\n')
+                elif mutation == 'mode':
+                    path.chmod(original_mode ^ 0o100)
+                elif mutation == 'symlink':
+                    path.unlink()
+                    path.symlink_to(self.source / 'tracked.txt')
+                elif mutation == 'fifo':
+                    path.unlink()
+                    os.mkfifo(path)
+                else:
+                    moved = self.root / 'app-moved'
+                    self.app.rename(moved)
+                    self.app.symlink_to(moved, target_is_directory=True)
+                self.shell(self.verify + '\n' + self.bundle_commands, False)
+                self.assertFalse((self.root / 'bundle').exists())
+                self.assert_no_host_dispatch()
+                if mutation == 'parent-symlink':
+                    self.app.unlink()
+                    moved.rename(self.app)
+                else:
+                    path.unlink()
+                    path.write_bytes(original)
+                    path.chmod(original_mode)
 
 
 class WorkflowBoundaryTests(unittest.TestCase):

@@ -305,17 +305,33 @@ class GitHub:
     def api(self, endpoint):
         return load(self.run('api', '--method', 'GET', endpoint))
 
-    def absent_release(self, repo, tag):
-        # A nonzero gh exit is NOT evidence of absence (auth/rate/network fail closed).
-        page = 1
-        while page <= 10:
+    def releases(self, repo):
+        # Authenticated push access includes drafts. A transport failure is never
+        # absence; exhaust the bounded inventory to detect exact-tag collisions.
+        result = []
+        for page in range(1, 11):
             entries = self.api(f'repos/{repo}/releases?per_page=100&page={page}')
-            require(isinstance(entries, list), 'release inventory response')
-            require(not any(x.get('tag_name') == tag for x in entries), 'release already exists (including draft)')
+            require(isinstance(entries, list) and all(isinstance(x, dict) for x in entries),
+                    'release inventory response')
+            result.extend(entries)
             if len(entries) < 100:
-                return
-            page += 1
+                return result
         raise GateError('release inventory pagination bound')
+
+    def absent_release(self, repo, tag):
+        require(not any(x.get('tag_name') == tag for x in self.releases(repo)),
+                'release already exists (including draft)')
+
+    def draft_id(self, repo, tag):
+        inventory = self.releases(repo)
+        entries = [x for x in inventory if x.get('tag_name') == tag]
+        require(len(entries) == 1, 'draft lookup missing or exact-tag collision')
+        entry = entries[0]
+        release_id = entry.get('id')
+        require(entry.get('draft') is True and type(release_id) is int and release_id > 0,
+                'draft lookup requires draft and positive numeric ID')
+        require(sum(x.get('id') == release_id for x in inventory) == 1, 'draft ID collision')
+        return release_id
 
 
 def remote_source(gh, repo, tag, source):
@@ -373,9 +389,13 @@ def publish(gh, approval_ref, approval_id, kit_ref, directory, repo, tag, source
         # --verify-tag is real gh syntax. Never --target, --clobber, force/delete.
         gh.run('release', 'create', tag, '--repo', repo, '--verify-tag', '--draft',
                '--title', tag, '--notes', f'Exact source {source}; integrity: SHA256SUMS and release.json.')
+        release_id = gh.draft_id(repo, tag)
         gh.run('release', 'upload', tag, '--repo', repo, *[str(Path(tmp, x)) for x in names])
-        actual = gh.api(f'repos/{repo}/releases/tags/{tag}')
-        require(actual.get('draft') is True and actual.get('tag_name') == tag, 'draft verification')
+        # /releases/tags/{tag} is PUBLISHED-ONLY, even with authentication.
+        # Inspect the authenticated inventory's draft by its numeric REST ID.
+        actual = gh.api(f'repos/{repo}/releases/{release_id}')
+        require(actual.get('draft') is True and actual.get('tag_name') == tag and
+                type(actual.get('id')) is int and actual['id'] == release_id, 'draft verification')
         assets = actual.get('assets', [])
         require({x.get('name') for x in assets} == set(names) and len(assets) == len(names), 'remote asset names')
         for name in names:
@@ -386,6 +406,7 @@ def publish(gh, approval_ref, approval_id, kit_ref, directory, repo, tag, source
         # A final current source/policy check; unlike admit, draft now exists.
         final_raw, final_tag = remote_source(gh, repo, tag, source)
         require(final_raw == raw and final_tag == tag_object, 'source changed before visibility')
+        require(gh.draft_id(repo, tag) == release_id, 'draft changed before visibility')
         gh.run('release', 'edit', tag, '--repo', repo, '--draft=false', '--latest', '--verify-tag')
     return manifest
 

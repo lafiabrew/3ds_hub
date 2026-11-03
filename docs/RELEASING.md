@@ -154,9 +154,12 @@ app policy, artifact metadata, or unreviewed shared GitHub objects.
    scoped RUGGED then fresh nonauthor spec/quality (every atom >=95), history,
    licenses/assets, current Drop producer freshness or evidenced N/A. Verify K0
    itself has its independent reviews. No author self-approval.
-3. Obtain and preserve native candidate hashes/identity from A0. The independent
-   app-coordinator record below binds A0, K0, policy bytes, intended version and
-   **exact approved binary hashes**, not just a product code from the app.
+3. Obtain candidate hashes/identity through the **qualified LOCAL controlled-build
+   procedure below**, with K0's pinned SDK and two clean A0 builds. App/source,
+   license/history/artifact provenance and reproducibility must be reviewed
+   before the independent coordinator approves those exact binary bytes.
+   The record binds A0, K0, policy bytes, intended version and **exact approved
+   binary hashes**, not just a product code from the app.
 4. Review/integrate that JSON data in the central hub as commit R1, reachable
    from actual public hub main. Its filename is SHA256 of exact record bytes.
    R1 need not equal K0 and contains no executable authority. The app remains
@@ -213,19 +216,121 @@ annotated tag, and policy must remain enabled/stable with identical bytes.
 Source/policy/K0/tag/binary changes invalidate approval. A changed binary needs
 investigation and new independent qualification, not an automatic new digest.
 
+## Qualified LOCAL hashes before approval R1
+
+There is no binary-upload dry-run loophole. Hashes originate on a controlled,
+project-volume local build host, **not** from an unapproved GitHub artifact
+upload. Do not use the historical PadTest smoke as qualification: its banner
+provenance is uncleared, and neither its old build nor a hypothetical matching
+second build is app approval. No new approval is made to demonstrate this kit.
+
+The app coordinator first clears source/history/licenses/assets, freezes A0
+(including the enabled policy and K0 caller), and obtains the exact-source
+independent tests/reviews described above. A qualified operator then performs
+this local procedure and retains the full commands, original exits, source and
+policy hashes, K0 hash, SDK input digests, tool versions, logs, artifact hashes
+and native identities. Independently review source **and resulting artifacts**;
+reproducibility alone is not provenance clearance.
+
+For example, in Bash from the trusted K0 hub Git root, set `HUB_ROOT` to that
+root, `APP_SOURCE` to a new trusted clean exact-A0 checkout, `LOCAL_ROOT` to a
+**new unused project-volume** evidence directory, `NATIVE_QUEUE` to the existing
+shared max-two queue script, `LOCAL_IMAGE` to a new unused local image name,
+and full `KIT_SHA`, `SOURCE_SHA`, `REPO`, `TAG` to the qualified transaction. No tokens are needed by any container. Capture the
+whole chain's output and original exit outside these new build directories:
+
+```sh
+set -e
+cd "$HUB_ROOT"
+test "$(git rev-parse HEAD)" = "$KIT_SHA"
+test -z "$(git status --porcelain --untracked-files=all)"
+test "$(git -C "$APP_SOURCE" rev-parse HEAD)" = "$SOURCE_SHA"
+test -z "$(git -C "$APP_SOURCE" status --porcelain --untracked-files=all)"
+test ! -e "$APP_SOURCE/build/3ds"
+test -z "$(podman images -q "$LOCAL_IMAGE")"
+mkdir "$LOCAL_ROOT"
+python3 "$NATIVE_QUEUE" -- podman build --platform linux/amd64 -t "$LOCAL_IMAGE" -f "$HUB_ROOT/releasekit/Containerfile" "$HUB_ROOT/releasekit"
+for attempt in one two; do
+  (
+    set -e
+    mkdir "$LOCAL_ROOT/$attempt"
+    cd "$LOCAL_ROOT/$attempt"
+    python3 "$HUB_ROOT/tools/release_hub/tracked.py" prepare --source "$APP_SOURCE" --app app --snapshot tracked-snapshot.json
+    cp "$APP_SOURCE/.github/homebrew-release.json" frozen-policy.json
+    python3 -c 'import time; print(time.time_ns())' > started-ns
+    sandbox=(run --rm --network none --cap-drop ALL --security-opt no-new-privileges --pids-limit 512 --user "$(id -u):$(id -g)" --read-only --tmpfs /tmp:rw,exec,nosuid,size=1g -e HOME=/tmp -v "$PWD/app:/app:rw" -v "$HUB_ROOT:/kit:ro" -v "$PWD/frozen-policy.json:/policy.json:ro" "$LOCAL_IMAGE")
+    podman "${sandbox[@]}" python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase host
+    # Queue wrapper starts from the actual trusted Git root, not the build copy.
+    (cd "$HUB_ROOT" && python3 "$NATIVE_QUEUE" -- podman "${sandbox[@]}" python3 /kit/tools/release_hub/kit.py run --repo "$REPO" --config /policy.json --cwd /app --phase native)
+    python3 "$HUB_ROOT/tools/release_hub/tracked.py" verify --app app --snapshot tracked-snapshot.json
+    python3 "$HUB_ROOT/tools/release_hub/kit.py" bundle --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE_SHA" --kit-ref "$KIT_SHA" --config frozen-policy.json --artifacts app/build/3ds --output bundle --started-ns "$(<started-ns)"
+    python3 "$HUB_ROOT/tools/release_hub/kit.py" validate --repo "$REPO" --tag "$TAG" --source-sha "$SOURCE_SHA" --config frozen-policy.json --bundle bundle
+  )
+done
+cmp "$LOCAL_ROOT/one/bundle/release.json" "$LOCAL_ROOT/two/bundle/release.json"
+cmp "$LOCAL_ROOT/one/bundle/SHA256SUMS" "$LOCAL_ROOT/two/bundle/SHA256SUMS"
+python3 - "$LOCAL_ROOT" <<'PY'
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+a, b = root / 'one/bundle', root / 'two/bundle'
+for asset in json.loads((a / 'release.json').read_text())['assets']:
+    assert (a / asset['name']).read_bytes() == (b / asset['name']).read_bytes(), asset['name']
+PY
+```
+
+Run that entire fence as a standalone Bash script (not inside `if`, `&&` or
+`||`, which can suppress `set -e`); its first failure exits with the original
+status and stops downstream work. Both attempts must succeed; retain original
+exits, not a trailing log-write status. Keep both validated local bundles and
+byte-for-byte comparisons, and review `assets` from their
+canonical manifests (size/SHA256/native identity). Approval R1 copies those
+reviewed binary entries; manifests here intentionally have empty approval
+fields because R1 does not yet exist. Reviewers hash and bind this controlled
+build/provenance evidence into the approval's tests/clearance evidence, then
+independently review and integrate R1. No local bundle is uploaded by this
+procedure. Dispatch uses the unchanged A0/K0 plus R1 as described above.
+
+The GitHub rebuild MUST produce **exactly the same approved binary hashes**.
+The publisher checks every rebuilt binary's complete approved record before
+any release creation/upload; release metadata adds R1 but cannot change the
+approved binary entries. A matching local pair is necessary evidence, not proof
+that a GitHub runner will reproduce it. Clock, randomness, paths, SDK/packer
+behavior or makerom/CIA nondeterminism may still cause a mismatch. **Fail closed:
+publication is blocked until reproducibility is fixed and independently
+requalified in app source (outside this kit).** Never waive hash binding, approve
+whatever the runner happened to emit, use an external upload to learn hashes,
+or treat a successful compile as approval. Source changes require new A0 review
+and controlled builds before new R1, not inherited approval.
+
 ## Jobs, inputs and trust boundaries
 
 - Default token is contents-read. All checkouts disable credential persistence.
   The identity job alone requests id-token-write.
-- Build checks clean exact source and absent `build/3ds`; freezes policy outside
-  the app mount. Publication admission checks remote policy/approval and release
+- Build checks clean exact source and absent `build/3ds` in `app-source/`;
+  freezes policy outside the app mount. Before any app code, trusted
+  `tracked.py prepare` enumerates Git's tracked regular files and copies them
+  into a **separate Git-free** `app/`, recording each file's size, SHA256 and
+  permission mode in a trusted snapshot outside that mount. Tracked symlinks,
+  submodules, hardlinks and nonregular files are rejected. Publication admission checks remote policy/approval and release
   absence **before** any binary transfer. Disabled policy fails here even if a
   caller requests publication with otherwise valid approval fields.
 - The kit builds only its own pinned Containerfile. Host tests and native gates
   execute inside networkless, nonroot containers with read-only root and kit,
   app-only writable mount, scratch `/tmp`, dropped capabilities, no Docker
   socket, no GitHub/OIDC/environment/write tokens. Application commands never
-  run in the publisher. A source change reported by `git diff` fails the build.
+  run in the publisher. After app execution, trusted `tracked.py verify` reads
+  only regular tracked files and compares snapshot content/metadata, without
+  running Git or consulting app config, hooks, fsmonitor, diff drivers or
+  textconv. Recreated `app/.git` also blocks. The original `app-source/.git` is
+  **never mounted** into app containers; checkout-action cleanup consumes only
+  that unmodified original checkout. No host Git command consumes app-mutated
+  repository state after app code. New untracked build outputs are not audited
+  by the snapshot; separate bundle/archive/approval checks cover shipped assets.
+  This is a Docker/process/filesystem boundary, not a VM/kernel-exploit defense
+  or proof of arbitrary app safety. It assumes the trusted host/kit/snapshot and
+  container teardown are intact; host read-only job permissions alone are not
+  containment. No runner credential or Docker socket is passed into containers.
 - Any failed host/native/verification/bundle step stops downstream work.
   Dry runs make only local bundles: no artifact upload, tag or release. A
   publication-admitted successful build may transfer its validated bundle via
@@ -308,9 +413,19 @@ source/tag/policy/approval. It uses real verified gh flags:
 
 1. `gh release create TAG --repo REPO --verify-tag --draft ...` (no `--target`).
 2. `gh release upload TAG --repo REPO FILES...` (never `--clobber`).
-3. Verify remote draft tag and the exact names/sizes/GitHub SHA256 asset digests.
-4. Recheck remote source/policy/tag, then `gh release edit TAG --repo REPO
-   --draft=false --latest --verify-tag` for visibility.
+3. After create, discover the fresh draft through authenticated
+   `GET /repos/REPO/releases?per_page=100&page=N` (push access includes drafts).
+   Exhaust the bounded inventory: require **one exact tag**, `draft:true`, and
+   a unique positive integer release ID. Missing/ambiguous entries, wrong IDs,
+   non-drafts, auth/network failures and pagination overflow block; no fallback
+   assumes absence or resumes a prior draft. Discovery precedes upload.
+4. After upload, `GET /repos/REPO/releases/{numeric_id}` must return the **same
+   ID**, exact tag and draft state. Verify ALL asset names, sizes and GitHub
+   SHA256 digests, including `SHA256SUMS` and `release.json`. The published-only
+   `/releases/tags/{tag}` endpoint is **never** used to inspect draft assets.
+5. Recheck remote source/policy/annotated tag and unique draft ID, then
+   `gh release edit TAG --repo REPO --draft=false --latest --verify-tag` for
+   visibility. Any failed lookup/check leaves visibility unchanged.
 
 An existing draft/release/asset blocks retries; there is no overwrite, force,
 delete or automatic resume. A failed transfer/digest check leaves an unpublished
@@ -321,6 +436,14 @@ updates/deletions via repository rules. Hostile concurrent administrators are
 outside the token isolation guarantee. Configure GitHub immutable releases
 where available. CLI flags were verified using installed `gh release
 create/upload/edit --help`; no external release was created for validation.
+REST contract: https://docs.github.com/en/rest/releases/releases#list-releases
+and https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name .
+The latter explicitly says **published**; GitHub CLI v2.83.0
+`pkg/cmd/release/shared/fetch.go` confirms `FetchRelease` separately discovers
+pending drafts then fetches `/releases/{numeric_id}`. Read-only upstream docs,
+REST OpenAPI metadata and CLI source were retained privately; the local fake
+now returns 404 for drafts at the tag endpoint. No actual release experiment
+was performed.
 
 After an authorized publish, independently verify remote annotated tag object
 and peeled source, actual run ID/source/time, downloaded manifest/checksum/CIA
@@ -360,6 +483,23 @@ fullslug-policy evidence is retained, not relabeled as corrected evidence.
 Artifacts remain local; its old banner provenance remains **uncleared**. Full private logs,
 exits and source/artifact hashes are retained by the coordinator, not shipped
 as binaries or personal paths in this repository.
+
+The subsequent draft/sandbox correction preserves all 35 prior test methods
+and adds seven (42 total). Production publisher subprocess tests finish against
+an API-contract fake that returns 404 for drafts at the published-tag endpoint;
+missing/wrong/ambiguous draft IDs, lookup failures, changed source and remote
+asset size/digest contradictions stop visibility. Replaying the old publisher
+against that fake fails and leaves its draft, as expected. Actual shipped
+post-build verification and bundle shell commands are exercised with real Git
+configuration injected by an app Makefile: the host sentinel and local network
+command-dispatch canary remain absent. The old host Git command demonstrably
+executes both canaries as a test-only negative control (network tool is stubbed;
+no external network attempt). Snapshot content/mode/symlink/FIFO mutations also
+block. These host/process tests are **not** a new live Docker/Actions sandbox
+run, VM security proof, native rebuild or reproducibility qualification. No
+second qualified local build or GitHub bit-for-bit reproduction is claimed.
+The earlier independent FRAGILE report and its evidence remain historical,
+not superseded by author assertions; changed source requires fresh reviews.
 
 Still owed: exact-candidate coordinator RUGGED, two fresh nonauthor correctness
 passes, real GitHub dry-run execution, independent app qualification, any
