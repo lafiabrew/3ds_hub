@@ -332,6 +332,7 @@ def _build_repo_payload(
 
 
 def _cmd_plan(args: argparse.Namespace) -> int:
+    out_path = _new_output(Path(args.output))
     _require_kit_ref(args.kit_ref)
     audit = _read_json(Path(args.audit))
     profiles = _read_json(Path(args.profiles))
@@ -368,9 +369,7 @@ def _cmd_plan(args: argparse.Namespace) -> int:
         "repos": plan_rows,
     }
 
-    out_path = Path(args.output)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(_json_compact(output), encoding="utf-8")
+    _create_exclusive(out_path, _json_compact(output).encode("utf-8"))
     print(f"wrote plan for {len(plan_rows)} repos: {out_path}")
     return 0
 
@@ -432,15 +431,24 @@ def _kit_preflight(kit_ref: str) -> None:
 def _existing_open_prs_count(required: set[str]) -> int:
     # Enumerate actual organization repositories and every page of open pulls.
     # Canonical rollout namespace is reserved to the coordinator; no label required.
-    repos = _gh("orgs/lafiabrew/repos?type=public&per_page=100", paginated=True)
+    # GitHub silently omits inaccessible private repos even with type=all.
+    # Reconcile against the owner-visible total; public-only is not global proof.
+    org = _gh("orgs/lafiabrew")
+    private_total = org.get("total_private_repos") if isinstance(org, dict) else None
+    if type(private_total) is not int or private_total < 0:
+        raise RolloutError("global PR cap unproven: owner-visible total_private_repos unavailable; private inventory visibility required")
+    repos = _gh("orgs/lafiabrew/repos?type=all&per_page=100", paginated=True)
+    if not isinstance(repos, list) or any(not isinstance(r, dict) or type(r.get("private")) is not bool for r in repos):
+        raise RolloutError("malformed organization visibility evidence")
+    if sum(r["private"] for r in repos) != private_total:
+        raise RolloutError("global PR cap unproven: private inventory incomplete relative to organization total")
     count = 0
     observed: set[str] = set()
     for repo in repos:
-        if not isinstance(repo, dict) or not isinstance(repo.get("name"), str):
+        if not isinstance(repo.get("name"), str) or not re.fullmatch(r"[A-Za-z0-9_.-]+", repo["name"]) or repo["name"] in {".", ".."} or repo.get("full_name") != f"lafiabrew/{repo['name']}":
             raise RolloutError("malformed organization repository evidence")
         name = repo["name"]
-        if not REPO_RE.fullmatch(name) or name == "3ds_hub":
-            continue
+        # Counting scope is the whole organization, NOT caller admission scope.
         if name in observed:
             raise RolloutError("duplicate organization repository evidence")
         observed.add(name)
@@ -472,6 +480,17 @@ def _safe_path(path: Path, *, directory: bool = False) -> None:
                 raise RolloutError("path ancestor is not a directory")
         elif not stat.S_ISREG(mode):
             raise RolloutError("output must be a regular file")
+
+
+def _new_output(path: Path) -> Path:
+    path = Path(os.path.abspath(path))
+    _safe_path(path)
+    source = TEMPLATES.parent
+    if path == source or source in path.parents:
+        raise RolloutError("output must be outside guarded tool source tree")
+    if os.path.lexists(path):
+        raise RolloutError("immutable output already exists; choose a NEW output name")
+    return path
 
 
 def _validated_plan(args: argparse.Namespace) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -567,9 +586,9 @@ def _files_preflight(path: Path, row: dict[str, Any], *, prepared: bool = False)
     return changes
 
 
-def _create_exclusive(target: Path, data: bytes) -> None:
-    # Walk with directory descriptors so a late ancestor symlink cannot redirect
-    # an output outside its clone. No rollback/delete on I/O failure is attempted.
+def _open_exclusive(target: Path):
+    # Atomic name reservation, not an atomic content transaction. Descriptor
+    # walks prevent late ancestor symlinks. Never unlink partial local I/O.
     fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY)
     try:
         for component in target.absolute().parts[1:-1]:
@@ -581,13 +600,22 @@ def _create_exclusive(target: Path, data: bytes) -> None:
             os.close(fd)
             fd = child
         file_fd = os.open(target.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644, dir_fd=fd)
-        with os.fdopen(file_fd, 'wb') as stream:
-            stream.write(data)
+        return os.fdopen(file_fd, 'wb')
     finally:
         os.close(fd)
 
 
+def _create_exclusive(target: Path, data: bytes) -> None:
+    try:
+        with _open_exclusive(target) as stream:
+            stream.write(data)
+    except OSError as exc:
+        raise RolloutError("exclusive output creation/write failed; partial local I/O may remain; no deletion or rollback attempted") from exc
+
+
 def _cmd_apply(args: argparse.Namespace) -> int:
+    # Refuse old receipts before any API preflight or repository output write.
+    output = _new_output(Path(args.output))
     if not 1 <= args.max_open_prs <= 5:
         raise RolloutError("max-open-prs must be between 1 and 5")
     plan, rows = _validated_plan(args)
@@ -598,8 +626,6 @@ def _cmd_apply(args: argparse.Namespace) -> int:
         raise RolloutError("HEAD changed: --expected-heads cannot override plan source pins")
     root = Path(args.repos_root).absolute()
     _safe_path(root, directory=True)
-    output = Path(args.output).absolute()
-    _safe_path(output)
     if output == root or root in output.parents:
         raise RolloutError("receipt must be outside repos-root")
     prepared = args.cmd == "verify-publish"
@@ -616,21 +642,26 @@ def _cmd_apply(args: argparse.Namespace) -> int:
             path = _repo_preflight(root, row, prepared=prepared)
             changes = _files_preflight(path, row, prepared=prepared)
             receipts.append({"repo": row["repo"], "head": row["source_sha"], "changes": changes})
-    if not args.dry_run and not prepared:
-        for row in rows:
-            for rel, content in row["rendered_contents"].items():
-                target = root / row["repo"] / rel
-                _safe_path(target)
-                if target.exists():
-                    if target.read_bytes() != content.encode("utf-8"):
-                        raise RolloutError("late output conflict; preserve partial preparation and inspect")
-                else:
-                    _create_exclusive(target, content.encode("utf-8"))
-    receipt = {"schema": 1, "generated_utc": _utc_now(), "mode": "publish-boundary-check" if prepared else "local-prepare",
-               "dry_run": args.dry_run, "kit_ref": plan["kit_ref"], "open_prs_seen": open_prs,
-               "pending_batch": len(rows), "receipts": receipts, "remote_writes": False}
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(_json_compact(receipt), encoding="utf-8")
+    # Reserve receipt before repo writes: a late creator fails exclusively.
+    try:
+        with _open_exclusive(output) as receipt_stream:
+            if not args.dry_run and not prepared:
+                for row in rows:
+                    for rel, content in row["rendered_contents"].items():
+                        target = root / row["repo"] / rel
+                        _safe_path(target)
+                        if target.exists():
+                            if target.read_bytes() != content.encode("utf-8"):
+                                raise RolloutError("late output conflict; preserve partial preparation and inspect")
+                        else:
+                            _create_exclusive(target, content.encode("utf-8"))
+            receipt = {"schema": 1, "generated_utc": _utc_now(), "mode": "publish-boundary-check" if prepared else "local-prepare",
+                       "dry_run": args.dry_run, "kit_ref": plan["kit_ref"], "open_prs_seen": open_prs,
+                       "global_cap_visibility": "type=all inventory reconciled to owner-visible total_private_repos",
+                       "pending_batch": len(rows), "receipts": receipts, "remote_writes": False}
+            receipt_stream.write(_json_compact(receipt).encode("utf-8"))
+    except (OSError, RolloutError) as exc:
+        raise RolloutError("local preparation/receipt I/O failed; partial local I/O may remain; no deletion or rollback attempted") from exc
     print(f"{'verified publish boundary' if prepared else 'local-only preparation'}: {len(rows)} repos; no push/PR performed")
     return 0
 

@@ -20,6 +20,14 @@ if Path(sys.argv[0]).name == 'git':
         repo = Path(args[args.index('-C') + 1]).name
         cfg['remote_probes'] = cfg.get('remote_probes', 0) + 1
         cfg_path.write_text(json.dumps(cfg))
+        if cfg.get('output_race_at') == cfg['remote_probes']:
+            output = Path(cfg['output_race_path'])
+            if cfg.get('output_race_kind') == 'ancestor':
+                output.parent.symlink_to(cfg['output_race_target'], target_is_directory=True)
+            elif cfg.get('output_race_kind') == 'symlink':
+                output.symlink_to(cfg['output_race_target'])
+            else:
+                output.write_bytes(b'late competing output')
         if cfg.get('local_race_at') == cfg['remote_probes']:
             subprocess.run(['/usr/bin/git', '-C', args[args.index('-C') + 1],
                             'update-ref', 'refs/heads/main', cfg['race_sha']], check=True)
@@ -39,15 +47,20 @@ if endpoint.startswith('repos/lafiabrew/3ds_hub/compare/'):
 elif endpoint.startswith('repos/lafiabrew/3ds_hub/contents/'):
     data = {'type': 'symlink' if cfg.get('kit_missing') else 'file',
             'path': '.github/workflows/homebrew-release.yml', 'size': 100}
+elif endpoint == 'orgs/lafiabrew':
+    data = {} if cfg.get('private_total_unavailable') else {'total_private_repos': cfg.get('private_total', len(cfg.get('private_repos', [])))}
 elif endpoint.startswith('orgs/lafiabrew/repos?'):
+    if endpoint != 'orgs/lafiabrew/repos?type=all&per_page=100':
+        sys.exit(74)
     cfg['org_probes'] = cfg.get('org_probes', 0) + 1
     if cfg.get('cap_race_at') == cfg['org_probes']:
         cfg['open_count'] = 5
     cfg_path.write_text(json.dumps(cfg))
-    data = [{'name': repo} for repo in cfg['remotes']]
+    data = [{'name': repo, 'full_name': 'lafiabrew/' + repo, 'private': False} for repo in cfg['remotes']]
+    data += [{'name': repo, 'full_name': 'lafiabrew/' + repo, 'private': True, 'archived': True} for repo in cfg.get('private_repos', [])]
 elif '/pulls?' in endpoint:
     repo = endpoint.split('/')[2]
-    count = cfg.get('open_count', 0) if repo == sorted(cfg['remotes'])[0] else 0
+    count = cfg.get('private_open_count', 0) if repo in cfg.get('private_repos', []) else (cfg.get('open_count', 0) if repo == sorted(cfg['remotes'])[0] else 0)
     data = [{'head': {'ref': 'rollout/homebrew-release-' + str(i)}} for i in range(count)]
 else:
     repo = endpoint.split('/')[-1]

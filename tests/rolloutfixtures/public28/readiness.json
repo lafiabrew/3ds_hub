@@ -1,0 +1,981 @@
+{
+  "observed_utc": "2026-11-03T22:28:05.966362+00:00",
+  "rows": [
+    {
+      "repo": "3ds_capturekit",
+      "source_sha": "e6c6ce407af4a9bb083749188ea18073c16afff3",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_cartdash",
+      "source_sha": "f6722ba7d1bc319f503d657ba86fcb4090f0c35b",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_chip8",
+      "source_sha": "92940977acd92c8c6210990c323fd61872cad17c",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "92940977acd92c8c6210990c323fd61872cad17c",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433047579,
+          "url": "https://github.com/lafiabrew/3ds_chip8/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_chip8.3dsx",
+              "size": 221304,
+              "digest": "sha256:a199d27d54e38b3a5d2a230ba936c9a10e9ae0f702a99a5c245ae1047919400d",
+              "url": "https://github.com/lafiabrew/3ds_chip8/releases/download/v1.0.0/3ds_chip8.3dsx"
+            },
+            {
+              "name": "3ds_chip8.cia",
+              "size": 222144,
+              "digest": "sha256:a11388f4c41dfd5fa26aca10692db5fcddf29a7f884ddce55c43dd1a032555fc",
+              "url": "https://github.com/lafiabrew/3ds_chip8/releases/download/v1.0.0/3ds_chip8.cia"
+            },
+            {
+              "name": "3ds_chip8.smdh",
+              "size": 14016,
+              "digest": "sha256:efc05599c41afa8acd39b3e9c2e93a97586c9d4bda679a0aaafb44d790020086",
+              "url": "https://github.com/lafiabrew/3ds_chip8/releases/download/v1.0.0/3ds_chip8.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_drop",
+      "source_sha": "d3b0dfd3ad7c60d48b815d1264560fd5d007db28",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "6134e0484dcd770dbc4e4a74bd213c102a7be197",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924702,
+          "url": "https://github.com/lafiabrew/3ds_drop/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_drop.3dsx",
+              "size": 232512,
+              "digest": "sha256:fed11f5b9e3c7f48ed14b02a1a90b2152db90d5f16fd3e09b6e580456b427fa0",
+              "url": "https://github.com/lafiabrew/3ds_drop/releases/download/v1.0.0/3ds_drop.3dsx"
+            },
+            {
+              "name": "3ds_drop.cia",
+              "size": 236992,
+              "digest": "sha256:7982b8c889844a632d7abd0887f0fce3c6dd70d805c278b8de3d1aaf7224bdd5",
+              "url": "https://github.com/lafiabrew/3ds_drop/releases/download/v1.0.0/3ds_drop.cia"
+            },
+            {
+              "name": "3ds_drop.smdh",
+              "size": 14016,
+              "digest": "sha256:755b378444053fcc5517a5bb0524dd7847e9368dfae47ec38f5ed2660d7f7a73",
+              "url": "https://github.com/lafiabrew/3ds_drop/releases/download/v1.0.0/3ds_drop.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_foldquest",
+      "source_sha": "2e58cf435f3e6b2c4c8d1da003ca2d92b3e5ad87",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_gridblast",
+      "source_sha": "3dac2a4d50831fb7206db8c2b1919ebc0f9932ec",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_mahjong",
+      "source_sha": "b7c8ae95476dc966b662f946f7835d8ac6b764d8",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "b7c8ae95476dc966b662f946f7835d8ac6b764d8",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433049098,
+          "url": "https://github.com/lafiabrew/3ds_mahjong/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_mahjong.3dsx",
+              "size": 221268,
+              "digest": "sha256:565886f1ca2d670c7db13ecee1d3e331894b0861db6c6e67e1c2241030843c91",
+              "url": "https://github.com/lafiabrew/3ds_mahjong/releases/download/v1.0.0/3ds_mahjong.3dsx"
+            },
+            {
+              "name": "3ds_mahjong.cia",
+              "size": 222144,
+              "digest": "sha256:09d8ece094bcda5adfd66ad3cdf9bcaa328c078842579f207a510ed0e9c890b3",
+              "url": "https://github.com/lafiabrew/3ds_mahjong/releases/download/v1.0.0/3ds_mahjong.cia"
+            },
+            {
+              "name": "3ds_mahjong.smdh",
+              "size": 14016,
+              "digest": "sha256:f7c6aa29a54baee5eaf4b956a00636c6ebf90eb7f9b59ca4c084f7969d457a44",
+              "url": "https://github.com/lafiabrew/3ds_mahjong/releases/download/v1.0.0/3ds_mahjong.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_netpass",
+      "source_sha": "a88247d300c8ec5848c70d44259f7b798ec5001f",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "26397d968a5e7d16e932fc9b77d1579bac94ae64",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924943,
+          "url": "https://github.com/lafiabrew/3ds_netpass/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_netpass.3dsx",
+              "size": 175428,
+              "digest": "sha256:3d9e9b71dc26dbb3d59eaf0c605597fdda527a51658d6811214e2930e7646ced",
+              "url": "https://github.com/lafiabrew/3ds_netpass/releases/download/v1.0.0/3ds_netpass.3dsx"
+            },
+            {
+              "name": "3ds_netpass.cia",
+              "size": 197056,
+              "digest": "sha256:445dfaf4f3e3e49405e8ac3086ec26f04635260f45a5e95491b350b1825de360",
+              "url": "https://github.com/lafiabrew/3ds_netpass/releases/download/v1.0.0/3ds_netpass.cia"
+            },
+            {
+              "name": "3ds_netpass.smdh",
+              "size": 14016,
+              "digest": "sha256:9ee212e7b6db6b772175d3f31bb57fc5d0b3e239e1c764ff4c23d838f283016f",
+              "url": "https://github.com/lafiabrew/3ds_netpass/releases/download/v1.0.0/3ds_netpass.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_neverball",
+      "source_sha": "daa4338858d3d892e9f6790e2aa7b8bee96ff8d4",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_orrery",
+      "source_sha": "5ef27da64578a551ee6fb00eef8b01c9462d4086",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_padtest",
+      "source_sha": "a03c4f48c004c9a9520c08023978356564440db2",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "753222983e2b1a14a43e9919b2dd8617e437e936",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924983,
+          "url": "https://github.com/lafiabrew/3ds_padtest/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_padtest.3dsx",
+              "size": 172720,
+              "digest": "sha256:38eae95542cd46eb42a2e098d218c2712e8af0cadaff9f7666b78e5b3e949f39",
+              "url": "https://github.com/lafiabrew/3ds_padtest/releases/download/v1.0.0/3ds_padtest.3dsx"
+            },
+            {
+              "name": "3ds_padtest.cia",
+              "size": 195520,
+              "digest": "sha256:b76a9a477e17a9454cf338c3499a4fb0359c0d3c457bcc763f8cb00f54b76214",
+              "url": "https://github.com/lafiabrew/3ds_padtest/releases/download/v1.0.0/3ds_padtest.cia"
+            },
+            {
+              "name": "3ds_padtest.smdh",
+              "size": 14016,
+              "digest": "sha256:f46f8fd043bb013de4ca5c88efd5d6d4ace0f39476175f56772d8857a531c6ef",
+              "url": "https://github.com/lafiabrew/3ds_padtest/releases/download/v1.0.0/3ds_padtest.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_picross",
+      "source_sha": "4ab8474fea25501dfba6108d7868cb95d46dc04b",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "4ab8474fea25501dfba6108d7868cb95d46dc04b",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433047036,
+          "url": "https://github.com/lafiabrew/3ds_picross/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_picross.3dsx",
+              "size": 220648,
+              "digest": "sha256:8214093effa11aea82e9878854572794d8a192d6cf56d22f0fba398e15971651",
+              "url": "https://github.com/lafiabrew/3ds_picross/releases/download/v1.0.0/3ds_picross.3dsx"
+            },
+            {
+              "name": "3ds_picross.cia",
+              "size": 222144,
+              "digest": "sha256:2acabc2ff791ebe93ef83c8c414f2948735b7969d4543ffa5d2fe716daaedebf",
+              "url": "https://github.com/lafiabrew/3ds_picross/releases/download/v1.0.0/3ds_picross.cia"
+            },
+            {
+              "name": "3ds_picross.smdh",
+              "size": 14016,
+              "digest": "sha256:08e31a016359c533050395bd08eda5a9288ed57d71d6edba815cc2ee7a4a83f1",
+              "url": "https://github.com/lafiabrew/3ds_picross/releases/download/v1.0.0/3ds_picross.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_pieceduel",
+      "source_sha": "0a5e00abb86162bb2efce2f7b13783adeb9383c3",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "448b778a8454d32ca53c5deab63a29e8620a0d8b",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924492,
+          "url": "https://github.com/lafiabrew/3ds_pieceduel/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_pieceduel.3dsx",
+              "size": 298092,
+              "digest": "sha256:afa1bcd1a2735b735bd3c79fa54a7828f929382332c3a536ed494f67640227b6",
+              "url": "https://github.com/lafiabrew/3ds_pieceduel/releases/download/v1.0.0/3ds_pieceduel.3dsx"
+            },
+            {
+              "name": "3ds_pieceduel.cia",
+              "size": 282560,
+              "digest": "sha256:d78f91d24776d30e3fcbd6ac9133e15637aa05a5753e47b17368855df5493000",
+              "url": "https://github.com/lafiabrew/3ds_pieceduel/releases/download/v1.0.0/3ds_pieceduel.cia"
+            },
+            {
+              "name": "3ds_pieceduel.smdh",
+              "size": 14016,
+              "digest": "sha256:ee59fd1be0f77bfcc5b06470b9fa47c81daf472bad8211255d70aae43c6ed84a",
+              "url": "https://github.com/lafiabrew/3ds_pieceduel/releases/download/v1.0.0/3ds_pieceduel.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_pinball",
+      "source_sha": "2aafbdeb9da4c76864cc38406d4546323f859c90",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_pockettracker",
+      "source_sha": "39ffb288e2bb233faef95ee90d9e29fb3570b2bd",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_pokedash",
+      "source_sha": "6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "b32f6b1535bb5fe60adf4f51f646c4821d2525f6",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924563,
+          "url": "https://github.com/lafiabrew/3ds_pokedash/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_pokedash.3dsx",
+              "size": 171664,
+              "digest": "sha256:9d377ad7635d61574d369f047deb5c4fc3dc202a92c65d874960ea344e8ebc32",
+              "url": "https://github.com/lafiabrew/3ds_pokedash/releases/download/v1.0.0/3ds_pokedash.3dsx"
+            },
+            {
+              "name": "3ds_pokedash.cia",
+              "size": 197056,
+              "digest": "sha256:3f8e7bbf770e65ee6a40189ffcfa2ba7be121f986a638dfca9f2eb289fe06b84",
+              "url": "https://github.com/lafiabrew/3ds_pokedash/releases/download/v1.0.0/3ds_pokedash.cia"
+            },
+            {
+              "name": "3ds_pokedash.smdh",
+              "size": 14016,
+              "digest": "sha256:d9d034e2d3a17de34bbe013979773aa3c8135160ee5c45462cc25a9a30eec708",
+              "url": "https://github.com/lafiabrew/3ds_pokedash/releases/download/v1.0.0/3ds_pokedash.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_pokedex",
+      "source_sha": "694a58e1b0e0ec7368800eaa4f949f93ea3353ba",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "694a58e1b0e0ec7368800eaa4f949f93ea3353ba",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433048159,
+          "url": "https://github.com/lafiabrew/3ds_pokedex/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_pokedex.3dsx",
+              "size": 221832,
+              "digest": "sha256:d653dcfea1b1fcdf13cef347374759dbcb38598537b3aa96c25d3f0a357107e0",
+              "url": "https://github.com/lafiabrew/3ds_pokedex/releases/download/v1.0.0/3ds_pokedex.3dsx"
+            },
+            {
+              "name": "3ds_pokedex.cia",
+              "size": 223168,
+              "digest": "sha256:41a441204da6795ed64644d53664a23dab2156c30ffb9c009933c4994c735123",
+              "url": "https://github.com/lafiabrew/3ds_pokedex/releases/download/v1.0.0/3ds_pokedex.cia"
+            },
+            {
+              "name": "3ds_pokedex.smdh",
+              "size": 14016,
+              "digest": "sha256:f015eba9d0be6c25a0cc12757f9b91e08784ffd4c009ef88a63ccf4f202789be",
+              "url": "https://github.com/lafiabrew/3ds_pokedex/releases/download/v1.0.0/3ds_pokedex.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_rhythm",
+      "source_sha": "0e84d6a3db44e87c7e05aebd5a3392d0d927dc27",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_rngtool",
+      "source_sha": "7e52b5c072e29f9ce0852dd6be9f209be472a446",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "5db9fecefce5fca1ad99bcb7858a3f605207d834",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924887,
+          "url": "https://github.com/lafiabrew/3ds_rngtool/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_rngtool.3dsx",
+              "size": 174812,
+              "digest": "sha256:241d0fb2f63f1f5b6a67d0ffceecb1c94c2c71cba00f34b1f4d5f609abc46547",
+              "url": "https://github.com/lafiabrew/3ds_rngtool/releases/download/v1.0.0/3ds_rngtool.3dsx"
+            },
+            {
+              "name": "3ds_rngtool.cia",
+              "size": 196032,
+              "digest": "sha256:e314c9550b3cf8e2e65596e8332e509064f8bbc7c004fa4f74612ddd811a1d98",
+              "url": "https://github.com/lafiabrew/3ds_rngtool/releases/download/v1.0.0/3ds_rngtool.cia"
+            },
+            {
+              "name": "3ds_rngtool.smdh",
+              "size": 14016,
+              "digest": "sha256:5e3c987ea18e826b33c0450c5353fac84c77c2c67f1d5d543df04b20bd9f9da5",
+              "url": "https://github.com/lafiabrew/3ds_rngtool/releases/download/v1.0.0/3ds_rngtool.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_roulette",
+      "source_sha": "d21061daf182709a29dac088c5608e3649378763",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "d21061daf182709a29dac088c5608e3649378763",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433048834,
+          "url": "https://github.com/lafiabrew/3ds_roulette/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_roulette.3dsx",
+              "size": 221148,
+              "digest": "sha256:77381707dbb133714a90b66000691a5065262bf1492a8aeeccbe8d17e5f6f57a",
+              "url": "https://github.com/lafiabrew/3ds_roulette/releases/download/v1.0.0/3ds_roulette.3dsx"
+            },
+            {
+              "name": "3ds_roulette.cia",
+              "size": 222656,
+              "digest": "sha256:a8b2c8e8951c3364779ee7c969b6cfcfa6c82885c5562ece6700270999b69e5f",
+              "url": "https://github.com/lafiabrew/3ds_roulette/releases/download/v1.0.0/3ds_roulette.cia"
+            },
+            {
+              "name": "3ds_roulette.smdh",
+              "size": 14016,
+              "digest": "sha256:bdf639ba2ac5fd144d5814272fa67408d520cf6e42e5fe5dfdb34ef09bfcb446",
+              "url": "https://github.com/lafiabrew/3ds_roulette/releases/download/v1.0.0/3ds_roulette.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_sandlab",
+      "source_sha": "a47b389ba9c9f3cb770af526b2b4d29005f4cc68",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "a47b389ba9c9f3cb770af526b2b4d29005f4cc68",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433047322,
+          "url": "https://github.com/lafiabrew/3ds_sandlab/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_sandlab.3dsx",
+              "size": 220828,
+              "digest": "sha256:90852c95b8abaa52c67a8c8c39e8be185314a1b7889896bd02d89e712ba128f8",
+              "url": "https://github.com/lafiabrew/3ds_sandlab/releases/download/v1.0.0/3ds_sandlab.3dsx"
+            },
+            {
+              "name": "3ds_sandlab.cia",
+              "size": 222144,
+              "digest": "sha256:cc7d1afbeb2dc6532f961fdbcd38a0be54eeb4b294ec59a1002bbcfe5b29b677",
+              "url": "https://github.com/lafiabrew/3ds_sandlab/releases/download/v1.0.0/3ds_sandlab.cia"
+            },
+            {
+              "name": "3ds_sandlab.smdh",
+              "size": 14016,
+              "digest": "sha256:560d3bd6e7b1aef4f20250c30ba1e3fa863d386fc3c9ab663845ea9efcf93663",
+              "url": "https://github.com/lafiabrew/3ds_sandlab/releases/download/v1.0.0/3ds_sandlab.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_sokoban",
+      "source_sha": "337f5e82c742ded7e99afe1529d642586077cd6e",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "337f5e82c742ded7e99afe1529d642586077cd6e",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433048458,
+          "url": "https://github.com/lafiabrew/3ds_sokoban/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_sokoban.3dsx",
+              "size": 220348,
+              "digest": "sha256:cebf87ec1caf669cd246ba094feced5190d840039be52fd07a2776d3b0d5b7b0",
+              "url": "https://github.com/lafiabrew/3ds_sokoban/releases/download/v1.0.0/3ds_sokoban.3dsx"
+            },
+            {
+              "name": "3ds_sokoban.cia",
+              "size": 222144,
+              "digest": "sha256:e2ab45d1c39995c11d351e51178aeef42b0b11702d4a080e4fb19f44b1d019d8",
+              "url": "https://github.com/lafiabrew/3ds_sokoban/releases/download/v1.0.0/3ds_sokoban.cia"
+            },
+            {
+              "name": "3ds_sokoban.smdh",
+              "size": 14016,
+              "digest": "sha256:9e24253ada7d8952b5f6b0bea16e1c770b0ef7d54d78a2d6d67eb0eaad067d00",
+              "url": "https://github.com/lafiabrew/3ds_sokoban/releases/download/v1.0.0/3ds_sokoban.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_solitaire",
+      "source_sha": "cafe66ebfcb3a29f11dd339ee76a399b9ae79c1d",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "cafe66ebfcb3a29f11dd339ee76a399b9ae79c1d",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 433047883,
+          "url": "https://github.com/lafiabrew/3ds_solitaire/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_solitaire.3dsx",
+              "size": 221264,
+              "digest": "sha256:696dc8f1cb782209ed21ddc5c74c3ebd03f5b3301141e31bb80e2d48fb0dddb4",
+              "url": "https://github.com/lafiabrew/3ds_solitaire/releases/download/v1.0.0/3ds_solitaire.3dsx"
+            },
+            {
+              "name": "3ds_solitaire.cia",
+              "size": 222656,
+              "digest": "sha256:87bfa7113921d8488aba5ebc3c9fcb547c16b82a3a4ba84857f280e0bf1b861f",
+              "url": "https://github.com/lafiabrew/3ds_solitaire/releases/download/v1.0.0/3ds_solitaire.cia"
+            },
+            {
+              "name": "3ds_solitaire.smdh",
+              "size": 14016,
+              "digest": "sha256:e02f70c05c25d1eedd952d63e298795a91101fef25e1601712b73887cd2ed992",
+              "url": "https://github.com/lafiabrew/3ds_solitaire/releases/download/v1.0.0/3ds_solitaire.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_supaplex",
+      "source_sha": "9545cc12c4ac33020e55e2490dc8fdb2129fdd0d",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_sysdash",
+      "source_sha": "4c2714eb4175a84a7b030bedeecb86e4f41213df",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "80d1082050c015b46a925097ef38664b31da74d5",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924638,
+          "url": "https://github.com/lafiabrew/3ds_sysdash/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_sysdash.3dsx",
+              "size": 184664,
+              "digest": "sha256:aa488b0d23f28783c4ba993ef7e0321b1275f5246c24755ee374c6b5645606df",
+              "url": "https://github.com/lafiabrew/3ds_sysdash/releases/download/v1.0.0/3ds_sysdash.3dsx"
+            },
+            {
+              "name": "3ds_sysdash.cia",
+              "size": 201664,
+              "digest": "sha256:bf9078223cc3a51fa6d262a44115d5c72cda92a7d7a98d29f03935ea077fef57",
+              "url": "https://github.com/lafiabrew/3ds_sysdash/releases/download/v1.0.0/3ds_sysdash.cia"
+            },
+            {
+              "name": "3ds_sysdash.smdh",
+              "size": 14016,
+              "digest": "sha256:ef85cdbb76702964110f9e3237f8abfe171962afa696552ef4b6c12119c4d919",
+              "url": "https://github.com/lafiabrew/3ds_sysdash/releases/download/v1.0.0/3ds_sysdash.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_tuxpuck",
+      "source_sha": "f190e281c3d15620c4f2c6a8922ec7539e74606f",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_voxeltoy",
+      "source_sha": "248d005b417df206b640a75c4923dda722406896",
+      "tags": [],
+      "stable_releases": [],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": false,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    },
+    {
+      "repo": "3ds_wigle",
+      "source_sha": "0e5e3435f612fb049d03a8d946c606616aa66352",
+      "tags": [
+        {
+          "tag": "v1.0.0",
+          "commit": "a292f9b14504c86d7f2229ad29683c5c46cd654d",
+          "object_type": "commit",
+          "annotated": false
+        }
+      ],
+      "stable_releases": [
+        {
+          "tag": "v1.0.0",
+          "release_id": 431924826,
+          "url": "https://github.com/lafiabrew/3ds_wigle/releases/tag/v1.0.0",
+          "assets": [
+            {
+              "name": "3ds_wigle.3dsx",
+              "size": 177988,
+              "digest": "sha256:3704cd3456daa4269d14889f02512a3498adddf82e050d471c16222cf69ea99a",
+              "url": "https://github.com/lafiabrew/3ds_wigle/releases/download/v1.0.0/3ds_wigle.3dsx"
+            },
+            {
+              "name": "3ds_wigle.cia",
+              "size": 199616,
+              "digest": "sha256:3fb0262bb1d308aa22ec9c5d9585358b4f08df590d7803b91eee69a08457e7af",
+              "url": "https://github.com/lafiabrew/3ds_wigle/releases/download/v1.0.0/3ds_wigle.cia"
+            },
+            {
+              "name": "3ds_wigle.smdh",
+              "size": 14016,
+              "digest": "sha256:68a61febf070faf118590138a13b8bca4fad099da3c2af0fae948edda5670f54",
+              "url": "https://github.com/lafiabrew/3ds_wigle/releases/download/v1.0.0/3ds_wigle.smdh"
+            }
+          ]
+        }
+      ],
+      "ci_configured": false,
+      "ci_executed": false,
+      "published_existing": true,
+      "physically_tested": "not observed",
+      "eligibility": "blocked",
+      "publish_enabled": false,
+      "reviewed": false,
+      "blockers": [
+        "Frozen public observation only; exact-source qualification and verified release pipeline still required"
+      ]
+    }
+  ]
+}

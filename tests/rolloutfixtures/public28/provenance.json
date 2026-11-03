@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "scope": "28 public nonarchived lafiabrew/3ds_* repositories excluding hub; frozen observations, not current admission or approval",
+  "observations": {
+    "audit": "2026-11-03T21:48:43.094646+00:00",
+    "profiles": "2026-11-03T22:08:34.080839+00:00",
+    "readiness": "2026-11-03T22:28:05.966362+00:00"
+  },
+  "fixture_sha256": {
+    "profiles.json": "3f943c0a79baeb1f1994078fc8a63e125df8e1a08ed10a4c3fd469c119a6f1f2",
+    "audit.json": "68082c38a7af9b516014d3e2fde9473becff055c19262ab49f7f4c6a53337354",
+    "readiness.json": "02d9a297e1604ffb231661d8212370c668b3fc6b41b6bce932e9153d32c41c1b"
+  },
+  "sources": [
+    {
+      "repo": "3ds_capturekit",
+      "public_owner": "lafiabrew",
+      "source_sha": "e6c6ce407af4a9bb083749188ea18073c16afff3",
+      "source_url": "https://github.com/lafiabrew/3ds_capturekit/tree/e6c6ce407af4a9bb083749188ea18073c16afff3",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_capturekit/e6c6ce407af4a9bb083749188ea18073c16afff3/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_cartdash",
+      "public_owner": "lafiabrew",
+      "source_sha": "f6722ba7d1bc319f503d657ba86fcb4090f0c35b",
+      "source_url": "https://github.com/lafiabrew/3ds_cartdash/tree/f6722ba7d1bc319f503d657ba86fcb4090f0c35b",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_cartdash/f6722ba7d1bc319f503d657ba86fcb4090f0c35b/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_chip8",
+      "public_owner": "lafiabrew",
+      "source_sha": "92940977acd92c8c6210990c323fd61872cad17c",
+      "source_url": "https://github.com/lafiabrew/3ds_chip8/tree/92940977acd92c8c6210990c323fd61872cad17c",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_chip8/92940977acd92c8c6210990c323fd61872cad17c/Makefile",
+      "makefile_git_blob": "c66a5b7fb73ae215c22a9cb641a53a9c5973a914",
+      "makefile_sha256": "3446fdd308c48dbc0cf691b73ccfc08e98b8977098ec8caa9297452a914c263c"
+    },
+    {
+      "repo": "3ds_drop",
+      "public_owner": "lafiabrew",
+      "source_sha": "d3b0dfd3ad7c60d48b815d1264560fd5d007db28",
+      "source_url": "https://github.com/lafiabrew/3ds_drop/tree/d3b0dfd3ad7c60d48b815d1264560fd5d007db28",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_drop/d3b0dfd3ad7c60d48b815d1264560fd5d007db28/Makefile",
+      "makefile_git_blob": "b31a8d047911ab6196165b7668cfef2d15b87326",
+      "makefile_sha256": "eeb15f4b9465a966860015aec25e86901221e4b1ec50b87d658dce5ddfad0c85"
+    },
+    {
+      "repo": "3ds_foldquest",
+      "public_owner": "lafiabrew",
+      "source_sha": "2e58cf435f3e6b2c4c8d1da003ca2d92b3e5ad87",
+      "source_url": "https://github.com/lafiabrew/3ds_foldquest/tree/2e58cf435f3e6b2c4c8d1da003ca2d92b3e5ad87",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_foldquest/2e58cf435f3e6b2c4c8d1da003ca2d92b3e5ad87/Makefile",
+      "makefile_git_blob": "f112839fdbc2dcd5c0f87c45f067bbaaae844986",
+      "makefile_sha256": "afd9fafcef5a6afe02ba635d0dfadb115598ca664dd906f3af3c929ae15e7966"
+    },
+    {
+      "repo": "3ds_gridblast",
+      "public_owner": "lafiabrew",
+      "source_sha": "3dac2a4d50831fb7206db8c2b1919ebc0f9932ec",
+      "source_url": "https://github.com/lafiabrew/3ds_gridblast/tree/3dac2a4d50831fb7206db8c2b1919ebc0f9932ec",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_gridblast/3dac2a4d50831fb7206db8c2b1919ebc0f9932ec/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_mahjong",
+      "public_owner": "lafiabrew",
+      "source_sha": "b7c8ae95476dc966b662f946f7835d8ac6b764d8",
+      "source_url": "https://github.com/lafiabrew/3ds_mahjong/tree/b7c8ae95476dc966b662f946f7835d8ac6b764d8",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_mahjong/b7c8ae95476dc966b662f946f7835d8ac6b764d8/Makefile",
+      "makefile_git_blob": "fc4b1abe07a471fea091c7f4a42b4b25967c5a03",
+      "makefile_sha256": "7320e94d2953d86a37ec51c3c74e15f661a75d44b62373afce211ea0dc3947e8"
+    },
+    {
+      "repo": "3ds_netpass",
+      "public_owner": "lafiabrew",
+      "source_sha": "a88247d300c8ec5848c70d44259f7b798ec5001f",
+      "source_url": "https://github.com/lafiabrew/3ds_netpass/tree/a88247d300c8ec5848c70d44259f7b798ec5001f",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_netpass/a88247d300c8ec5848c70d44259f7b798ec5001f/Makefile",
+      "makefile_git_blob": "342be857bc6ee00240ede576b13f4a2532ddf5c4",
+      "makefile_sha256": "c07d6c3830221f25d33b40ba20e050a17ccf1ef689f5896869a2e73fde5938b7"
+    },
+    {
+      "repo": "3ds_neverball",
+      "public_owner": "lafiabrew",
+      "source_sha": "daa4338858d3d892e9f6790e2aa7b8bee96ff8d4",
+      "source_url": "https://github.com/lafiabrew/3ds_neverball/tree/daa4338858d3d892e9f6790e2aa7b8bee96ff8d4",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_neverball/daa4338858d3d892e9f6790e2aa7b8bee96ff8d4/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_orrery",
+      "public_owner": "lafiabrew",
+      "source_sha": "5ef27da64578a551ee6fb00eef8b01c9462d4086",
+      "source_url": "https://github.com/lafiabrew/3ds_orrery/tree/5ef27da64578a551ee6fb00eef8b01c9462d4086",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_orrery/5ef27da64578a551ee6fb00eef8b01c9462d4086/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_padtest",
+      "public_owner": "lafiabrew",
+      "source_sha": "a03c4f48c004c9a9520c08023978356564440db2",
+      "source_url": "https://github.com/lafiabrew/3ds_padtest/tree/a03c4f48c004c9a9520c08023978356564440db2",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_padtest/a03c4f48c004c9a9520c08023978356564440db2/Makefile",
+      "makefile_git_blob": "162793161052b6e815a75f7a163ede5327847f9b",
+      "makefile_sha256": "448d4477ee9ecbe3f69c5cf577c684d22b77e4ae5f1e72d6b4c05cda849ce2c4"
+    },
+    {
+      "repo": "3ds_picross",
+      "public_owner": "lafiabrew",
+      "source_sha": "4ab8474fea25501dfba6108d7868cb95d46dc04b",
+      "source_url": "https://github.com/lafiabrew/3ds_picross/tree/4ab8474fea25501dfba6108d7868cb95d46dc04b",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_picross/4ab8474fea25501dfba6108d7868cb95d46dc04b/Makefile",
+      "makefile_git_blob": "e1ae39ab7ae21b58e2397246dfd45b72c2aaa884",
+      "makefile_sha256": "d53540f8dc25206da218f521bb34aceee82cd2bac0ca7bdaf865cd9ceff8d2de"
+    },
+    {
+      "repo": "3ds_pieceduel",
+      "public_owner": "lafiabrew",
+      "source_sha": "0a5e00abb86162bb2efce2f7b13783adeb9383c3",
+      "source_url": "https://github.com/lafiabrew/3ds_pieceduel/tree/0a5e00abb86162bb2efce2f7b13783adeb9383c3",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_pieceduel/0a5e00abb86162bb2efce2f7b13783adeb9383c3/Makefile",
+      "makefile_git_blob": "33ca43aaa6692d38cd60274afd43032faf9fefa0",
+      "makefile_sha256": "0c8d5158af694c816f183646669725b31dba475d1cf0160bb77ef3607bcab119"
+    },
+    {
+      "repo": "3ds_pinball",
+      "public_owner": "lafiabrew",
+      "source_sha": "2aafbdeb9da4c76864cc38406d4546323f859c90",
+      "source_url": "https://github.com/lafiabrew/3ds_pinball/tree/2aafbdeb9da4c76864cc38406d4546323f859c90",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_pinball/2aafbdeb9da4c76864cc38406d4546323f859c90/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_pockettracker",
+      "public_owner": "lafiabrew",
+      "source_sha": "39ffb288e2bb233faef95ee90d9e29fb3570b2bd",
+      "source_url": "https://github.com/lafiabrew/3ds_pockettracker/tree/39ffb288e2bb233faef95ee90d9e29fb3570b2bd",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_pockettracker/39ffb288e2bb233faef95ee90d9e29fb3570b2bd/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_pokedash",
+      "public_owner": "lafiabrew",
+      "source_sha": "6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d",
+      "source_url": "https://github.com/lafiabrew/3ds_pokedash/tree/6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_pokedash/6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d/Makefile",
+      "makefile_git_blob": "11f0a470ee45db93ebbae175abd9914e04044236",
+      "makefile_sha256": "f73fc855236cc2e38f7ab54bd6fb2674ecdca4e826f98c1e444828133dc627bb"
+    },
+    {
+      "repo": "3ds_pokedex",
+      "public_owner": "lafiabrew",
+      "source_sha": "694a58e1b0e0ec7368800eaa4f949f93ea3353ba",
+      "source_url": "https://github.com/lafiabrew/3ds_pokedex/tree/694a58e1b0e0ec7368800eaa4f949f93ea3353ba",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_pokedex/694a58e1b0e0ec7368800eaa4f949f93ea3353ba/Makefile",
+      "makefile_git_blob": "3abeebdf2eee075b55d0056fb9c477e26053098d",
+      "makefile_sha256": "bd6ae2ec6a668a370b1a0c587f67d541c925d4bf7ff4f6a7804aceb4df25efba"
+    },
+    {
+      "repo": "3ds_rhythm",
+      "public_owner": "lafiabrew",
+      "source_sha": "0e84d6a3db44e87c7e05aebd5a3392d0d927dc27",
+      "source_url": "https://github.com/lafiabrew/3ds_rhythm/tree/0e84d6a3db44e87c7e05aebd5a3392d0d927dc27",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_rhythm/0e84d6a3db44e87c7e05aebd5a3392d0d927dc27/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_rngtool",
+      "public_owner": "lafiabrew",
+      "source_sha": "7e52b5c072e29f9ce0852dd6be9f209be472a446",
+      "source_url": "https://github.com/lafiabrew/3ds_rngtool/tree/7e52b5c072e29f9ce0852dd6be9f209be472a446",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_rngtool/7e52b5c072e29f9ce0852dd6be9f209be472a446/Makefile",
+      "makefile_git_blob": "df0eb4cbb4546a67e12b2e17c75314dc3a989daf",
+      "makefile_sha256": "465dc1a35f31a933735b65073d60184450d47e0521bb68274d3e45d1108038e8"
+    },
+    {
+      "repo": "3ds_roulette",
+      "public_owner": "lafiabrew",
+      "source_sha": "d21061daf182709a29dac088c5608e3649378763",
+      "source_url": "https://github.com/lafiabrew/3ds_roulette/tree/d21061daf182709a29dac088c5608e3649378763",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_roulette/d21061daf182709a29dac088c5608e3649378763/Makefile",
+      "makefile_git_blob": "c9a9ef5b72a509a02b14f58f418cfe5944365b9c",
+      "makefile_sha256": "beafa6235606a118980b51fdf09e7e87484b9d2e67167eb702285f765744f124"
+    },
+    {
+      "repo": "3ds_sandlab",
+      "public_owner": "lafiabrew",
+      "source_sha": "a47b389ba9c9f3cb770af526b2b4d29005f4cc68",
+      "source_url": "https://github.com/lafiabrew/3ds_sandlab/tree/a47b389ba9c9f3cb770af526b2b4d29005f4cc68",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_sandlab/a47b389ba9c9f3cb770af526b2b4d29005f4cc68/Makefile",
+      "makefile_git_blob": "3b420272d92ddf9c09a193e1b19aa50c89cdff36",
+      "makefile_sha256": "4daa712897afa60fc1be0a5dc4b57c214f7576d3a8e2c92bea82c5db7b1a6ff2"
+    },
+    {
+      "repo": "3ds_sokoban",
+      "public_owner": "lafiabrew",
+      "source_sha": "337f5e82c742ded7e99afe1529d642586077cd6e",
+      "source_url": "https://github.com/lafiabrew/3ds_sokoban/tree/337f5e82c742ded7e99afe1529d642586077cd6e",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_sokoban/337f5e82c742ded7e99afe1529d642586077cd6e/Makefile",
+      "makefile_git_blob": "9baefbaf984f9b81f72f14d5df1f96058cf2218a",
+      "makefile_sha256": "a862370f20dbf33e6831544733646218cd9d8f65986cf659e431c6d49f4384d3"
+    },
+    {
+      "repo": "3ds_solitaire",
+      "public_owner": "lafiabrew",
+      "source_sha": "cafe66ebfcb3a29f11dd339ee76a399b9ae79c1d",
+      "source_url": "https://github.com/lafiabrew/3ds_solitaire/tree/cafe66ebfcb3a29f11dd339ee76a399b9ae79c1d",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_solitaire/cafe66ebfcb3a29f11dd339ee76a399b9ae79c1d/Makefile",
+      "makefile_git_blob": "7021329c44bdc1911c14054254da0af214d74aaa",
+      "makefile_sha256": "4d04c708e92a6fdf58e2fe01ba28d91573072ba98bf682a5351abb8ccc5cddaf"
+    },
+    {
+      "repo": "3ds_supaplex",
+      "public_owner": "lafiabrew",
+      "source_sha": "9545cc12c4ac33020e55e2490dc8fdb2129fdd0d",
+      "source_url": "https://github.com/lafiabrew/3ds_supaplex/tree/9545cc12c4ac33020e55e2490dc8fdb2129fdd0d",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_supaplex/9545cc12c4ac33020e55e2490dc8fdb2129fdd0d/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_sysdash",
+      "public_owner": "lafiabrew",
+      "source_sha": "4c2714eb4175a84a7b030bedeecb86e4f41213df",
+      "source_url": "https://github.com/lafiabrew/3ds_sysdash/tree/4c2714eb4175a84a7b030bedeecb86e4f41213df",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_sysdash/4c2714eb4175a84a7b030bedeecb86e4f41213df/Makefile",
+      "makefile_git_blob": "f483c5aa21c627dd5fafd33e82914ee269b97c56",
+      "makefile_sha256": "e0a79adf3b5be69710688cb28177763ada46c4f8127704d8309c6334d1b5bf37"
+    },
+    {
+      "repo": "3ds_tuxpuck",
+      "public_owner": "lafiabrew",
+      "source_sha": "f190e281c3d15620c4f2c6a8922ec7539e74606f",
+      "source_url": "https://github.com/lafiabrew/3ds_tuxpuck/tree/f190e281c3d15620c4f2c6a8922ec7539e74606f",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_tuxpuck/f190e281c3d15620c4f2c6a8922ec7539e74606f/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_voxeltoy",
+      "public_owner": "lafiabrew",
+      "source_sha": "248d005b417df206b640a75c4923dda722406896",
+      "source_url": "https://github.com/lafiabrew/3ds_voxeltoy/tree/248d005b417df206b640a75c4923dda722406896",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_voxeltoy/248d005b417df206b640a75c4923dda722406896/Makefile",
+      "makefile_git_blob": "83b8a522ccc46b63851ebdabf659e7d18364ec94",
+      "makefile_sha256": "96c77d9de5844f2548269f39371ddafd429baee5c1608b84532acdc145ed944c"
+    },
+    {
+      "repo": "3ds_wigle",
+      "public_owner": "lafiabrew",
+      "source_sha": "0e5e3435f612fb049d03a8d946c606616aa66352",
+      "source_url": "https://github.com/lafiabrew/3ds_wigle/tree/0e5e3435f612fb049d03a8d946c606616aa66352",
+      "makefile_url": "https://raw.githubusercontent.com/lafiabrew/3ds_wigle/0e5e3435f612fb049d03a8d946c606616aa66352/Makefile",
+      "makefile_git_blob": "4b7f338ad472d9bd15ed56a6d557061ba4449b49",
+      "makefile_sha256": "b7647a7960a018f9dbdd925ecb42676e35de6f87680f36b5e7a52ca424a3feec"
+    }
+  ]
+}

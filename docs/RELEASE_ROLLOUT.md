@@ -27,8 +27,10 @@ python3 tools/rollout_release.py plan \
   --output "$PAGES_RUN/runtime/rollout-plan.json"
 ```
 
+All example output names must be unused; select a new attempt-specific name and
+use that same plan path in later commands. Reusing an example name fails closed.
 Plan performs no network writes (indeed no network calls). It reads three explicit
-inputs and writes only the requested private plan, including full rendered
+inputs and exclusively creates the requested NEW private plan, including full rendered
 contents, paths, byte counts, SHA256, source pins, status, blockers and commands.
 Review/hash this artifact before use; it contains private input locations and is
 not a public release asset. Repository sets must match and be nonempty; all pins
@@ -83,8 +85,11 @@ python3 tools/rollout_release.py apply \
   --dry-run --output "$PAGES_RUN/runtime/rollout-preflight-padtest.json"
 ```
 
-Remove `--dry-run` only for authorized **local preparation**. Receipts must be
-outside `REPOS_ROOT`. Optional `--expected-heads` is an additional assertion,
+Remove `--dry-run` only for authorized **local preparation**, choosing a NEW
+receipt name for that attempt. Plans/receipts are immutable: existing regular
+files (even identical), symlinks/dangling links and symlink ancestors are refused
+before API apply preflight or repository output writes. All output paths must be
+outside this tool's guarded source; receipts must also be outside `REPOS_ROOT`. Optional `--expected-heads` is an additional assertion,
 never a way to override plan source pins. Only main is admitted by apply.
 
 Before the first file/receipt write, **two complete global preflights** check all
@@ -96,8 +101,18 @@ SHA aborts without output/index/source/remote mutation. Conflict in repo 2/path 
 cannot leave repo 1/path 1 behind. Dry-run also rejects symlinks.
 
 Both passes query current organization rollout PRs via supported read-only
-`gh api --paginate --slurp` endpoints: organization repositories then each
-`3ds_*` repo's open pulls. No optional JSON counter, default-zero fallback or
+`gh api --paginate --slurp` endpoints: organization repositories with `type=all`,
+then every organization repository's open pulls, including private, archived, hub and
+non-`3ds_*` repositories (counting scope only).
+These are counting-only reads, not extra caller admission, PR creation or app
+source scope; selected callers remain only the admitted public repositories.
+GitHub may silently hide inaccessible private repos. Therefore both passes also
+require owner-visible `orgs/lafiabrew.total_private_repos` and reconcile that total
+against the complete private inventory. Missing total, incomplete visibility or
+failed private pulls block with a precise global-cap-unproven/probe error; a
+public-only token cannot establish a global cap. Some non-owner tokens with
+repository read access still lack this total and intentionally fail closed. No
+private names/payloads go into receipts or public docs. No optional JSON counter, default-zero fallback or
 token output. Canonical rollout heads use reserved prefix
 `rollout/homebrew-release`; coordinator must use that namespace for every rollout
 PR. Current count **plus the entire pending batch** must be <=5 (`--max-open-prs`
@@ -108,10 +123,14 @@ Incomplete/API/auth/rate/transport failures block rather than assume zero.
 
 Preflight rejection is nonmutating. This is **not** an all-or-nothing I/O
 transaction: disk-full, process termination or post-preflight filesystem changes
-may leave newly created files/directories. Creation is exclusive/no-clobber and
-walks ancestor descriptors with `O_NOFOLLOW`; no force/reset/stash/delete or
-rollback is attempted. Inspect and preserve partial work, resolve the cause and
-retry identical outputs. A remote can change after the last read; local preparation
+may leave newly created files/directories. Creation is exclusive/no-clobber (`O_CREAT|O_EXCL|O_NOFOLLOW`) and
+walks ancestor directory descriptors with `O_NOFOLLOW`. After both preflights,
+the NEW receipt name is atomically reserved **before** any repository file is
+created, so a late competing output cannot cause repository writes. Reservation
+is not atomic content completion: interrupted/failed local I/O can leave an empty
+or partial receipt and partial repository files. Preserve prior bytes and inspect
+those new files; no force/reset/stash/delete or rollback is attempted. Inspect and preserve partial work, resolve the cause and
+retry identical repository outputs with a NEW receipt name. A remote can change after the last read; local preparation
 never claims a remote lock. Coordinator must serialize batches globally and rerun
 checks at actual remote boundaries, below. External concurrent PR creation cannot
 be atomically locked by a read-only API probe; do not run multiple publishers.
@@ -193,8 +212,28 @@ Canonical hub: https://lafiabrew.github.io/3ds_hub/ .
 python3 -m unittest discover -s tests -p test_release_rollout.py -v
 ```
 
-Fixtures live on project volume under `tests/rolloutfixtures/_work/`. The explicit
-offline process seam replaces only GH transport and redirects `ls-remote` to real
+All 34 original tests remain; additional output/visibility race controls are
+required too. `test_plan_works_on_real_28_repo_inputs` ALWAYS reads the committed
+`tests/rolloutfixtures/public28/` snapshot, independent of `PAGES_RUN`. Its public
+pins/version states were observed on 2026-11-03, with per-file hashes, public
+source URLs and Makefile blob/SHA256 provenance; see the fixture README. It is not
+a fabricated repository set, a live audit, or current-source coordinator approval.
+The separate explicit live-runtime 28-repo plan above remains a coordinator gate,
+bound to matching source SHAs and a reviewed public kit before apply.
+
+Test clones/remotes use `tempfile` under caller-provided `TMPDIR` (project volume
+for coordinator evidence), or the standard temporary directory in public CI.
+Checked teardown removes only each test's created directory after verifying its
+identity; no source scratch writes or unknown-path cleanup. The historical empty
+`tests/rolloutfixtures/_work/` may remain untouched. Tests compare full Git source
+status and tracked/untracked content before/after. To suppress Python cache writes
+when proving a pristine source tree:
+
+```sh
+env -u PAGES_RUN PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests -p test_release_rollout.py -v
+```
+
+The explicit offline process seam replaces only GH transport and redirects `ls-remote` to real
 bare repos; all source/index/origin/branch operations use actual Git. No production
 fixture flags or JSON PR-count bypass exist. Tests retain earlier scenarios and
 add tampered-plan/hash/policy/pin/extra-output, full input admission, correct apply
@@ -204,3 +243,20 @@ and prepared-commit boundary controls. Process logs can be captured with
 `ROLLOUT_PROCESS_LOG` (private evidence only). Actionlint must run on actual
 rendered callers, not the unexpanded template. Passing local tests is not
 independent approval, remote installation or a real workflow/device run.
+
+### Existing server self-test prerequisite (not a source repair)
+
+The historical no-argument `python3 serve_3ds.py --self-test` failure in a clean
+public clone is retained in earlier evidence: that clone has no SDK-built CIA.
+Independent integration RUGGED accepted pointing the **unchanged** server at the
+actual previously built public PadTest checkout as legitimate prerequisite
+recovery, not a weakened test:
+
+```sh
+python3 serve_3ds.py --root "$PAGES_RUN/runtime/sdk-padtest" --self-test
+```
+
+Require its original exit zero; do not fabricate artifacts or repair app source.
+This local SDK/host check establishes neither a deployed workflow nor physical FBI
+installation. Publication, per-app exact-source qualification, live refresh and
+device gates remain distinct and pending until separately evidenced.
