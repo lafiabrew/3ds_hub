@@ -1,0 +1,21 @@
+{
+  "approval_id": "",
+  "approval_ref": "",
+  "assets": [
+    {
+      "name": "3ds_padtest.cia",
+      "native_identity": {
+        "product_code": "CTR-P-PADT",
+        "title_id": "0004000000d3e703"
+      },
+      "sha256": "14d22462ef1b507ac8d9094e0bab64cccb65fd5a09b9bdb59e34afeea918f9da",
+      "size": 18688
+    }
+  ],
+  "kit_sha": "ec8ac27e0991188b35c6dd72cc5dacb9b208f3dc",
+  "policy_sha256": "4ea43159473321bc14f5db69c934404e26098d82cd16291ce3855ea4439d96e8",
+  "repo": "lafiabrew/3ds_padtest",
+  "schema": 1,
+  "source_sha": "1234567890abcdef1234567890abcdef12345678",
+  "tag": "v1.0.1"
+}
