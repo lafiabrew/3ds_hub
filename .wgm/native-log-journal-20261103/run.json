@@ -1,0 +1,20 @@
+{
+  "run_id": "native-log-journal-20261103",
+  "start_utc": "2026-11-03T05:38:39Z",
+  "observed_epoch": 1793684983.1769862,
+  "observed_monotonic": 186961.22516806,
+  "original_fleet_start_utc": "2026-11-02T21:27:01Z",
+  "approval": "user yes to native diagnostic-log journaling only; save-file guarantees unchanged",
+  "historical_temp_evidence": "previous temp workspaces absent; historical raw timing/source evidence not reconstructed",
+  "source_base": "90c8b113c77dfa9240c0a1ccb9bce15e32f0724b",
+  "durable_workspace": ".wgm/native-log-journal-20261103/workspaces/linklab-parent",
+  "evidence_checkpoint": ".wgm/native-log-journal-20261103/evidence",
+  "runtime_spool": "external persistent state; copied back after completed phases",
+  "parent_sha": "d8b4d0ac327bb462cf4283e52cff8fd18e34534e",
+  "base_gate": "exit 0; existing eight contracts plus actual ARM artifact gate",
+  "toolchain_image_id": "74542c3d894b2a06a3148a635fb771f7156ffeb52aae67c9037b3f6351b03938",
+  "historical_old_tmp_worker_state": "absent, not claimed running",
+  "plan_verdict": "RUGGED",
+  "baseline_docs": "AMBER/no RED; load-bearing specification clarifications applied",
+  "readiness_score": 94
+}

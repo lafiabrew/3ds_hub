@@ -1,0 +1,15 @@
+name: native-log-interruption-to-drop
+description: An operator recovers interrupted diagnostics without losing the prior committed records or being told an incomplete transaction succeeded.
+tier: 1
+setup:
+  - Use the immutable LinkLab journal candidate and its production host-native model; label it as a model, not an actual 3DS run.
+  - Retain known committed generation A and older previous P; create a new append or rotation through real production code.
+steps:
+  - action: Interrupt export after the old active name has moved but before the new active is published, then restart and recover twice.
+    expect: Old committed bytes remain recoverable; recovery terminates and yields a valid stable generation without duplicate namespace changes or false success.
+  - action: Repeat with a corrupt checked intent, unexpected target, failed archive close and a legacy orphan staged log.
+    expect: Visible pending/error status, retained data and owned resource, no destructive retry, no replacement handle accumulation and no silent trimming.
+  - action: Trigger a recovered export through the actual app integration, then query the real Drop host API for its active log.
+    expect: The existing API discovers it and returns byte-identical complete JSONL; sidecars are not advertised as committed logs; the daemon is boundedly reaped.
+  - action: Inspect current native build and user-facing status/docs.
+    expect: Real SDK calls compile and pending/recovered states are wired; savedata guarantees are unchanged, and no host-model or build result is mislabeled as physical power-loss verification.
