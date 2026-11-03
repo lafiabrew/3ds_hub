@@ -214,6 +214,14 @@ class Test3DSHomebrewSuite(unittest.TestCase):
             "3ds_rngtool",
             "3ds_netpass",
             "3ds_padtest",
+            "3ds_picross",
+            "3ds_sandlab",
+            "3ds_chip8",
+            "3ds_solitaire",
+            "3ds_pokedex",
+            "3ds_sokoban",
+            "3ds_roulette",
+            "3ds_mahjong",
         )
         for doc_rel in ("ARCHITECTURE.md", "SOP.md", "CHEATSHEET.md", "TROUBLESHOOTING.md", "AGENT_PLAYBOOK.md"):
             doc_path = os.path.join(WORKSPACE_ROOT, "docs", doc_rel)
@@ -268,9 +276,9 @@ class Test3DSHomebrewSuite(unittest.TestCase):
                     f"CBMD cwav_offset ({hex(cwav_off)}) in {proj} must be 32-byte (0x20) aligned!",
                 )
                 bnr_cgfx_hashes.add(bnr_bytes[0x88:cwav_off])
-        self.assertEqual(len(icon_hashes), 8, "Each 3DS project must have a unique meta/icon.png")
-        self.assertEqual(len(smdh_icon_hashes), 8, "Each 3DS project must have a unique SMDH 48x48 icon")
-        self.assertEqual(len(bnr_cgfx_hashes), 8, "Each 3DS project must have a unique CBMD 3D top-screen banner texture")
+        self.assertEqual(len(icon_hashes), 16, "Each 3DS project must have a unique meta/icon.png")
+        self.assertEqual(len(smdh_icon_hashes), 16, "Each 3DS project must have a unique SMDH 48x48 icon")
+        self.assertEqual(len(bnr_cgfx_hashes), 16, "Each 3DS project must have a unique CBMD 3D top-screen banner texture")
 
     def test_05_wigle_sync_pass_and_fail_and_unified_logs(self) -> None:
         """Proves wigle_sync.py pass-the-pass upload/rank sync, fail-the-fail CSV/auth rejection, and unified 3ds/logs/*.log."""

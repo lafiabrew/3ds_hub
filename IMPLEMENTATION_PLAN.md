@@ -117,3 +117,24 @@ Build a complete Nintendo 3DS CFW & Pokémon ROM-Hack Homebrew Suite in this wor
 - **Files/areas:** `docs/ARCHITECTURE.md`, `docs/SOP.md`, `AGENTS.md`, `README.md`, `pc_companion/tests/test_suite.py`
 - **Validation command:** `make all && python3 serve_3ds.py --self-test`
 - **Evidence:** Exited 0 (`docs/ARCHITECTURE.md` and `docs/SOP.md` created and verified; all 8 3DS apps and `3ds_hub` pushed to `github.com/lafiabrew`). Ruggedness verdict: **RUGGED**.
+
+### T15 — Wave-2A Ports: `3ds_picross` (`0x0D3E8`), `3ds_sandlab` (`0x0D3E9`), `3ds_chip8` (`0x0D3EA`), `3ds_solitaire` (`0x0D3EB`) (`wave2a-ports`)
+- **Status:** done
+- **Objective:** Implement, test (pass-the-pass + fail-the-fail under ASan/UBSan), optimize (`-Os -flto` + stripped ELF), and package `3ds_picross`, `3ds_sandlab`, `3ds_chip8`, and `3ds_solitaire` with unique icons, 32B-aligned CBMD banners, and `sdmc:/3ds/logs/<app>.log` telemetry.
+- **Files/areas:** `3ds_picross/`, `3ds_sandlab/`, `3ds_chip8/`, `3ds_solitaire/`
+- **Validation command:** `for p in 3ds_picross 3ds_sandlab 3ds_chip8 3ds_solitaire; do make -C $p test && make -C $p 3ds && make -C $p verify-3ds; done`
+- **Evidence:** Exited 0 (`test_picross`, `test_sandlab`, `test_chip8`, `test_solitaire` + ARM11 `< 450 KB` stripped ELF / `.smdh` / `.3dsx` / `.cia` verifiers all passed). Ruggedness verdict: **RUGGED**.
+
+### T16 — Wave-2B Ports: `3ds_pokedex` (`0x0D3EC`), `3ds_sokoban` (`0x0D3ED`), `3ds_roulette` (`0x0D3EE`), `3ds_mahjong` (`0x0D3EF`) (`wave2b-ports`)
+- **Status:** done
+- **Objective:** Implement, test (pass-the-pass + fail-the-fail under ASan/UBSan), optimize (`-Os -flto` + stripped ELF), and package `3ds_pokedex`, `3ds_sokoban`, `3ds_roulette`, and `3ds_mahjong` with unique icons, 32B-aligned CBMD banners, and `sdmc:/3ds/logs/<app>.log` telemetry.
+- **Files/areas:** `3ds_pokedex/`, `3ds_sokoban/`, `3ds_roulette/`, `3ds_mahjong/`
+- **Validation command:** `for p in 3ds_pokedex 3ds_sokoban 3ds_roulette 3ds_mahjong; do make -C $p test && make -C $p 3ds && make -C $p verify-3ds; done`
+- **Evidence:** Exited 0 (`test_pokedex`, `test_sokoban`, `test_roulette`, `test_mahjong` + ARM11 `< 450 KB` stripped ELF / `.smdh` / `.3dsx` / `.cia` verifiers all passed). Ruggedness verdict: **RUGGED**.
+
+### T17 — Full 16-App Workspace Integration, Screenshots, Docs & `lafiabrew` Org Sync (`wave2-sync`)
+- **Status:** done
+- **Objective:** Generate dual-screen `docs/screenshot.png`, `docs/icon.png`, `docs/banner.png`, and Mermaid `README.md` files for all 8 new apps, update root `Makefile`, `README.md`, `AGENTS.md`, `docs/CHEATSHEET.md`, and `pc_companion/tests/test_suite.py` to verify all 16 apps (`0x0D3E0`..`0x0D3EF`), and create/push all 8 new GitHub repositories + `v1.0.0` releases under `https://github.com/orgs/lafiabrew/repositories`.
+- **Files/areas:** `Makefile`, `README.md`, `AGENTS.md`, `docs/`, `pc_companion/render_screenshots.py`, `pc_companion/tests/test_suite.py`, `3ds_*/README.md`
+- **Validation command:** `make test && make verify-3ds && python3 serve_3ds.py --self-test`
+- **Evidence:** Exited 0 (All 16 3DS apps verified and pushed to `github.com/lafiabrew`). Ruggedness verdict: **RUGGED**.

@@ -1,6 +1,6 @@
 # Root Makefile for 3DS CFW & ROM-Hack Homebrew Suite
 
-PROJECTS := 3ds_pokedash 3ds_sysdash 3ds_drop 3ds_wigle 3ds_rngtool 3ds_netpass 3ds_padtest 3ds_pieceduel
+PROJECTS := 3ds_pokedash 3ds_sysdash 3ds_drop 3ds_wigle 3ds_rngtool 3ds_netpass 3ds_padtest 3ds_picross 3ds_sandlab 3ds_chip8 3ds_solitaire 3ds_pokedex 3ds_sokoban 3ds_roulette 3ds_mahjong 3ds_pieceduel
 
 .PHONY: all test 3ds verify-3ds list serve scan-sd
 

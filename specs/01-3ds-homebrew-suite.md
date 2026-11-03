@@ -50,3 +50,13 @@ Running one command on the PC (`python3 pc_companion/sd_scanner.py --url http://
   - *When* `make 3ds` builds ARM11 artifacts across all 8 projects, *the build and asset pipeline shall* use `-Os -flto -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections`, strip DWARF debug sections (`arm-none-eabi-strip --strip-debug`) from `.elf`, and use 4-KB-window extended LZ11 (`0xFFFF + 0x111` match length) + 11,025 Hz BCWAV audio in `generate_bnr_shared.py` so every `.elf` shrinks by ~75% (`~1.5 MB` -> `~300 KB`) and every `.cia` shrinks by ~10–15% with faster FBI network install times.
 - **R16 (Architecture Diagrams, Ecosystem Map & Human SOP Documentation):**
   - *When* an operator or future coding agent inspects the workspace or any `lafiabrew` repository, *the documentation shall* provide Mermaid architecture/data-flow/memory-safety diagrams (`docs/ARCHITECTURE.md` and `AGENTS.md`) plus a human-friendly step-by-step Standard Operating Procedure (`docs/SOP.md` and `README.md`) covering installation, SD scanning, PKHaX ROM-hack editing, LayeredFS toggling, black-box cleanup, and WiGLE leaderboard syncing.
+- **R17 (Wave-2 3DS Game & Companion Ports — `0x0D3E8`..`0x0D3EF`):**
+  - *When* `make all` runs across the expanded 16-app suite, *the system shall* build, test (pass-the-pass + fail-the-fail under ASan/UBSan), strip (`< 450 KB` `.elf`), verify (`.smdh` `0x36C0`, `.3dsx`, `.cia` `0x2020`, `CBMD` `0x20` alignment), render dual-screen `docs/screenshot.png` previews, and sync to `lafiabrew` for all 8 new apps:
+    1. `3ds_picross` (`CTR-P-PICR`, `0x0D3E8`): Nonogram/Picross stylus logic puzzle with row/column RLE clue solver.
+    2. `3ds_sandlab` (`CTR-P-SAND`, `0x0D3E9`): Falling-sand cellular automata physics sandbox (Sand, Water, Fire, Plant, Oil, Gunpowder, Acid, Wall).
+    3. `3ds_chip8` (`CTR-P-CHP8`, `0x0D3EA`): 35-opcode CHIP-8 VM, disassembler, live register debugger & 16-key touch hex keypad.
+    4. `3ds_solitaire` (`CTR-P-SOLI`, `0x0D3EB`): Klondike & FreeCell card suite with foundation auto-mover and legal move validator.
+    5. `3ds_pokedex` (`CTR-P-PKDX`, `0x0D3EC`): Gen 1–7 Pokédex base-stat, type-weakness, ability & evolution encyclopedia.
+    6. `3ds_sokoban` (`CTR-P-SOKO`, `0x0D3ED`): Classic warehouse box-pushing puzzle with undo stack & move-par tracker.
+    7. `3ds_roulette` (`CTR-P-ROUL`, `0x0D3EE`): European 37-pocket (`0..36`) Roulette wheel physics simulator, inside/outside betting board (`35:1` straight, `17:1` split, `8:1` corner, `2:1` dozen, `1:1` red/black/even/odd) & bankroll history.
+    8. `3ds_mahjong` (`CTR-P-MAHJ`, `0x0D3EF`): 3D multi-layer Mahjong Solitaire (Bamboo/Character/Dot/Wind/Dragon tiles) with free-tile rule engine, hint finder & shuffle.

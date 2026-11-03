@@ -95,6 +95,14 @@ def generate_all_screenshots() -> List[str]:
         ("3ds_netpass", ["build/host/3ds_netpass_host", "--sd-root", "build/test_sd", "--once"]),
         ("3ds_padtest", ["build/host/3ds_padtest_host", "--sd-root", "build/test_sd", "--once"]),
         ("3ds_pieceduel", ["build/host/3ds_pieceduel_host", "--once"]),
+        ("3ds_picross", ["build/host/3ds_picross_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_sandlab", ["build/host/3ds_sandlab_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_chip8", ["build/host/3ds_chip8_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_solitaire", ["build/host/3ds_solitaire_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_pokedex", ["build/host/3ds_pokedex_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_sokoban", ["build/host/3ds_sokoban_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_roulette", ["build/host/3ds_roulette_host", "--sd-root", "build/test_sd", "--once"]),
+        ("3ds_mahjong", ["build/host/3ds_mahjong_host", "--sd-root", "build/test_sd", "--once"]),
     ]
 
     generated: List[str] = []
