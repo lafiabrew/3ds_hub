@@ -1,0 +1,46 @@
+{
+  "commands": [
+    "python3 kit.py bundle --repo lafiabrew/3ds_padtest --tag v1.0.1 --source-sha <source_sha> --config policy.json --artifacts app/build/3ds --output bundle --started-ns <now-1s> --kit-ref <kit_ref>",
+    "python3 kit.py validate --repo lafiabrew/3ds_padtest --tag v1.0.1 --source-sha <source_sha> --config policy.json --bundle bundle  (exit 0, stdout == release.json bytes)"
+  ],
+  "creator": {
+    "cia_py_git_blob": "4579b459db4c8940828894488a2aaa81616151ee",
+    "cia_py_sha256": "071d813cb2471b6d267f77b76ddcfa409de76f44bbaccbab950089dbf35b78bc",
+    "kit_commit": "ec8ac27e0991188b35c6dd72cc5dacb9b208f3dc",
+    "kit_py_git_blob": "8399d6b124d55e7bbaec7167d10936f4fe8ab766",
+    "kit_py_sha256": "f8df9b2ddbf8d512f6efcfdfe92815604e12b12575c1a3f06e1ea46a8acf4454",
+    "kit_ref_ref": "refs/pages/candidates/release-kit-r2",
+    "note": "Same kit.py/cia.py blobs are present in integration commit 18e94dd8c5712edce939dc25e0ab34a5d5991db7 (read-only check).",
+    "synthetic_cia_generator": "tests/releasefixtures/cia.py cia() defaults (title 0004000000d3e703, CTR-P-PADT) at the same commit",
+    "tool": "tools/release_hub/kit.py bundle + validate (production CLI)"
+  },
+  "files": {
+    "SHA256SUMS": {
+      "sha256": "1c0e71623c4468ef4ebccdd96e9627b6af996386b64e56997d0189ff520b7b11",
+      "size": 82
+    },
+    "release.json": {
+      "sha256": "df5ac00edf56c32187571c4f5c44a502f66e424a3e07a08dfee2794835544fd6",
+      "size": 600
+    }
+  },
+  "generator_script": "PAGES_RUN/runtime/catalogue-author-r2/make_p2_fixture.sh (log: make_p2_fixture.log)",
+  "inputs": {
+    "approval_id": "",
+    "approval_ref": "",
+    "kit_ref": "ec8ac27e0991188b35c6dd72cc5dacb9b208f3dc",
+    "policy_json_bytes": "{\n  \"artifact_dir\": \"build/3ds\",\n  \"channel\": \"stable\",\n  \"cia_asset\": \"3ds_padtest.cia\",\n  \"extra_engine_check\": false,\n  \"host_commands\": [\n    [\n      \"make\",\n      \"test\"\n    ]\n  ],\n  \"native_commands\": [\n    [\n      \"make\",\n      \"3ds-native\"\n    ],\n    [\n      \"make\",\n      \"verify-3ds\"\n    ]\n  ],\n  \"native_target\": \"3ds-native\",\n  \"publish_enabled\": false,\n  \"reason\": \"Synthetic catalogue contract fixture; not an approved release\",\n  \"repo\": \"3ds_padtest\",\n  \"schema\": 1\n}\n",
+    "policy_sha256": "4ea43159473321bc14f5db69c934404e26098d82cd16291ce3855ea4439d96e8",
+    "repo": "lafiabrew/3ds_padtest",
+    "source_sha": "1234567890abcdef1234567890abcdef12345678",
+    "source_sha_is_synthetic": true,
+    "tag": "v1.0.1"
+  },
+  "synthetic_cia": {
+    "name": "3ds_padtest.cia",
+    "sha256": "14d22462ef1b507ac8d9094e0bab64cccb65fd5a09b9bdb59e34afeea918f9da",
+    "size": 18688,
+    "stored": false
+  },
+  "what": "Synthetic new-contract (P2) release manifests for 3ds_padtest v1.0.1. SYNTHETIC ORIGIN: no native build, no real app source, no published release. The CIA bytes are NOT stored here or anywhere in tests/Pages; only their size and SHA-256 are recorded so the fake GitHub API can describe the asset."
+}

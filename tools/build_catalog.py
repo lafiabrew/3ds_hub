@@ -19,7 +19,9 @@ What it does, at build time only (visitors never call the GitHub API):
   source-only card with a stated reason.
 * Legacy releases without ``SHA256SUMS``/``release.json`` are labelled Published,
   with the missing manifest disclosed. New-contract releases have both manifests
-  downloaded (size-bounded) and cross-checked; contradictions demote the card.
+  downloaded (size-bounded) and cross-checked (``repo`` must be the full
+  ``<org>/<repo>``, plus tag, full source SHA, size and SHA-256); contradictions
+  demote the card.
 
 API access is bounded (10 s timeout, at most two retries, at most ten pages and
 1000 repositories per listing, a total request budget). Any timeout, rate limit,
@@ -445,8 +447,11 @@ def evaluate_integrity(org, repo, tag, assets, cia_size, api_sha, client) -> Tup
     if not isinstance(manifest, dict) or manifest.get("schema") != 1:
         problems.append("release.json schema is not 1")
         manifest = manifest if isinstance(manifest, dict) else {}
-    if manifest.get("repo") != repo:
-        problems.append("release.json repo mismatch")
+    # The P2 release kit writes the FULL repository ("lafiabrew/3ds_padtest") into
+    # release.json; only its schema-1 *policy* file uses the bare slug. Require the
+    # exact full owner/repo: bare slugs, foreign owners and other repos are rejected.
+    if manifest.get("repo") != f"{org}/{repo}":
+        problems.append(f"release.json repo is not exactly {org}/{repo}")
     if manifest.get("tag") != tag:
         problems.append("release.json tag mismatch")
     source_sha = manifest.get("source_sha")

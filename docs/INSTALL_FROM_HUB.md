@@ -110,7 +110,11 @@ flowchart LR
    Foreign hosts, `http:`, `javascript:`, `/latest/`, release pages and path tricks
    are rejected.
 5. If `SHA256SUMS` or `release.json` exists, both must exist and agree with each other,
-   the uploaded size and GitHub's digest.
+   the uploaded size and GitHub's digest. `release.json` must name the release tag, a
+   full 40-hex `source_sha` and the full repository `lafiabrew/<repo>` exactly as the
+   release kit writes it (a bare `<repo>`, another owner or another repository is a
+   mismatch). The `source_sha` is shown as declared by the manifest; the catalogue does
+   not re-resolve the tag to a commit.
 
 Otherwise the card is **Source only** and states why. All repository/release text is
 plain text, HTML-escaped and length-limited.
