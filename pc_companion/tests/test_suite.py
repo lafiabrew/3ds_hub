@@ -84,7 +84,32 @@ class Test3DSHomebrewSuite(unittest.TestCase):
             self.assertEqual(slot2["level"], 100)
             self.assertEqual(slot2["ability"], 302)  # Custom ROM-hack ability untouched
 
-            # Verify custom ROM-hack header bytes (0x0000..0x0FFF) were untouched
+            # Verify live PKHaX Web UI server (--serve) endpoints (/ and /api/save and /api/edit)
+            from http.server import ThreadingHTTPServer
+            import threading
+
+            srv = ThreadingHTTPServer(("127.0.0.1", 0), pkhex_web.make_pkhex_web_handler(work_save))
+            port = srv.server_address[1]
+            t = threading.Thread(target=srv.serve_forever, daemon=True)
+            t.start()
+            try:
+                with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=2.0) as resp:
+                    html_body = resp.read().decode("utf-8")
+                    self.assertIn("PokeDash PKHaX", html_body)
+                edit_req = urllib.request.Request(
+                    f"http://127.0.0.1:{port}/api/edit",
+                    data=json.dumps({"slot": 0, "max_ivs": True, "level": 99}).encode("utf-8"),
+                    method="POST",
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(edit_req, timeout=2.0) as resp:
+                    edited = json.loads(resp.read().decode("utf-8"))
+                    self.assertTrue(edited["checksum_valid"])
+                    self.assertEqual(edited["party"][0]["level"], 99)
+                    self.assertEqual(edited["party"][0]["ivs"], [31, 31, 31, 31, 31, 31])
+            finally:
+                srv.shutdown()
+                srv.server_close()
             with open(work_save, "rb") as fp:
                 hdr = fp.read(0x1000)
             for i, b in enumerate(hdr):
@@ -202,8 +227,10 @@ class Test3DSHomebrewSuite(unittest.TestCase):
             self.assertIn("```mermaid", rtxt, f"Expected Mermaid diagram in {proj}/README.md")
             self.assertIn("docs/icon.png", rtxt, f"Expected docs/icon.png preview in {proj}/README.md")
             self.assertIn("docs/banner.png", rtxt, f"Expected docs/banner.png preview in {proj}/README.md")
+            self.assertIn("docs/screenshot.png", rtxt, f"Expected docs/screenshot.png preview in {proj}/README.md")
             self.assertTrue(os.path.isfile(os.path.join(WORKSPACE_ROOT, proj, "docs", "icon.png")))
             self.assertTrue(os.path.isfile(os.path.join(WORKSPACE_ROOT, proj, "docs", "banner.png")))
+            self.assertTrue(os.path.isfile(os.path.join(WORKSPACE_ROOT, proj, "docs", "screenshot.png")))
             icon_path = os.path.join(WORKSPACE_ROOT, proj, "meta", "icon.png")
             smdh_path = os.path.join(WORKSPACE_ROOT, proj, "build", "3ds", f"{proj}.smdh")
             bnr_path = os.path.join(WORKSPACE_ROOT, proj, "meta", "banner.bnr")

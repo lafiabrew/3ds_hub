@@ -13,12 +13,14 @@ Compatible bit-for-bit with `3ds_pokedash` surgical PKHaX save blocks:
 
 from __future__ import annotations
 
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import argparse
 import json
 import os
 import shutil
 import struct
-from typing import Any, Dict, List, Optional
+import urllib.parse
+from typing import Any, Dict, List, Optional, Type
 
 PKHAX_BLOCK_OFFSET = 0x1400
 PKHAX_BLOCK_SIZE = 0x0200
@@ -247,6 +249,100 @@ def apply_surgical_edit_to_file(
     return parse_save_bytes(bytes(buf), path)
 
 
+def make_pkhex_web_handler(save_path: str) -> Type[BaseHTTPRequestHandler]:
+    class PKHaXWebHandler(BaseHTTPRequestHandler):
+        def log_message(self, format: str, *args: object) -> None:
+            pass
+
+        def _send_json(self, status: int, data: Dict[str, Any]) -> None:
+            raw = json.dumps(data, indent=2).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+
+        def do_GET(self) -> None:
+            if self.path.startswith("/api/save"):
+                try:
+                    with open(save_path, "rb") as fp:
+                        summary = parse_save_bytes(fp.read(), save_path)
+                    self._send_json(200, summary)
+                except Exception as exc:
+                    self._send_json(400, {"error": str(exc)})
+                return
+
+            html_doc = """<!doctype html><html><head><meta charset="utf-8"/>
+<title>PokeDash PKHaX Web Editor (lafiabrew)</title>
+<style>
+body{background:#0e1526;color:#eef3fc;font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:1.5rem}
+h1{color:#ffd666;margin:0 0 .3rem 0}.sub{color:#9ab0d4;margin:0 0 1rem 0;font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.card{background:#17233b;border:1px solid #2d4470;border-radius:12px;padding:1rem}
+button{background:#38c890;color:#08150f;border:none;padding:.45rem .75rem;border-radius:7px;font-weight:700;cursor:pointer;margin:.2rem .2rem 0 0}
+button.alt{background:#4a78c2;color:#fff}
+.shiny{color:#ffd666;font-weight:700}
+</style></head><body>
+<h1>PokeDash PKHaX — Browser Surgical Save Editor</h1>
+<p class="sub" id="hdr">Loading save...</p>
+<div style="margin-bottom:1rem">
+  <button class="alt" onclick="editSlot(0,{max_money:true})">Max Money ($9,999,999) + 999 Candies/Master Balls</button>
+</div>
+<div class="grid" id="party"></div>
+<script>
+async function loadSave(){
+  const s=await (await fetch('/api/save')).json();
+  document.getElementById('hdr').textContent=`Save: ${s.path} (Gen ${s.gen} ${s.is_romhack?'ROMHACK':'Vanilla'}) | OT: ${s.trainer_name} | $${s.money} | CRC: 0x${s.checksum.toString(16).toUpperCase()} (${s.checksum_valid?'VALID':'ERR'})`;
+  const box=document.getElementById('party');box.innerHTML='';
+  (s.party||[]).forEach(m=>{
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML=`<h3>[${m.slot+1}] ${m.nickname} (#${m.species}) Lv.${m.level} ${m.is_shiny?'<span class="shiny">*SHINY*</span>':''}</h3>
+    <p>Nature: <b>${m.nature_name}</b> | Ability ID: <code>${m.ability}</code></p>
+    <p>IVs: <code>${m.ivs.join('/')}</code> | EVs: <code>${m.evs.join('/')}</code></p>
+    <button onclick='editSlot(${m.slot},{max_ivs:true})'>6x31 IVs</button>
+    <button onclick='editSlot(${m.slot},{trick_room:true})'>0 Spe (Trick Room)</button>
+    <button onclick='editSlot(${m.slot},{shiny:${!m.is_shiny}})'>Toggle Shiny</button>
+    <button onclick='editSlot(${m.slot},{level:100})'>Lv.100</button>`;
+    box.appendChild(d);
+  });
+}
+async function editSlot(slot,opts){
+  await fetch('/api/edit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({slot},opts))});
+  loadSave();
+}
+loadSave();
+</script></body></html>""".encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html_doc)))
+            self.end_headers()
+            self.wfile.write(html_doc)
+
+        def do_POST(self) -> None:
+            if self.path.startswith("/api/edit"):
+                clen = int(self.headers.get("Content-Length", "0"))
+                req = json.loads(self.rfile.read(clen).decode("utf-8", errors="replace") or "{}")
+                try:
+                    updated = apply_surgical_edit_to_file(
+                        save_path,
+                        slot_idx=int(req.get("slot", 0)),
+                        max_ivs=bool(req.get("max_ivs", False)),
+                        trick_room=bool(req.get("trick_room", False)),
+                        shiny=req.get("shiny") if "shiny" in req else None,
+                        nature=req.get("nature"),
+                        level=req.get("level"),
+                        evs=req.get("evs"),
+                        money=9999999 if req.get("max_money") else req.get("money"),
+                    )
+                    self._send_json(200, updated)
+                except Exception as exc:
+                    self._send_json(400, {"error": str(exc)})
+                return
+            self._send_json(404, {"error": "not_found"})
+
+    return PKHaXWebHandler
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="PKHaX Save Inspector & Surgical Editor (CLI)")
     parser.add_argument("save_path", help="Path to Pokémon save file (main or .sav)")
@@ -257,8 +353,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--nature", type=int, help="Set nature ID (0..24)")
     parser.add_argument("--level", type=int, help="Set level (1..100)")
     parser.add_argument("--max-money", action="store_true", help="Max money ($9,999,999) + 999 Rare Candies & Master Balls")
+    parser.add_argument("--serve", action="store_true", help="Launch interactive browser PKHaX Web UI")
+    parser.add_argument("--port", type=int, default=8767, help="Port for --serve Web UI (default: 8767)")
     parser.add_argument("--json", action="store_true", help="Output JSON")
     args = parser.parse_args(argv)
+
+    if args.serve:
+        srv = ThreadingHTTPServer(("0.0.0.0", args.port), make_pkhex_web_handler(args.save_path))
+        print(f"PKHaX Web UI listening on http://127.0.0.1:{args.port}/ (editing {args.save_path})")
+        srv.serve_forever()
+        return 0
 
     did_edit = any(
         [
