@@ -4,6 +4,9 @@ System-scoped Nintendo 3DS CFW homebrew workspace in this repository (alongside 
 
 - **Architecture & Mermaid Ecosystem Diagrams:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Human Step-by-Step Quick-Start & SOPs:** [`docs/SOP.md`](docs/SOP.md)
+- **Pocket Field Cheat Sheet (Buttons, Boot Combos & Pokémon TitleIDs):** [`docs/CHEATSHEET.md`](docs/CHEATSHEET.md)
+- **Troubleshooting, Crash Dump & `.bak` Recovery Playbook:** [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md)
+- **Future Agent Playbook & Multi-Console Blueprint:** [`docs/AGENT_PLAYBOOK.md`](docs/AGENT_PLAYBOOK.md)
 - **Agent Operational Guide:** [`AGENTS.md`](AGENTS.md)
 
 ## System & Ecosystem Overview

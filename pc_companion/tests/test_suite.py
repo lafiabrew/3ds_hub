@@ -190,8 +190,20 @@ class Test3DSHomebrewSuite(unittest.TestCase):
             "3ds_netpass",
             "3ds_padtest",
         )
+        for doc_rel in ("ARCHITECTURE.md", "SOP.md", "CHEATSHEET.md", "TROUBLESHOOTING.md", "AGENT_PLAYBOOK.md"):
+            doc_path = os.path.join(WORKSPACE_ROOT, "docs", doc_rel)
+            self.assertTrue(os.path.isfile(doc_path), f"Missing root documentation file: {doc_path}")
+
         for proj in all_projects:
             self.assertIn(proj, out, f"Expected {proj} in serve_3ds.py --list output")
+            readme_path = os.path.join(WORKSPACE_ROOT, proj, "README.md")
+            with open(readme_path, "r", encoding="utf-8") as rfp:
+                rtxt = rfp.read()
+            self.assertIn("```mermaid", rtxt, f"Expected Mermaid diagram in {proj}/README.md")
+            self.assertIn("docs/icon.png", rtxt, f"Expected docs/icon.png preview in {proj}/README.md")
+            self.assertIn("docs/banner.png", rtxt, f"Expected docs/banner.png preview in {proj}/README.md")
+            self.assertTrue(os.path.isfile(os.path.join(WORKSPACE_ROOT, proj, "docs", "icon.png")))
+            self.assertTrue(os.path.isfile(os.path.join(WORKSPACE_ROOT, proj, "docs", "banner.png")))
             icon_path = os.path.join(WORKSPACE_ROOT, proj, "meta", "icon.png")
             smdh_path = os.path.join(WORKSPACE_ROOT, proj, "build", "3ds", f"{proj}.smdh")
             bnr_path = os.path.join(WORKSPACE_ROOT, proj, "meta", "banner.bnr")

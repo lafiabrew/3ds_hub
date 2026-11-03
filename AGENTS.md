@@ -3,6 +3,9 @@
 ## Architecture & Operational References
 - **System & Ecosystem Architecture (Mermaid Diagrams)**: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Human Quick-Start & Standard Operating Procedures (SOP)**: [`docs/SOP.md`](docs/SOP.md)
+- **Pocket Field Cheat Sheet (Controls, Boot Combos & TitleIDs)**: [`docs/CHEATSHEET.md`](docs/CHEATSHEET.md)
+- **Troubleshooting, Crash Dump & Recovery Playbook**: [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md)
+- **Future Agent Playbook & Multi-Console Blueprint**: [`docs/AGENT_PLAYBOOK.md`](docs/AGENT_PLAYBOOK.md)
 - **Project Principles & Safety Invariants**: [`specs/CONSTITUTION.md`](specs/CONSTITUTION.md)
 
 ## Workspace Structure (`lafiabrew` GitHub Organization)
