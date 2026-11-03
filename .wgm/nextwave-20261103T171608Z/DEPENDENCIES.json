@@ -1,0 +1,15 @@
+{
+  "process_core": {
+    "path": ".wgm/fleet-20261102T212701Z/runner.py",
+    "sha256": "c3eaa62c25a49d09c5b85dcfa3f3ba8f5b443f4b5e3a0e0f295666c3d24a2823",
+    "git_blob": "e570e82af1f6ba128c828e0368f57ae34978041d",
+    "imports": [
+      "OwnedProcess",
+      "EventStream",
+      "semantic_success",
+      "positive_seconds"
+    ],
+    "runtime_logic_changed": false,
+    "scope": "tracked byte-identical actual process core, not only a missing historical claim"
+  }
+}
