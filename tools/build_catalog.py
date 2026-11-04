@@ -634,7 +634,8 @@ def render_index(catalog: Dict[str, Any]) -> str:
 <p class="meta">Catalogue generated <time datetime="{h(catalog["generated_utc"])}">{h(catalog["generated_utc"])}</time>
 from the public GitHub API: {len(apps)} repositories, {len(installs)} installable, {len(sources)} source-only.
 New releases appear at the next scheduled rebuild (hourly), not instantly.
-<a href="{h(base)}catalog.json">Machine-readable catalogue</a>.</p>
+<a href="{h(base)}catalog.json">Machine-readable catalogue</a> ·
+<a href="{h(base)}docs/">Documentation and safety limits</a>.</p>
 </header>
 <main>
 <section class="howto" aria-labelledby="howto">
@@ -645,9 +646,11 @@ New releases appear at the next scheduled rebuild (hourly), not instantly.
 copy it to the SD card and install it with FBI.</li>
 <li><strong>Back up first:</strong> before updating or removing an app, back up its save data with a save manager
 (for example Checkpoint) and keep a copy of the <code>.cia</code> you have installed.</li>
-<li><strong>Update:</strong> when a newer version appears here, scan its QR code; it installs over the same title.</li>
-<li><strong>Roll back:</strong> every version keeps its own versioned download URL on the app's Releases page. Install the older
-<code>.cia</code> the same way; if FBI refuses, delete the title in FBI first, reinstall, then restore your save backup.</li>
+<li><strong>Update:</strong> verify exact title identity and app-specific compatibility before installing a newer version;
+a public download and a matching name do not establish safe save migration.</li>
+<li><strong>Roll back:</strong> preserve your own prior installer/save copies and obtain qualified app-specific guidance.
+If FBI refuses a downgrade, stop rather than deleting a title or restoring data to bypass the refusal.
+Read the <a href="{h(base)}docs/STATUS.html">documented safety limits</a>; versioned URLs alone do not guarantee retention or immutable bytes.</li>
 </ol>
 <p class="tiers"><strong>What “Published” means:</strong> the file is a public, stable, non-draft GitHub release asset with the
 expected name. It does <em>not</em> mean the release was independently reviewed, built by CI, or tested on real hardware;

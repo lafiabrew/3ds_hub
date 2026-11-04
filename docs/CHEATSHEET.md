@@ -38,6 +38,6 @@ Boundary puzzle navigation stays at puzzle 1/6 without resetting the board in th
 
 ## Identity and firmware shortcuts
 
-Use each actual package's full TitleID and product code; a UniqueId range is not deletion authority. `0x0D3D*` examples in older materials are historical. The current build-metadata catalog is in the [README](../README.md).
+Use each actual package's full TitleID and product code; a UniqueId range is not deletion authority. `0x0D3D*` examples in older materials are historical. The current build-metadata catalog is in the [repository README](https://github.com/lafiabrew/3ds_hub/blob/main/README.md).
 
 Firmware/boot shortcuts depend on the installed CFW and payload configuration. Consult that version's official instructions before maintenance. This guide deliberately does not prescribe cache-reset/database-reset combinations, system updates or deletion to fix unknown symptoms.

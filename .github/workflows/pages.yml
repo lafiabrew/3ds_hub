@@ -5,13 +5,22 @@
 # There is no cross-repository dispatch; a new app release appears at the next run.
 # Any test, API, probe or decode failure stops before deploy, so the previously
 # deployed site stays live. Pull requests never run or deploy this workflow.
-name: Pages catalogue
+name: Pages catalogue and documentation
 
 on:
   push:
     branches: [main]
     paths:
       - 'site/**'
+      - 'docs/**'
+      - 'specs/**'
+      - '_includes/**'
+      - 'assets/**'
+      - 'README.md'
+      - 'tools/compose_pages.py'
+      - 'tools/pages_docs.py'
+      - 'tests/pages/**'
+      - 'tests/test_pages_integration.py'
       - 'tools/build_catalog.py'
       - 'tools/probe_pages.py'
       - 'tests/test_catalog.py'
@@ -57,10 +66,43 @@ jobs:
       - name: Probe built site over loopback HTTP, decode every QR, Range-check every CIA
         run: python3 tools/probe_pages.py --directory _site --base-path /3ds_hub/ --minimum-installs 16
 
+      - name: Documentation privacy and composition regressions
+        run: |
+          set -eu
+          python3 tests/pages/check_privacy.py
+          python3 -m unittest discover -s tests -p test_pages_integration.py -v
+
+      - name: Build docs with the pinned official Pages stack
+        env:
+          CONTAINER_RUNTIME: docker
+          JEKYLL_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          docker --version
+          docker pull ghcr.io/actions/jekyll-build-pages@sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041
+          sh tests/pages/build_pages.sh "$RUNNER_TEMP/3ds-pages-docs"
+
+      - name: Compose only approved docs and assets alongside catalogue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/compose_pages.py --catalog _site --docs "$RUNNER_TEMP/3ds-pages-docs" --output "$RUNNER_TEMP/3ds-pages-publication"
+
+      - name: Validate composed catalogue and real-browser docs
+        run: |
+          set -eu
+          python3 tools/probe_pages.py --directory "$RUNNER_TEMP/3ds-pages-publication" --base-path /3ds_hub/ --minimum-installs 16
+          npm install --prefix "$RUNNER_TEMP/3ds-pages-tools" --no-save --ignore-scripts --no-audit --no-fund playwright-core@1.58.2
+          export PLAYWRIGHT_MODULE_PATH="$RUNNER_TEMP/3ds-pages-tools/node_modules/playwright-core"
+          CHROMIUM_EXECUTABLE="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)"
+          export CHROMIUM_EXECUTABLE
+          test -n "$CHROMIUM_EXECUTABLE"
+          node tests/pages/test_pages.cjs --site-dir "$RUNNER_TEMP/3ds-pages-publication" --expected-commit "$GITHUB_SHA"
+          node tests/pages/test_pages.cjs --site-dir "$RUNNER_TEMP/3ds-pages-publication" --cleanup-probe
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: _site
+          path: ${{ runner.temp }}/3ds-pages-publication
 
   deploy:
     needs: build

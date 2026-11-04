@@ -1,6 +1,6 @@
 # Current implementation status and safety limits
 
-This page describes **inspected source snapshots**, not every public repository revision. Reviewed 2026-11-03; source references below allow rechecking. A feature requirement or previous audit verdict is not implementation evidence. [README](../README.md) lists build membership; [SOP](SOP.md) provides bounded inspection commands.
+This page describes **inspected source snapshots**, not every public repository revision. Reviewed 2026-11-03; source references below allow rechecking. A feature requirement or previous audit verdict is not implementation evidence. [repository README](https://github.com/lafiabrew/3ds_hub/blob/main/README.md) lists build membership; [SOP](SOP.md) provides bounded inspection commands.
 
 ## Evidence levels
 

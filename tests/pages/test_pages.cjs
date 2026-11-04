@@ -29,10 +29,13 @@ let listener, browserServer, browser, browserPID;
 let cleanupPromise;
 const state = { test: 'Pages privacy/Mermaid', pid: null, port: null, results: [], cleanup: {} };
 const selectors = 'pre > code.language-mermaid, .language-mermaid pre > code';
-// Every current inventoried Markdown route is intentionally published.
-const sourceOnlyExceptions = new Set();
+const policy = JSON.parse(fs.readFileSync(path.join(root, 'site/docs-manifest.json'), 'utf8'));
+const sourceOnlyExceptions = new Set(policy.source_only);
+const expectedIndex = args.indexOf('--expected-commit');
+const expectedCommit = expectedIndex >= 0 ? args[expectedIndex + 1] : null;
+if (expectedCommit) assert(/^[0-9a-f]{40}$/.test(expectedCommit), 'Expected commit must be a full lowercase SHA');
 function requirePublished(status, item) {
-  if (status === 404 && sourceOnlyExceptions.has(item.source)) return false;
+  assert(!sourceOnlyExceptions.has(item.source), 'Source-only file must not be inferred published');
   assert.equal(status, 200, 'Required public route unavailable: ' + item.route);
   return true;
 }
@@ -192,7 +195,37 @@ async function main() {
     const sourceAudit = JSON.parse(execFileSync('python3', [path.join(root, 'tests/pages/check_privacy.py')], { cwd: root, encoding: 'utf8' }));
     const context = await browser.newContext();
     try {
+      const catResponse = await context.request.get(base + 'catalog.json');
+      const docResponse = await context.request.get(base + 'docs/publication.json');
+      assert.equal(catResponse.status(), 200); assert.equal(docResponse.status(), 200);
+      const cat = await catResponse.json(), published = await docResponse.json();
+      assert.equal(published.schema, '3ds-docs-publication-v1');
+      assert.equal(published.hub_source_sha, cat.hub_source_sha, 'Mixed catalogue/docs source revisions');
+      if (expectedCommit) assert.equal(published.hub_source_sha, expectedCommit, 'Stale or unintended deployment');
+      assert.deepEqual(published.pages, policy.pages);
+      assert.deepEqual(published.source_only, policy.source_only);
+      for (const [file, hash] of Object.entries(published.sha256)) {
+        const response = await context.request.get(base + file);
+        assert.equal(response.status(), 200, 'Published docs asset/page unavailable: ' + file);
+        assert.equal(crypto.createHash('sha256').update(await response.body()).digest('hex'), hash, 'Published bytes differ: ' + file);
+      }
+      const homepage = await context.newPage();
+      await homepage.goto(base, { waitUntil: 'domcontentloaded' });
+      assert((await homepage.title()).includes('FBI'), 'Catalogue homepage was overwritten');
+      assert.equal(await homepage.locator('script').count(), 0, 'Catalogue must remain script-free');
+      assert(await homepage.locator('a[href="' + policy.base_path + 'docs/"]').count(), 'Catalogue docs navigation missing');
+      const rootResponse = await context.request.get(base);
+      assert.equal(crypto.createHash('sha256').update(await rootResponse.body()).digest('hex'), published.catalogue_sha256['index.html']);
+      await homepage.close();
+      for (const forbidden of ['AGENTS.html', 'IMPLEMENTATION_PLAN.html', 'serve_3ds.py', 'tests/pages/test_pages.cjs', '_includes/head-custom.html']) {
+        assert.equal((await context.request.get(base + forbidden)).status(), 404, 'Unapproved output exposed: ' + forbidden);
+      }
+      state.results.push({ catalogue_preserved: true, source_sha: published.hub_source_sha, output_allowlist_checked: true });
       for (const item of sourceAudit.inventory) {
+        if (item.publication === 'source-only') {
+          assert(sourceOnlyExceptions.has(item.source));
+          state.results.push({ source: item.source, published: false, source_only: true }); continue;
+        }
         const page = await context.newPage();
         try {
           const route = item.route.replace(/^\//, '');
@@ -221,20 +254,25 @@ async function main() {
       }
     } finally { await context.close(); }
   }
-  for (const suffix of ['', 'docs/ARCHITECTURE.html', 'docs/AGENT_PLAYBOOK.html']) {
+  const assembled = !!(liveURL || siteDir);
+  const primary = assembled ? 'docs/ARCHITECTURE.html' : '';
+  const diagramRoutes = assembled ? Object.keys(policy.pages).filter(file =>
+    /^```mermaid\s*$/m.test(fs.readFileSync(path.join(root, file), 'utf8'))).map(file => policy.pages[file])
+    : ['', 'docs/ARCHITECTURE.html', 'docs/AGENT_PLAYBOOK.html'];
+  for (const suffix of diagramRoutes) {
     if (suffix.endsWith('AGENT_PLAYBOOK.html')) {
       const p = await open(base + suffix); const n = await p.page.locator(selectors).count(); await p.context.close();
       if (!n) continue;
     }
     await normal(base, suffix);
   }
-  await normal(base, '', true);
+  await normal(base, primary, true);
   if (!liveURL) {
-    const session = await open(base);
+    const session = await open(base + primary);
     try {
       await expectSVG(session.page, await session.page.locator(selectors).count());
       // Validate every candidate Mermaid fence, not only the older captured diagrams.
-      const sources = ['README.md', 'docs/ARCHITECTURE.md', 'docs/AGENT_PLAYBOOK.md'].flatMap(file =>
+      const sources = ['README.md', ...Object.keys(policy.pages)].flatMap(file =>
         Array.from(fs.readFileSync(path.join(root, file), 'utf8').matchAll(/```mermaid\r?\n([\s\S]*?)```/g), m => m[1]));
       const candidate = await session.page.evaluate(async list => {
         const results = [];
@@ -254,7 +292,7 @@ async function main() {
     } finally { await session.context.close(); }
   }
   if (!liveURL) {
-    let s = await open(base + '?case=omitted');
+    let s = await open(base + primary + '?case=omitted');
     try {
       const n = await s.page.locator(selectors).count(); assert(n > 0);
       await assert.rejects(() => expectSVG(s.page, n, 1200), 'Omitted renderer must fail the SVG gate');
@@ -266,13 +304,13 @@ async function main() {
       assert.equal(await s.page.locator('.pages-mermaid-fallback').count(), 1);
       state.results.push({ control: 'bad-diagram', other_diagrams_rendered: n - 1, source_and_notice_retained: true });
     } finally { await s.context.close(); }
-    s = await open(base + '?case=xss');
+    s = await open(base + primary + '?case=xss');
     try {
       const n = await s.page.locator(selectors).count(); await expectSVG(s.page, n);
       assert.equal(s.dialogs.length, 0); assert.equal(await s.page.locator('.pages-mermaid-viewport img[onerror]').count(), 0);
       state.results.push({ control: 'HTML-like-label', script_dialogs: 0 });
     } finally { await s.context.close(); }
-    s = await open(base, { missing: true });
+    s = await open(base + primary, { missing: true });
     try {
       const n = await s.page.locator(selectors).count(); await s.page.waitForSelector('.pages-mermaid-fallback');
       assert.equal(await s.page.locator('.pages-mermaid-fallback').count(), n);
@@ -287,7 +325,7 @@ async function main() {
 }
 async function cleanupProbe() {
   for (const failure of [false, true]) {
-    const child = spawn(process.execPath, [__filename, '--hold-ready', ...(failure ? ['--inject-close-failure'] : [])], { env: process.env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+    const child = spawn(process.execPath, [__filename, '--hold-ready', ...(siteDir ? ['--site-dir', siteDir] : []), ...(failure ? ['--inject-close-failure'] : [])], { env: process.env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
     let owned, closed;
     child.on('message', message => { if (message.cleanup) closed = message.cleanup; });
     try {

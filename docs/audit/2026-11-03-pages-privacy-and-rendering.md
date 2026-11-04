@@ -1,25 +1,28 @@
-# 3DS Pages privacy, rendering and accuracy audit — 2026-11-03
+# 3DS Pages privacy, rendering and publication audit
 
-Scope: the public 3DS documentation site, its source Markdown, actual served HTML shapes and the documented implementation boundaries. This is **not application, console or release acceptance**. The site is static documentation; LAN transfer/installation still requires the separate local hub/console programs.
+Started 2026-11-03; catalogue integration authorized 2026-11-04. This is a **website/docs correction**, not application, hardware or release acceptance. The homepage remains the script-free FBI release catalogue; documentation lives alongside it under `/docs/`. Static Pages does not run the local SD-transfer or installer programs.
 
 ## Findings and corrections
 
-| Finding | Evidence / correction | Remaining boundary |
-|---|---|---|
-| Fixed deployment examples | Initial source inventory found nine identifying-address occurrences across SOP, cheatsheet and troubleshooting. Values are not repeated in this report. Current guides use quoted placeholders or tool-displayed addresses. | This changes current documentation, not old Git history, existing browser/CDN caches, every source-code example or all possible identifiers. |
-| Raw Mermaid source on Pages | Served home/architecture/playbook HTML contained Mermaid fences without a renderer. Primer's `head-custom.html` hook installs a small conditional adapter; actual Jekyll output includes its prefixed assets. | Deployed responses still require separate post-publication verification. |
-| Renderer availability | Mermaid 11.12.2 is pinned, integrity-checked and served from this site only when needed. No runtime Mermaid CDN dependency. | It is a third-party dependency, not an independently audited codebase; the existing theme may have unrelated external assets. |
-| Liquid inside code fences | Actual Jekyll 3.10 consumed the unprotected Go-format inspection template while only emitting a warning. Raw-block protection now preserves the exact rendered command, which was executed successfully. | Build exit 0 alone is insufficient; rendered-command and warning checks are required. |
-| Bad/blocked diagrams | Strict initialization, protected security settings, independent per-diagram handling and preserved original source. Wide SVGs scroll rather than squash. | Modern Chromium integration was tested; universal/legacy-browser compatibility is not claimed. |
-| Stale safety/capability claims | Current guides distinguish private PKHX parsing, incomplete backup/native recovery, synthetic observations, fixed cheat templates and app-local coin/text data. Requirements/history are not completion evidence. | Those implementation defects are not repaired by prose. Root aggregate build failures can still be concealed. |
-| Local/deployed confusion | Public source links point to GitHub snapshots instead of nonexistent sibling directories on Pages. ParkShift remains local-only, without a public repository/download/validation guarantee. | No unpublished app files, binaries, task logs or profile changes are part of this site patch. |
-| Startup side effects | Inspection startup examples explicitly pass `--push ''`, overriding an inherited `IP` target. | Dashboard installation controls still require operator authorization; the static Pages site does not run the LAN installer. |
+| Finding | Correction / evidence boundary |
+|---|---|
+| Fixed deployment examples | Initial source inventory found nine identifying-address occurrences in SOP, cheatsheet and troubleshooting. Values are not repeated. Current guides use quoted placeholders or device-displayed addresses. Source/current rendered text is checked; history, caches, every source-code example and general privacy are not certified. |
+| Raw Mermaid source | A pinned same-origin Mermaid 11.12.2 bundle is loaded only for diagram pages through Primer's hook. Original source remains accessible; failed library/diagram loads do not hide it. No Mermaid runtime CDN dependency. Other existing theme assets are a separate dependency. |
+| Unreadable/invalid diagrams | Wide SVGs scroll. Strict settings are protected from diagram overrides; click callbacks are not bound. Bad syntax is isolated. Real Chromium tests cover visibility, source, small viewport, missing library, HTML-like labels, repeated loading and an omitted-loader counterfactual. No universal/legacy-browser claim. |
+| Liquid inside code fences | Real Jekyll consumed an unprotected Go-format inspection template while only warning and exiting 0. Raw guards now preserve the actual rendered command. The official build helper rejects Liquid diagnostics; guard-removal mutation is rejected. Release-workflow schematic expressions are protected too. |
+| Publisher changed during review | The new workflow initially uploaded only its generated catalogue, dropping SOP/architecture routes. Docs are built separately and composed through `site/docs-manifest.json`; Jekyll cannot overwrite the catalogue index, JSON, QR files or styling. |
+| Unintended publication | Manifest-approved docs/specs HTML and four required assets are the only new output. Agent instructions, implementation plans, templates, tests, service/app code, captures and private logs are source-only. Unknown Markdown classification or missing STATUS blocks validation. |
+| Partial or mixed artifact | Composition creates only a NEW output, never replacing inputs/existing output. Copies are checked; readiness is written last. Copy/signal/removal-failure tests preserve inputs and retain ownership on failed cleanup. Docs and catalogue must identify the same CI source SHA. Failed build/probe/browser steps cannot upload/deploy. |
+| Stale safety assertions | Current guides distinguish private PKHX parsing, incomplete backup/native recovery, synthetic observations, fixed cheats and app-local stand-ins. Requirements/history are not completion evidence. These code defects are not repaired by prose. Root aggregate build failure propagation remains open. |
+| Startup side effects | Inspection startup uses `--push ''`, overriding inherited `IP`; dashboard installation actions still require separate operator authorization. |
 
 ## Source audit
 
-The hub's public source snapshot was `d3bae799fbe8f68d803c986981a09e945dd53412` when this correction was prepared. Its `Makefile`, PC parser, server and constitution matched the previously inspected local versions. The following **public immutable implementation snapshots** were fetched and matched the primary audited files byte-for-byte:
+The initial hub source was `d3bae799fbe8f68d803c986981a09e945dd53412`; integration refreshed onto public `60269b3fd15e8d5099ed18f20a927443e4eb3ba7`. No unrelated local commits, app binaries, profile edits or task logs are part of the site patch. Source navigation uses GitHub URLs rather than nonexistent sibling folders on Pages. ParkShift remains local-only, with no public reviewed download or release asserted.
 
-| Project | Snapshot / primary source |
+Primary public snapshots were fetched and matched the previously audited source files byte-for-byte:
+
+| Project | Immutable primary source |
 |---|---|
 | PokeDash | [`6d0dc218bf`](https://github.com/lafiabrew/3ds_pokedash/blob/6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d/src/pkhex.c) |
 | Drop | [`d3b0dfd3ad`](https://github.com/lafiabrew/3ds_drop/blob/d3b0dfd3ad7c60d48b815d1264560fd5d007db28/src/drop_server.c) |
@@ -28,63 +31,28 @@ The hub's public source snapshot was `d3bae799fbe8f68d803c986981a09e945dd53412` 
 | NetPass | [`a88247d300`](https://github.com/lafiabrew/3ds_netpass/blob/a88247d300c8ec5848c70d44259f7b798ec5001f/src/netpass.c) |
 | Pokédex | [`694a58e1b0`](https://github.com/lafiabrew/3ds_pokedex/blob/694a58e1b0e0ec7368800eaa4f949f93ea3353ba/src/pokedex.c) |
 
-See [STATUS](../STATUS.md) for what those observations establish. They do not prove genuine-format saves, native power-loss recovery, real radio/location provenance, per-game cheats, system coin/CECD integration, clean provisioning or physical-device behavior.
+[Current safety limits](../STATUS.md) explain what inspection establishes. It does not prove real-format edits, power-loss recovery, genuine radio/location data, per-game cheats, system coin/CECD integration, clean provisioning or console compatibility.
 
-## Reproduction
+## Reproduce the composed-site gates
 
-Run from the hub checkout:
-
-```sh
-python3 tests/pages/check_privacy.py
-```
-
-This inventories tracked/new non-hidden Markdown, including historical docs; holdout content is excluded. It rejects identifying IPv4 literals without echoing their values and exercises an identifying-host mutant plus loopback/listener/documentation-range controls. It does not erase historical disclosures or certify general privacy.
-
-For browser integration, use Node/npm and install the pinned SDK outside the checkout:
+From the hub checkout on Linux with Python 3, Node/npm, Podman and a compatible installed Chromium, use **one standalone fail-fast entry point**. Replace the declared browser placeholder with your actual executable ([browser setup](https://playwright.dev/docs/browsers)):
 
 ```sh
-npm install --prefix /tmp/3ds-pages-tools --no-save --ignore-scripts --no-audit --no-fund playwright-core@1.58.2
+CHROMIUM_EXECUTABLE=/path/to/chrome sh tests/pages/validate_composed.sh
 ```
 
-Use a separately installed compatible Chromium executable; [browser setup documentation](https://playwright.dev/docs/browsers) describes installation options. Playwright Core does not download a browser in the command above. This update reused an existing cached Chromium and does not certify every browser/SDK combination. Capture real production HTML/theme resources **outside the repository**, because pre-fix captures can contain old identifying examples:
+The script owns a fresh workspace, logs each stage separately, preserves the first failing native status and does not launch later stages after failure. It runs source/privacy and composition regressions, pulls/builds the pinned Pages stack, builds a catalogue through the existing captured API transport, composes a NEW artifact, installs pinned Playwright Core outside the checkout, then runs browser and cancellation/cleanup gates. A PATH-stub success control, prerequisite-failure injection and deliberately error-swallowing canary test this exact script's control flow; those controls are offline evidence, not real runtime acceptance.
 
-```sh
-python3 tests/pages/capture_pages.py --out /tmp/3ds-pages-captures
-```
+Source inventory includes current non-hidden historical/source-only Markdown without echoing identifying values. Loopback/listener/RFC 5737 controls pass and an identifying-host mutant must fail. Manifest classification is exhaustive; STATUS is never an implicit exception.
 
-Set the declared browser path to your actual executable. Run these exports and the following browser commands in the **same shell**; repeat the exports in each new terminal. Do not copy captures into the public checkout:
+The fixture catalogue proves production builder/transport integration with captured metadata, not current live releases/binaries. CI builds from the live public API and retains independent QR/Range probes. Docs use github-pages 232/Jekyll 3.10.0/Primer with the observed project configuration; local default is rootless Podman and CI selects Docker with a non-root UID. No host Ruby is needed. CI may supply its ephemeral contents-read metadata token; output credential checks precede upload.
 
-```sh
-export PLAYWRIGHT_MODULE_PATH=/tmp/3ds-pages-tools/node_modules/playwright-core &&
-export CHROMIUM_EXECUTABLE=/path/to/chrome &&
-export PAGES_CAPTURE_DIR=/tmp/3ds-pages-captures &&
-node tests/pages/test_pages.cjs
-```
+Browser gates serve actual generated/composed bytes, not an injected nominal hook. They check preserved catalogue bytes, all required routes/hashes, source-only exclusions, rendered privacy, literal inspection/workflow examples and every published diagram. Missing-STATUS, malformed-source, missing-library and omitted-loader controls must be rejected or degrade visibly as specified. Cleanup probes cover the exercised PID/listener paths, not every platform startup race. Old capture mode is a separate legacy-shape regression; captures may contain old addresses and must stay outside source.
 
-This first local gate uses actual captured production DOM and the candidate hook/assets. It checks SVG visibility, retained source, a small viewport, malformed-diagram isolation, strict HTML-like labels, missing-library fallback, repeated enhancement and the omitted-renderer counterfactual. Candidate diagram definitions are also rendered. Existing theme-script bytes are fulfilled from the real capture, not a fake implementation. This adapter test alone is **not a Jekyll build or live-site acceptance**.
+## Deployment verification and remaining boundaries
 
-A separate real build uses GitHub's official pinned Pages image (github-pages 232, Jekyll 3.10.0 and Primer), with the observed project URL/base path. No host Ruby or GitHub credentials are required. Choose a new empty output directory outside the checkout:
+Before main integration, push only the reviewed candidate branch and manually dispatch `gh workflow run pages.yml --repo lafiabrew/3ds_hub --ref REVIEWED_BRANCH` (replace the declared branch). The workflow's main-only automatic trigger is not a branch test. Bind the run to the reviewed SHA using `gh run list --repo lafiabrew/3ds_hub --workflow pages.yml --branch REVIEWED_BRANCH --commit FULL_COMMIT_SHA --json databaseId,headSha,status,conclusion`; wait for successful actual Ubuntu Docker/composition/browser gates and confirm deploy is skipped on that non-main ref. Do not push main if this stage fails. Refresh public main before a non-force integration; a new writer requires reconciliation and affected revalidation.
 
-```sh
-podman pull ghcr.io/actions/jekyll-build-pages@sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041 &&
-sh tests/pages/build_pages.sh /tmp/3ds-pages-site
-```
+After an authorized main integration, the exact intended Pages workflow/deploy commit must succeed. With the exported browser environment, run `node tests/pages/test_pages.cjs --live-url https://lafiabrew.github.io/3ds_hub/ --expected-commit FULL_COMMIT_SHA` (replace the declared SHA), then `python3 tools/probe_pages.py --url https://lafiabrew.github.io/3ds_hub/ --minimum-installs 16`. A local/PR/build pass, HTTP 200 or old successful workflow is insufficient. `docs/publication.json` ties allowed paths and hashes to the catalogue source SHA. Inspect actual live SOP/architecture responses; do not treat deletion/404 as anonymized documentation restoration.
 
-Using the same browser environment, run `node tests/pages/test_pages.cjs --site-dir /tmp/3ds-pages-site`. This serves the actual generated HTML/assets without injecting the nominal hook, checks the rendered privacy inventory and diagram output, and asserts that Liquid preserved the documented inspection template. The candidate passed both build and browser gates. The standalone SDK defaults differ from the managed site's URL metadata, so the helper explicitly supplies the observed `/3ds_hub` configuration. A build/HTML/browser pass is still **not a deployed-site pass**.
-
-Use the same environment with `node tests/pages/test_pages.cjs --cleanup-probe` to exercise cancellation and an injected graceful-close failure. Owned browser/listener resources must be confirmed closed; failed cleanup retains ownership evidence instead of silently passing.
-
-After an authorized publication, use the same environment with:
-
-```sh
-node tests/pages/test_pages.cjs --live-url https://lafiabrew.github.io/3ds_hub/
-```
-
-Also confirm the Pages build reports `built`, no error and the intended public commit. A local/PR pass, HTTP 200 or unchanged old page is insufficient. Every inventoried public route, including the authoritative STATUS page, must return 200. The reviewed source-only exception list is currently empty; any intentional future exception must be explicitly reviewed, not silently inferred from a 404. Current source privacy and local rendering checks do not themselves prove the URL has updated.
-
-## Remaining actions
-
-- **Operator action:** explicitly authorize any protected root/app `AGENTS.md` corrections; they were not edited by this patch. Their older feature descriptions are not verification evidence.
-- **Agent action, separately scoped:** repair root aggregate failure propagation and the unsafe/incomplete implementations, with real regressions and independent review. This patch changes no app or service behavior.
-- **Operator action:** separately approve publication, installs/releases and physical/live-service tests where not already authorized. No games, binaries, private logs, profile edits or other local commits should be pushed incidentally.
-- **Historical boundary:** old root plans/audits and sibling documents remain point-in-time records, not blanket current acceptance. Retain their limits and source/revision context.
+Unchanged source-only `AGENTS.md` corrections still require file-specific approval. Native unsafe implementations, sibling/current remote revisions, provisioning, physical/live-service evidence and app publication need their own work/authorization. Nothing here authorizes real installs, valuable-save edits, title deletion, generated-cheat activation or synthetic-observation upload. No history/cache erasure, universal privacy, dependency security audit or all-browser/device acceptance is claimed.

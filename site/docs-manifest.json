@@ -1,0 +1,41 @@
+{
+  "schema": "3ds-docs-manifest-v1",
+  "base_path": "/3ds_hub/",
+  "pages": {
+    "docs/AGENT_PLAYBOOK.md": "docs/AGENT_PLAYBOOK.html",
+    "docs/ARCHITECTURE.md": "docs/ARCHITECTURE.html",
+    "docs/CHEATSHEET.md": "docs/CHEATSHEET.html",
+    "docs/INSTALL_FROM_HUB.md": "docs/INSTALL_FROM_HUB.html",
+    "docs/README.md": "docs/",
+    "docs/RELEASE_ROLLOUT.md": "docs/RELEASE_ROLLOUT.html",
+    "docs/RELEASING.md": "docs/RELEASING.html",
+    "docs/SOP.md": "docs/SOP.html",
+    "docs/STATUS.md": "docs/STATUS.html",
+    "docs/TROUBLESHOOTING.md": "docs/TROUBLESHOOTING.html",
+    "docs/audit/2026-11-02_3ds-homebrew-suite-audit.md": "docs/audit/2026-11-02_3ds-homebrew-suite-audit.html",
+    "docs/audit/2026-11-02_docs-and-ecosystem-audit.md": "docs/audit/2026-11-02_docs-and-ecosystem-audit.html",
+    "docs/audit/2026-11-02_multi-round-ux-and-function-audit.md": "docs/audit/2026-11-02_multi-round-ux-and-function-audit.html",
+    "docs/audit/2026-11-03-pages-privacy-and-rendering.md": "docs/audit/2026-11-03-pages-privacy-and-rendering.html",
+    "docs/audit/README.md": "docs/audit/",
+    "specs/01-3ds-homebrew-suite.md": "specs/01-3ds-homebrew-suite.html",
+    "specs/CONSTITUTION.md": "specs/CONSTITUTION.html",
+    "specs/CONTEXT.md": "specs/CONTEXT.html"
+  },
+  "assets": [
+    "assets/css/style.css",
+    "assets/js/mermaid-loader.js",
+    "assets/vendor/mermaid-11.12.2.min.js",
+    "assets/vendor/MERMAID-LICENSE"
+  ],
+  "source_only": [
+    "AGENTS.md",
+    "IMPLEMENTATION_PLAN.md",
+    "README.md",
+    "assets/vendor/README.md",
+    "templates/RELEASING.md",
+    "tests/fixtures/catalog/README.md",
+    "tests/rolloutfixtures/README.md",
+    "tests/vendor/jsqr/README.md",
+    "tools/release_hub/approvals/README.md"
+  ]
+}

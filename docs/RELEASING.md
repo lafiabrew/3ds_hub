@@ -95,6 +95,7 @@ pinned, licensed inputs are reviewed. Node itself is pinned in the SDK recipe.
 
 Caller must use:
 
+<!-- {% raw %} -->
 ```yaml
 uses: lafiabrew/3ds_hub/.github/workflows/homebrew-release.yml@<40hexKIT_SHA>
 with:
@@ -107,6 +108,7 @@ permissions:
   contents: write
   id-token: write
 ```
+<!-- {% endraw %} -->
 
 This is a schematic **calling-job** fragment: replace both placeholders with
 the same reviewed, **public** full lowercase commit; never `main`, a version tag,
