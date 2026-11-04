@@ -1,21 +1,22 @@
 # Specification: 3DS CFW, PKHaX & Diagnostic Homebrew Suite
 
+> **Requirements, not completion evidence.** The feature statements below record intended behavior, including unfulfilled goals. They are not safe operating recipes or a public release report. [Current inspected status](../docs/STATUS.md) supersedes earlier capability assurances. R1/R2 native-format safety, R4 native replacement recovery, R7 game-specific cheats/TinyMT, R8 real system coin/CECD integration, R12 uniform logging and R13 genuine observations/live-service acceptance remain incomplete or unverified. R6/R17 aggregate build success is not a reliable gate while early failures can be concealed. R11 physical layout and R15 optimization targets need measured per-artifact/model evidence. Existing historical size/optimization numbers are targets, not current measurements.
+
 ## 1. Goal & Job-To-Be-Done (JTBD)
 When a user who has just completed `3ds.hacks.guide` is playing Pokémon (including custom ROM hacks across 3DS, NDS, and GBA) and running homebrew on their 3DS, they need an integrated suite of on-console 3DS utilities and PC companion tools so they can:
 1. **Inspect & surgically edit Pokémon saves (`3ds_pokedash`)** in permissive **PKHaX Mode** (IVs, EVs, Nature, Shiny PID, Friendship, Level, Money, Bag items, Type/Nature/Shiny calculator) across Gen 3–7 (`Checkpoint`, `TWiLightMenu++`, and `open_agb_firm`/GBA paths) with automatic `.bak` backup and block checksum recalculation.
 2. **Inspect 3DS hardware, toggle Luma3DS LayeredFS ROM hack mods, and collect SD & crash logs (`3ds_sysdash`)** without unscrewing the 3DS backplate.
 3. **Wirelessly scan the SD card, pull crash/homebrew logs, and push/pull saves, ROMs, and LayeredFS mod packs (`3ds_drop`)** over LAN HTTP/JSON (`:8766`).
-4. **Drive the whole workflow from PC (`pc_companion/`)** via a remote/local SD & log scanner (`sd_scanner.py`), a PKHaX CLI & web UI (`pkhex_web.py`), and an `.ips`/`.bps` ROM hack patcher (`romhack_tool.py`), while `serve_3ds.py` serves scannable FBI QR codes for every `.cia`/`.3dsx`.
+4. **Drive the whole workflow from PC (`pc_companion/`)** via a remote/local SD & log scanner (`sd_scanner.py`), a PKHaX CLI & web UI (`pkhex_web.py`), and an `.ips`/`.bps` ROM hack patcher (`romhack_tool.py`), while `serve_3ds.py` discovers CIA/3DSX packages, serves CIA URLs for FBI installation and provides 3DSX downloads for Homebrew Launcher execution.
 
 ## 2. Magic Moment
 Running one command on the PC (`python3 pc_companion/sd_scanner.py --url http://<3ds-ip>:8766`) or pressing `A` in `3ds_sysdash` / `3ds_pokedash` to instantly see every Pokémon save, ROM hack, Luma LayeredFS mod, and crash log on the 3DS SD card, surgically maxing a Pokémon's IVs or toggling a Luma ROM hack in PKHaX mode with automatic `.bak` backup and valid CRC-16 checksums, and installing any of the 4 apps via FBI QR code from `serve_3ds.py`.
 
-## 3. Smallest End-to-End Demo Path
-1. Build all 3 new C11 3DS apps (`3ds_pokedash`, `3ds_sysdash`, `3ds_drop`) for both host (`make test`) and ARM11 3DS (`make 3ds && make verify-3ds`).
-2. Start `3ds_drop` in headless daemon mode pointing at a populated mock 3DS SD card root (`sdmc/` with Gen 3/4/5/6/7 Pokémon ROM hack saves, Luma LayeredFS mods, `luma/dumps/arm11/crash_00.dmp`, `luma/errdisp.txt`, and `3ds/` homebrew logs).
-3. Run `pc_companion/sd_scanner.py` against the live `3ds_drop` HTTP server (`:8766`) to scan the SD card and pull the diagnostic log bundle.
-4. Run `3ds_pokedash` and `pc_companion/pkhex_web.py` to parse & surgically edit Pokémon saves in PKHaX mode, verifying `.bak` creation and valid block checksums.
-5. Run `serve_3ds.py --list` to confirm all 4 homebrew projects (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`) are discovered with distinct Title IDs (`0x0D3D0`..`0x0D3D3`) and valid `.cia`/`.3dsx`/`.smdh` packages.
+## 3. Bounded current demo and pending acceptance
+
+The former real-save editing and mock-SD demo is not accepted as a genuine-format or native recovery journey. Use [the current SOP](../docs/SOP.md) for executable inspection examples: hub self-test, actual package listing and explicit per-app validation with prerequisites. An unmatched filter can return an empty list with exit 0; require the expected package row.
+
+The original four-app metadata allocation is `0x0D3E0`–`0x0D3E3`; the complete current root catalog extends through `0x0D3EF`. ParkShift reserves `0x0D400` separately and is not in root `PROJECTS`. Verify full package TitleIDs, not just these UniqueIds. Physical installations, native-format save edits/restores, genuine wardriving uploads and end-to-end system integration remain separately gated and are not authorized by this specification.
 
 ## 4. Testable Requirements (EARS Format)
 - **R1 (PKHaX Save Engine — `3ds_pokedash`):**
@@ -29,7 +30,7 @@ Running one command on the PC (`python3 pc_companion/sd_scanner.py --url http://
 - **R5 (PC Companion Suite — `pc_companion/`):**
   - *When* the operator runs `pc_companion/sd_scanner.py`, `pc_companion/pkhex_web.py`, or `pc_companion/romhack_tool.py`, *the system shall* support scanning a local SD mount or remote `3ds_drop` URL (`http://<3ds-ip>:8766`), pulling all 3DS logs/dumps into a local diagnostic report, inspecting/editing saves via CLI or Web UI, and applying/creating `.ips` and `.bps` ROM hack patches with CRC32 verification.
 - **R6 (ARM11 3DS Packaging & Universal FBI QR Discovery):**
-  - *When* `make 3ds && make verify-3ds` runs across the workspace, *the system shall* produce verified ARM11 `.elf`, `.smdh` (`0x36C0`), `.3dsx`, and `.cia` (`0x2020`) artifacts for all 8 projects (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`) with distinct icons, 32-byte-aligned CBMD banners, and unique Title IDs (`0x0D3E0`..`0x0D3E7`), all auto-discovered by `serve_3ds.py`.
+  - *When* `make 3ds && make verify-3ds` runs across the workspace, *the system shall* produce verified ARM11 `.elf`, `.smdh` (`0x36C0`), `.3dsx`, and `.cia` (`0x2020`) artifacts for the original eight projects (`3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`) with distinct icons, 32-byte-aligned CBMD banners, and distinct UniqueIds (`0x0D3E0`..`0x0D3E7`), all auto-discovered by `serve_3ds.py`.
 - **R7 (PokeRNG & Luma3DS Cheat Generator — `3ds_rngtool`):**
   - *When* `3ds_rngtool` loads a Trainer `TID`/`SID` or seed, *the system shall* compute the exact Trainer Shiny Value (`TSV = (TID ^ SID) >> 4`, `0..4095`) and Gen 7 6-digit display ID (`G7TID = (TID | (SID << 16)) % 1000000`), search LCRNG (`seed * 0x41C64E6D + 0x6073`) and TinyMT frames for Shiny / 6×31 IV / 0-Spe Trick Room spreads, and atomically write Luma3DS Rosalina `cheats.txt` files to `<sd_root>/luma/titles/<TitleID>/cheats.txt`.
 - **R8 (Play Coin Maxer, Pedometer & StreetPass Vault — `3ds_netpass`):**
@@ -47,11 +48,11 @@ Running one command on the PC (`python3 pc_companion/sd_scanner.py --url http://
 - **R14 (Pass-the-Pass & Fail-the-Fail Test Discipline + Multi-Persona / Multi-Round Audits):**
   - *When* `make test` runs across all projects, *the test suites shall* assert both positive ("pass the pass") and negative/adversarial ("fail the fail": corrupted save magic/CRC, truncated buffers, out-of-bounds indices, invalid `gamecoin.dat` magic, malformed WiGLE CSVs/credentials, and `..` path traversal) cases, backed by multi-round, multi-persona UX/UI/code/docs audits.
 - **R15 (Binary Size & ARM11 Runtime Optimization):**
-  - *When* `make 3ds` builds ARM11 artifacts across all 8 projects, *the build and asset pipeline shall* use `-Os -flto -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections`, strip DWARF debug sections (`arm-none-eabi-strip --strip-debug`) from `.elf`, and use 4-KB-window extended LZ11 (`0xFFFF + 0x111` match length) + 11,025 Hz BCWAV audio in `generate_bnr_shared.py` so every `.elf` shrinks by ~75% (`~1.5 MB` -> `~300 KB`) and every `.cia` shrinks by ~10–15% with faster FBI network install times.
+  - *When* `make 3ds` builds ARM11 artifacts across the original eight projects, *the build and asset pipeline shall* use `-Os -flto -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections`, strip DWARF debug sections (`arm-none-eabi-strip --strip-debug`) from `.elf`, and use 4-KB-window extended LZ11 (`0xFFFF + 0x111` match length) + 11,025 Hz BCWAV audio in `generate_bnr_shared.py` so every `.elf` shrinks by ~75% (`~1.5 MB` -> `~300 KB`) and every `.cia` shrinks by ~10–15% with faster FBI network install times.
 - **R16 (Architecture Diagrams, Ecosystem Map & Human SOP Documentation):**
   - *When* an operator or future coding agent inspects the workspace or any `lafiabrew` repository, *the documentation shall* provide Mermaid architecture/data-flow/memory-safety diagrams (`docs/ARCHITECTURE.md` and `AGENTS.md`) plus a human-friendly step-by-step Standard Operating Procedure (`docs/SOP.md` and `README.md`) covering installation, SD scanning, PKHaX ROM-hack editing, LayeredFS toggling, black-box cleanup, and WiGLE leaderboard syncing.
 - **R17 (Wave-2 3DS Game & Companion Ports — `0x0D3E8`..`0x0D3EF`):**
-  - *When* `make all` runs across the expanded 16-app suite, *the system shall* build, test (pass-the-pass + fail-the-fail under ASan/UBSan), strip (`< 450 KB` `.elf`), verify (`.smdh` `0x36C0`, `.3dsx`, `.cia` `0x2020`, `CBMD` `0x20` alignment), render dual-screen `docs/screenshot.png` previews, and sync to `lafiabrew` for all 8 new apps:
+  - *When* `make all` runs across the expanded 16-app suite, *the system shall* build, test (pass-the-pass + fail-the-fail under ASan/UBSan), strip (`< 450 KB` `.elf`), verify (`.smdh` `0x36C0`, `.3dsx`, `.cia` `0x2020`, `CBMD` `0x20` alignment), render dual-screen `docs/screenshot.png` previews, and sync to `lafiabrew` for these eight additional apps:
     1. `3ds_picross` (`CTR-P-PICR`, `0x0D3E8`): Nonogram/Picross stylus logic puzzle with row/column RLE clue solver.
     2. `3ds_sandlab` (`CTR-P-SAND`, `0x0D3E9`): Falling-sand cellular automata physics sandbox (Sand, Water, Fire, Plant, Oil, Gunpowder, Acid, Wall).
     3. `3ds_chip8` (`CTR-P-CHP8`, `0x0D3EA`): 35-opcode CHIP-8 VM, disassembler, live register debugger & 16-key touch hex keypad.

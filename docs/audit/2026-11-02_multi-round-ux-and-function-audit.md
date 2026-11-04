@@ -1,5 +1,7 @@
 # Multi-Round, Multi-Persona UX, Functional & Documentation Audit Report
 
+> **Historical snapshot — warning added 2026-11-03.** This report is not current operating guidance or release/device certification. Some assurances below were not supported by later source review. Read [current status](../STATUS.md); the original report is preserved below, not retroactively validated.
+
 - **Date:** 2026-11-02
 - **Scope:** `/home/lafiamafia/homebrew/3ds` (`3ds_hub`, `3ds_pieceduel`, `3ds_pokedash`, `3ds_sysdash`, `3ds_drop`, `3ds_wigle`, `3ds_rngtool`, `3ds_netpass`, `3ds_padtest`)
 - **Mode:** 2-Round, 5-Persona Review (CFW Power User · Pokémon ROM-Hack / RNG Player · Hardware/UX Designer · Systems/Security Engineer · Technical Writer Consolidator)

@@ -1,5 +1,7 @@
 # Multi-Round, Multi-Persona Documentation & Ecosystem Audit Report
 
+> **Historical snapshot — warning added 2026-11-03.** This report is not current operating guidance or release/device certification. Some assurances below were not supported by later source review. Read [current status](../STATUS.md); the original report is preserved below, not retroactively validated.
+
 - **Date:** 2026-11-02
 - **Scope:** All 9 `lafiabrew` repositories (`3ds_hub` root `README.md`, `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/SOP.md`, `docs/CHEATSHEET.md`, `docs/TROUBLESHOOTING.md`, `docs/AGENT_PLAYBOOK.md`, plus all 8 standalone `3ds_*/README.md` and `3ds_*/docs/{icon,banner}.png`)
 - **Mode:** 2-Round, 5-Persona Documentation & DX Audit (Junior Dev · Senior Dev · Principal Dev · PM · Technical Writer Consolidator)

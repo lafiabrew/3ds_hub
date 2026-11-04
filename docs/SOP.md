@@ -1,103 +1,87 @@
-# Standard Operating Procedures (SOP) & Human Quick-Start Guide
+# Setup and safe inspection procedures
 
-This guide covers step-by-step procedures for installing, using, syncing, and troubleshooting your Nintendo 3DS homebrew suite.
+Start with [STATUS](STATUS.md). These procedures deliberately exclude real-save editing, valuable-file overwrite, title deletion, generated-cheat activation and live WiGLE upload until the named safety gaps are resolved. No command below installs an app automatically.
 
----
+## 1. Workspace prerequisites
 
-## SOP 1: Installing or Updating Any App on Your 3DS (`serve_3ds.py`)
+Run hub commands in the directory containing `serve_3ds.py`. App directories are **separate repositories**, not files guaranteed to arrive when cloning the hub. The organization repository list identifies public projects; ParkShift currently exists as a local candidate only. Do not invent a public ParkShift clone URL.
 
-1. **Start the Installer Hub on your PC:**
-   ```bash
-   cd /home/lafiamafia/homebrew/3ds
-   python3 serve_3ds.py
-   ```
-2. **Open the Web Dashboard:**
-   - Open **`http://192.168.0.104:8765/`** (or your PC's LAN IP shown in the terminal) in your browser.
-   - You will see all **8 homebrew apps** with their custom 48×48 pixel icons and ultra-crisp 25×25 QR codes (`/c/0` .. `/c/7`).
-3. **Install via FBI on your 3DS:**
-   - **Method A (Camera QR Scan):** Open **FBI → Remote Install → Scan QR Code** and point the 3DS camera at the QR code on your monitor.
-   - **Method B (No-Camera Network Push):** Open **FBI → Remote Install → Receive URLs over the network**, type your 3DS IP (e.g. `192.168.0.170`) into the **Push to FBI (:5000)** box on the web page, and click **Push**.
+Prerequisites for inspection: Python 3 and existing app checkouts/artifacts for discovery. Host app tests require Make/GCC and sanitizer libraries. Native builds require the appropriate rootless toolchain image and app-specific dependencies. PieceDuel additionally documents Node-based compatibility tests.
 
----
+For a standalone hub checkout, start at the [public PieceDuel prerequisites](https://github.com/lafiabrew/3ds_pieceduel#prerequisites--building-containerfile3ds-or-native-devkitarm) or [public repository](https://github.com/lafiabrew/3ds_pieceduel). Its separate checkout must be named `3ds_pieceduel/` directly under this hub directory; a hub clone does not obtain it automatically. Once present, the existing local provisioning entry point is [PieceDuel's public build documentation](https://github.com/lafiabrew/3ds_pieceduel#prerequisites--building-containerfile3ds-or-native-devkitarm) and [Makefile](https://github.com/lafiabrew/3ds_pieceduel/blob/main/Makefile). With that separate checkout available, its `make 3ds` can build the container if needed. Inspect its `Containerfile.3ds` before allowing network downloads. **Clean-machine provisioning was not tested by this docs update**; an existing image is not a reproducibility guarantee.
 
-## SOP 2: Clearing Old "Black Square" Test Icons (`SysDash`)
+ParkShift consumes `localhost/pieceduel-3ds-toolchain:latest` with `--pull=never --network=none`. It will not obtain a missing image. Inspect it without downloading or retagging:
 
-If you have leftover black-square icons on your 3DS HOME Menu from earlier test builds:
-1. Launch **SysDash** on your 3DS.
-2. **One-Button Auto-Purge:** Press **`SELECT`**. SysDash will scan the SD title database (`am:u`) and delete all legacy `0x0D3D*` test titles and tickets at once.
-3. **Manual Per-Title Delete:**
-   - Press **`R`** (or tap **`TITLES:R`** on the bottom touch screen) to open the scrollable Title Manager.
-   - Any broken/legacy/0KB titles are automatically sorted to the top and labeled **`01.[OLD]`** in red.
-   - Use **`D-Pad Up/Down`** (1 row) or **`D-Pad Left/Right`** (page jump 8 rows) to highlight any unwanted title and press **`A`** to delete its title + ticket.
+<!-- {% raw %} -->
+```sh
+podman image inspect localhost/pieceduel-3ds-toolchain:latest --format '{{.Id}}'
+```
+<!-- {% endraw %} -->
 
----
+The accepted slice records image ID `d4e9a0e114502d3b535b1ab33dd40c542e4453027dfc76030490f8fb969bd306`, also observed by this update; this is a maintainer-local test image identity, not a published image download or an independent provenance certificate. Stop if it is missing or different. Matching the ID identifies bytes, not independent provenance approval or clean-machine reproducibility; do not silently substitute/retag an unknown image. A missing sibling checkout/toolchain is a missing prerequisite, not proof of an app defect.
 
-## SOP 3: Wireless SD Card Scanning, Web File Drop & Log Harvesting (`3DS Drop`)
+## 2. Inspect the installer hub
 
-Never unscrew your New 3DS XL backplate just to move a save file or check a crash log:
-1. Open **3DS Drop** on your 3DS.
-2. Look at the top or bottom screen of your 3DS — it displays your live URL, e.g.:
-   ```text
-   3DS URL: http://192.168.0.170:8766
-   ```
-3. **Use the Browser Web UI (Drag & Drop):**
-   - Open **`http://192.168.0.170:8766/`** in your PC browser.
-   - Click **Download** next to any save file, screenshot, or log.
-   - To upload a modified `.sav` / `main` file or ROM hack, choose the file, verify the target SD path, and click **Upload Atomically to 3DS SD** (it automatically saves a `.bak` backup of the old file first!).
-4. **Harvest All Logs & Crash Dumps to Your PC (For Debugging with an Agent):**
-   ```bash
-   python3 pc_companion/sd_scanner.py --url http://192.168.0.170:8766 --dump-logs ./sd_logs
-   ```
-   This downloads `sd_diagnostic_report.json`, all Luma `errdisp.txt` / ARM11 `.dmp` crash dumps, and every app's operational log (`3ds/logs/pokedash.log`, `sysdash.log`, `wigle.log`, etc.) into `./sd_logs/`.
+From the hub root:
 
----
-
-## SOP 4: Editing Pokémon & ROM-Hack Saves Safely (`PokeDash` & `pkhex_web.py`)
-
-### On Your 3DS (`PokeDash`):
-1. First back up your Pokémon save in **Checkpoint** (so a decrypted save exists under `sdmc:/3ds/Checkpoint/saves/`). *(NDS `.sav` files in `sdmc:/roms/nds/saves/` and GBA `.sav` files in `sdmc:/roms/gba/` are detected automatically without Checkpoint!)*
-2. Open **PokeDash** on your 3DS:
-   - **`SELECT`**: Cycle between discovered save files.
-   - **`D-Pad Left / Right`**: Select Party Slot (`1..6`).
-   - **`D-Pad Up / Down`** (or Touch on Bottom Screen): Pick a surgical PKHaX edit (`MAX IVS 6X31`, `TRICK ROOM 0 SPE`, `TOGGLE SHINY PID`, `CYCLE NATURE`, `LEVEL 100`, `EV 252/252`, `MAX MONEY + 999 ITEMS`).
-   - **`A`**: Apply edit. PokeDash writes `<save>.bak`, updates only the target slot bytes (leaving custom ROM-hack scripts/abilities untouched), recalculates the CRC-16/section checksum, and saves atomically.
-
-### On Your PC (`pc_companion/pkhex_web.py`):
-```bash
-# Inspect party, IVs, EVs, Nature, Shiny status, and checksum validity
-python3 pc_companion/pkhex_web.py /path/to/main
-
-# Surgically max IVs, turn Shiny ON, and max Money/Candies/Master Balls (creates main.bak)
-python3 pc_companion/pkhex_web.py /path/to/main --slot 0 --max-ivs --shiny on --max-money
+<!-- check: local-smoke -->
+```sh
+python3 serve_3ds.py --self-test &&
+python3 serve_3ds.py --list
 ```
 
----
+Expected: self-test exits 0; list prints the packages actually present. Package presence does not prove those files match current source. Printed names/descriptions come from package metadata or fallback labels and may retain overstated feature titles such as “Auto-Solver”; they are not validation results. Use STATUS for inspected limits. QR routes change with discovery; do not bookmark an index as an app identity.
 
-## SOP 5: Wardriving & Uploading to WiGLE.net for Leaderboard Points (`WiGLE 3DS`)
+To inspect only ParkShift's existing packages from the same directory:
 
-1. Open **WiGLE 3DS** on your 3DS:
-   - Press **`A`** (or tap **`A: SWEEP NOW`**) for a single scan, or press **`X`** (or tap **`X: AUTO [ON]`**) to continuously sweep every 2 seconds while walking/driving.
-   - Press **`Y`** (or **`L`/`R`**) to cycle between:
-     1. **2.4 GHz Ch 01–13 Spectrum Analyzer**
-     2. **2D Polar Radar Scope**
-     3. **WiGLE Account & Global/Monthly Leaderboard Rank Card**
-2. **Sync & Upload Your Wardriving Session to WiGLE.net:**
-   - Grab your **API Name (`AID...`)** and **API Token** from [https://wigle.net/account](https://wigle.net/account).
-   - Open **3DS Drop** on your 3DS (or insert your microSD card into your PC) and run:
-     ```bash
-     export WIGLE_API_NAME="AID_your_api_name"
-     export WIGLE_API_TOKEN="your_api_token"
-     python3 pc_companion/wigle_sync.py --url http://192.168.0.170:8766
-     ```
-   - `wigle_sync.py` pulls `3ds/wigle/wigle_3ds_session.csv` from your 3DS, validates the `WigleWifi-1.4` format, uploads it to `api.wigle.net` for points, fetches your updated **Global Rank, Monthly Rank & Discovered Wi-Fi total**, and pushes `wigle_account.json` back to your 3DS!
+```sh
+python3 serve_3ds.py 3ds_parkshift --list
+```
 
----
+An unmatched filter currently exits 0 with empty output. Confirm the named row is present; exit status alone is insufficient.
 
-## SOP 6: Pokémon RNG Abuse, Luma Cheats, Play Coins & Stick Drift Testing
+## 3. Build one app, not an unsound aggregate
 
-- **`PokeRNG` (`3ds_rngtool`)**:
-  - Use **`D-Pad Up/Down`** to scroll through Shiny (`SH*` / `SQ*`) and high-IV RNG frames, **`Y`** to filter Shiny-only frames, and **`L`/`R` + `A`** (or tap the game card on the bottom screen) to write ready-to-use Luma3DS Rosalina `cheats.txt` files (`sdmc:/luma/titles/<TitleID>/cheats.txt`). Enable them in-game via **`L + Down + Select` → Cheats**.
-- **`NetPass` (`3ds_netpass`)**:
-  - Press **`A`** (or tap **`A: MAX PLAY COINS`**) to immediately set your 3DS Play Coins to **`300/300`** (with automatic `gamecoin.dat.bak` backup), or press **`Y`** to archive StreetPass `CECD` boxes.
-- **`PadTest` (`3ds_padtest`)**:
-  - Rotate your Circle Pad to measure min/max excursion, let go to check your resting **Drift %** and **Recommended Deadzone**, press each hardware button to light up the 10-button test matrix, press **`Y`** to cycle full-screen dead-pixel colors (`Red`, `Green`, `Blue`, `White`, `Black`), and press **`X`** to save `sdmc:/3ds/padtest/hardware_report.json`.
+From the hub root, with the [public PadTest repository](https://github.com/lafiabrew/3ds_padtest) checked out as `3ds_padtest/` and its reviewed image available:
+
+```sh
+make -C 3ds_padtest test &&
+make -C 3ds_padtest 3ds &&
+make -C 3ds_padtest verify-3ds
+```
+
+This runs host tests, native packaging and the app's package verifier. Inspect each command's result and retain matching source/artifact hashes and debug ELF. Physical acceptance and independent code review remain separate. Root `make all` is **not** reliable fleet acceptance while its native build/verify loops can conceal earlier failures; [STATUS](STATUS.md) records that unresolved code defect.
+
+## 4. Optional local installer dashboard
+
+From hub root, explicitly disable automatic startup push:
+
+```sh
+python3 serve_3ds.py --push ''
+```
+
+The empty argument overrides the `IP` environment variable, which otherwise supplies an automatic FBI push target. Do not rely on omitting `--push` for inspection-only startup. `--list` and `--self-test` return before startup push handling. Use the LAN URL printed by the server, not a hardcoded personal IP. Keep the service on a trusted network; it is not an authenticated public deployment service. Dashboard push controls still require operator authorization.
+
+FBI camera scanning or its network receiver is an **operator-authorized installation step**. Match the app name, CIA hash, product/TitleID and matching debug ELF against an independently reviewed build record first. Stop on a missing record or mismatch. Rebuilding can change CIA bytes; a new record and review are required, not simply accepting fresh hashes. No reviewed public ParkShift artifact or hash record is provided by this page. Do not use the CLI `--push` option casually: it initiates a remote installation request. For ParkShift, follow its local `docs/DEVICE_CHECKLIST.md`; hardware tests are still owed per console model.
+
+## 5. Optional read-oriented SD/log collection
+
+Open an independently reviewed 3DS Drop build on the console. On the PC, substitute the complete URL **inside the quotes** with the address shown on that console:
+
+```sh
+python3 pc_companion/sd_scanner.py --url 'http://REPLACE_WITH_3DS_IP:8766' --dump-logs ./sd_logs
+```
+
+This performs remote scan/log requests and writes a local report/downloads under `./sd_logs`; a pristine remote SD is not promised because the running server can itself log activity. Review collected filenames and errors. The current client may return partial JSON/bytes after transport errors, so a report file alone is not proof of complete transfer. Keep private dumps and backups out of public issues.
+
+This live-console journey was **not run by the documentation update**. No fixture or host loopback is a substitute. ParkShift has no SD app log to harvest in this slice.
+
+## 6. Workflows intentionally withheld
+
+- Do not feed real saves to PokeDash or the PC editor on the strength of old general-format claims. Use an independently verified format-specific tool and offline backups instead.
+- Do not use Drop's upload/replacement control as a guaranteed safe restore mechanism. Its UI wording does not establish checked backups or native power-loss recovery.
+- Do not upload current synthetic/default WiGLE observations as genuine measurements; no API credential or points workflow is recommended here.
+- Do not enable PokeRNG's fixed generated cheat templates without independently validated game/update/region-specific codes.
+- Do not treat NetPass's local files as a real CECD vault or system coin backup. Do not purge titles to fix an unexplained icon.
+
+For symptom handling and the information to preserve, see [troubleshooting](TROUBLESHOOTING.md).

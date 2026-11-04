@@ -1,0 +1,389 @@
+{
+  "observed_utc": "2026-11-04T00:08:29.666403+00:00",
+  "stage": "prepublication candidate including actual official Pages-stack build; not deployed-site acceptance",
+  "public_source_baseline": "d3bae799fbe8f68d803c986981a09e945dd53412",
+  "privacy": {
+    "before_documents": 14,
+    "before_address_occurrences": 9,
+    "affected_sources": [
+      "docs/CHEATSHEET.md",
+      "docs/SOP.md",
+      "docs/TROUBLESHOOTING.md"
+    ],
+    "original_addresses_omitted": true,
+    "candidate_documents": 19,
+    "candidate_identifying_hosts": 0,
+    "counterfactual_rejected": true,
+    "example_controls_passed": true
+  },
+  "rendering": {
+    "browser": "Google Chrome for Testing 156.0.8078.4",
+    "playwright_core": "1.58.2",
+    "pass": true,
+    "cases": [
+      {
+        "page": "/",
+        "diagrams": 1,
+        "mobile": false,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "page": "docs/ARCHITECTURE.html",
+        "diagrams": 3,
+        "mobile": false,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "page": "docs/AGENT_PLAYBOOK.html",
+        "diagrams": 1,
+        "mobile": false,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "page": "/",
+        "diagrams": 1,
+        "mobile": true,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "candidate_diagrams": 3,
+        "all_rendered": true,
+        "repeated_loader_idempotent": true
+      },
+      {
+        "control": "omitted-loader",
+        "raw_source_only": true,
+        "rejected_by_SVG_gate": true
+      },
+      {
+        "control": "bad-diagram",
+        "other_diagrams_rendered": 2,
+        "source_and_notice_retained": true
+      },
+      {
+        "control": "HTML-like-label",
+        "script_dialogs": 0
+      },
+      {
+        "control": "missing-library",
+        "readable_source_retained": true,
+        "visible_failure": true
+      },
+      {
+        "control": "no-diagram-page",
+        "vendor_downloads": 0
+      }
+    ],
+    "normal_cleanup": {
+      "browser_absent": true,
+      "listener_closed": true
+    },
+    "local_jekyll_build": true
+  },
+  "cancellation_and_close_failure": {
+    "pass": true,
+    "cases": [
+      {
+        "cleanup_probe": true,
+        "injected_close_failure": false,
+        "observed": {
+          "browser_absent": true,
+          "listener_closed": true
+        },
+        "browser_absent": true,
+        "listener_port_closed": true,
+        "child_exit": 143
+      },
+      {
+        "cleanup_probe": true,
+        "injected_close_failure": true,
+        "observed": {
+          "graceful_error": "injected graceful-close failure",
+          "kill_fallback": true,
+          "browser_absent": true,
+          "listener_closed": true
+        },
+        "browser_absent": true,
+        "listener_port_closed": true,
+        "child_exit": 143
+      }
+    ]
+  },
+  "live_baseline": {
+    "after_candidate_publication_tested": false,
+    "old_site_browser_gate_failed_on_identifying_literals": true,
+    "stage": "old deployed site, not candidate deployment"
+  },
+  "implementation_sources": [
+    {
+      "project": "3ds_pokedash",
+      "commit": "6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d",
+      "file": "src/pkhex.c",
+      "url": "https://github.com/lafiabrew/3ds_pokedash/blob/6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d/src/pkhex.c",
+      "sha256": "a5e2fd4ba0bc7a9b63d168fe04170834ab83e88f95bffe9e608ef8bb16dc8dda",
+      "matches_previously_audited_local_source": true
+    },
+    {
+      "project": "3ds_drop",
+      "commit": "d3b0dfd3ad7c60d48b815d1264560fd5d007db28",
+      "file": "src/drop_server.c",
+      "url": "https://github.com/lafiabrew/3ds_drop/blob/d3b0dfd3ad7c60d48b815d1264560fd5d007db28/src/drop_server.c",
+      "sha256": "b23a6130e23b80b36708cb2bb4ce079371628789677db737ec6f8f1d0c3bb057",
+      "matches_previously_audited_local_source": true
+    },
+    {
+      "project": "3ds_wigle",
+      "commit": "0e5e3435f612fb049d03a8d946c606616aa66352",
+      "file": "src/wigle.c",
+      "url": "https://github.com/lafiabrew/3ds_wigle/blob/0e5e3435f612fb049d03a8d946c606616aa66352/src/wigle.c",
+      "sha256": "91e0efe9da56e8f0ec1e5ab095ae428ac0a6c11956bdba568a81260e4b9448d7",
+      "matches_previously_audited_local_source": true
+    },
+    {
+      "project": "3ds_rngtool",
+      "commit": "7e52b5c072e29f9ce0852dd6be9f209be472a446",
+      "file": "src/rng_tool.c",
+      "url": "https://github.com/lafiabrew/3ds_rngtool/blob/7e52b5c072e29f9ce0852dd6be9f209be472a446/src/rng_tool.c",
+      "sha256": "b4144ea743b555d6a38e4c4f79d8184df4ad8bb0cf046a01168cb95f3a1b3af8",
+      "matches_previously_audited_local_source": true
+    },
+    {
+      "project": "3ds_netpass",
+      "commit": "a88247d300c8ec5848c70d44259f7b798ec5001f",
+      "file": "src/netpass.c",
+      "url": "https://github.com/lafiabrew/3ds_netpass/blob/a88247d300c8ec5848c70d44259f7b798ec5001f/src/netpass.c",
+      "sha256": "aeb5c4c089276b8c5588a2dbe44daa693bacf9231be6e5ddf904191b832a7047",
+      "matches_previously_audited_local_source": true
+    },
+    {
+      "project": "3ds_pokedex",
+      "commit": "694a58e1b0e0ec7368800eaa4f949f93ea3353ba",
+      "file": "src/pokedex.c",
+      "url": "https://github.com/lafiabrew/3ds_pokedex/blob/694a58e1b0e0ec7368800eaa4f949f93ea3353ba/src/pokedex.c",
+      "sha256": "38acc49ef48e370c88ba72925d412fe8901f2b28e9fb149d2da77ab59cb0699c",
+      "matches_previously_audited_local_source": true
+    }
+  ],
+  "native_logger_sources": [
+    {
+      "project": "3ds_pokedash",
+      "commit": "6d0dc218bf6fcc397c997ecdb373c82dfb45ab0d",
+      "native_append_path_observed": true
+    },
+    {
+      "project": "3ds_drop",
+      "commit": "d3b0dfd3ad7c60d48b815d1264560fd5d007db28",
+      "native_append_path_observed": true
+    },
+    {
+      "project": "3ds_sysdash",
+      "commit": "4c2714eb4175a84a7b030bedeecb86e4f41213df",
+      "native_append_path_observed": true
+    }
+  ],
+  "vendor": {
+    "version": "11.12.2",
+    "bytes": 2754895,
+    "sha256": "d0830a6c05546e9edb8fe20a8f545f3e0dc7c4c3134d584bad9c13a99d7a71e0",
+    "SRI": "sha384-1ggI9FC3CkghppRD/XCR4aD+jp4DxwXlJIW0wxhyTLNKuiZEW3c4BwcjKXl0iVAJ",
+    "registry_tarball_integrity": "sha512-n34QPDPEKmaeCG4WDMGy0OT6PSyxKCfy2pJgShP+Qow2KLrvWjclwbc3yXfSIf4BanqWEhQEpngWwNp/XhZt6w==",
+    "license": "MIT plus unchanged bundled notices"
+  },
+  "jekyll_build": {
+    "pass": true,
+    "image": [
+      "ghcr.io/actions/jekyll-build-pages@sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041"
+    ],
+    "image_id": "ac7c0ad006b3868f2c25dd48296cd135971438675ce72caacd4c9dc6d3f958fa",
+    "github_pages_gem": "232",
+    "jekyll": "3.10.0",
+    "observed_site_config": {
+      "baseurl": "/3ds_hub",
+      "url": "https://lafiabrew.github.io",
+      "repository": "lafiabrew/3ds_hub"
+    },
+    "pre_fix": {
+      "build_exit": 0,
+      "liquid_warning": true,
+      "published_template_consumed": true
+    },
+    "post_fix": {
+      "build_exit": 0,
+      "liquid_warning": false,
+      "template_preserved": true,
+      "rendered_command_exit": 0,
+      "rendered_command_id_matches": true,
+      "hook_prefix_and_vendor_bytes_verified": true
+    },
+    "environment_note": "Initial official wrapper with empty token failed authentication before product validation; anonymous public build and observed config were used without credentials. Standalone SDK default baseurl is not the production project prefix.",
+    "liquid_guard_mutant_rejected": true
+  },
+  "generated_site_browser": {
+    "pass": true,
+    "cases": [
+      {
+        "privacy_route": "AGENTS.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "IMPLEMENTATION_PLAN.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "/",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "assets/vendor/",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/AGENT_PLAYBOOK.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/ARCHITECTURE.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/CHEATSHEET.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/SOP.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/STATUS.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/TROUBLESHOOTING.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/audit/2026-11-02_3ds-homebrew-suite-audit.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/audit/2026-11-02_docs-and-ecosystem-audit.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/audit/2026-11-02_multi-round-ux-and-function-audit.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/audit/2026-11-03-pages-privacy-and-rendering.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "docs/audit/",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "specs/01-3ds-homebrew-suite.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "specs/CONSTITUTION.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "privacy_route": "specs/CONTEXT.html",
+        "published": true,
+        "identifying_hosts": 0
+      },
+      {
+        "control": "missing-authoritative-STATUS",
+        "injection_reached": true,
+        "required_route_gate_rejected": true
+      },
+      {
+        "page": "/",
+        "diagrams": 1,
+        "mobile": false,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "page": "docs/ARCHITECTURE.html",
+        "diagrams": 2,
+        "mobile": false,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "page": "/",
+        "diagrams": 1,
+        "mobile": true,
+        "rendered": true,
+        "source_preserved": true
+      },
+      {
+        "candidate_diagrams": 3,
+        "all_rendered": true,
+        "repeated_loader_idempotent": true
+      },
+      {
+        "control": "omitted-loader",
+        "raw_source_only": true,
+        "rejected_by_SVG_gate": true
+      },
+      {
+        "control": "bad-diagram",
+        "other_diagrams_rendered": 1,
+        "source_and_notice_retained": true
+      },
+      {
+        "control": "HTML-like-label",
+        "script_dialogs": 0
+      },
+      {
+        "control": "missing-library",
+        "readable_source_retained": true,
+        "visible_failure": true
+      },
+      {
+        "control": "no-diagram-page",
+        "vendor_downloads": 0
+      }
+    ],
+    "cleanup": {
+      "browser_absent": true,
+      "listener_closed": true
+    }
+  },
+  "fresh_shell_reproduction_passed": true,
+  "route_policy": {
+    "all_inventory_routes_required": true,
+    "source_only_exceptions": [],
+    "missing_STATUS_counterfactual_rejected": true
+  }
+}

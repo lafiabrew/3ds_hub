@@ -1,71 +1,83 @@
-# 3DS Homebrew, PKHaX & Diagnostic Workspace
+# Nintendo 3DS homebrew workspace
 
-System-scoped Nintendo 3DS CFW homebrew workspace in this repository (alongside future console directories like `ps3/`, `ps4/`, `vita/`, `xbox360/`, `wiiu/`, etc.) tracked under the [**`lafiabrew`** GitHub Organization](https://github.com/orgs/lafiabrew/repositories).
+**Public Nintendo 3DS page:** <https://lafiabrew.github.io/3ds_hub/>. This page is static 3DS documentation, not a release catalog for every console or a remotely running SD/installer service. LAN operations still require the local PC/console programs.
 
-- **Architecture & Mermaid Ecosystem Diagrams:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- **Human Step-by-Step Quick-Start & SOPs:** [`docs/SOP.md`](docs/SOP.md)
-- **Pocket Field Cheat Sheet (Buttons, Boot Combos & Pokémon TitleIDs):** [`docs/CHEATSHEET.md`](docs/CHEATSHEET.md)
-- **Troubleshooting, Crash Dump & `.bak` Recovery Playbook:** [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md)
-- **Future Agent Playbook & Multi-Console Blueprint:** [`docs/AGENT_PLAYBOOK.md`](docs/AGENT_PLAYBOOK.md)
-- **Agent Operational Guide:** [`AGENTS.md`](AGENTS.md)
+Games, experimental utilities and PC companion tools for the `lafiabrew` organization. This is the **hub repository**; app directories are separate repositories. A folder, passing host test, packaged CIA or reachable GitHub link is **not a hardware-verified release**.
 
-## System & Ecosystem Overview
+> **Read [current status and safety limits](docs/STATUS.md) before touching saves, uploading observations, generating cheats or deleting titles.** Some earlier descriptions overstate compatibility, backup guarantees and system integration. Existing `AGENTS.md` files and historical audits have not all been corrected; they are not evidence that these features are safe.
+
+## Documentation
+
+- [Documentation index](docs/README.md)
+- [Current capabilities, limitations and evidence](docs/STATUS.md)
+- [Architecture and data boundaries](docs/ARCHITECTURE.md)
+- [Setup and safe inspection procedures](docs/SOP.md)
+- [Short command and control reference](docs/CHEATSHEET.md)
+- [Troubleshooting without destructive shortcuts](docs/TROUBLESHOOTING.md)
+- [Agent/maintainer accuracy checklist](docs/AGENT_PLAYBOOK.md)
+- [Pages privacy, diagram and accuracy audit](docs/audit/2026-11-03-pages-privacy-and-rendering.md)
+- [Historical audit index](docs/audit/README.md)
+- [Project constitution: required invariants, not certification](specs/CONSTITUTION.md)
+
+## Workspace inventory
+
+The root [Makefile](Makefile) selects **16 projects**. The first 16 rows below describe that build membership, not release acceptance. UniqueIds/product codes come from each app's `meta/app.rsf`; full installed TitleIDs must be checked in the actual package. Other local work-in-progress directories may exist.
+
+| Project | Source-level purpose / boundary | UniqueId | Product code |
+|---|---|---|---|
+| `3ds_pieceduel/` | Shared-trait four-in-a-row game; networking/device paths need their own evidence. | `0x0D3E0` | `CTR-P-PD3D` |
+| `3ds_pokedash/` | Pokémon calculators and experimental PKHX save-block editing; not verified general native-save support. | `0x0D3E1` | `CTR-P-PKDS` |
+| `3ds_sysdash/` | Telemetry, mod-directory operations and title-management code; deletion is not an icon-repair prerequisite. | `0x0D3E2` | `CTR-P-SYSD` |
+| `3ds_drop/` | HTTP SD inspection/transfer server on port 8766; replacement/backup guarantees are incomplete. | `0x0D3E3` | `CTR-P-DROP` |
+| `3ds_wigle/` | Wi-Fi/UDS display and CSV experiments with synthetic/default fields; not submission-ready wardriving data. | `0x0D3E4` | `CTR-P-WIGL` |
+| `3ds_rngtool/` | TSV/G7TID and Method-1 LCRNG calculations; fixed cheat templates are not validated per-game codes. | `0x0D3E5` | `CTR-P-PRNG` |
+| `3ds_netpass/` | App-local coin-file and seeded box-summary experiments; actual system coin/CECD integration unverified. | `0x0D3E6` | `CTR-P-SPAS` |
+| `3ds_padtest/` | Input excursion/drift display, screen patterns and report exporter; physical calibration unverified. | `0x0D3E7` | `CTR-P-PADT` |
+| `3ds_picross/` | Small built-in nonogram puzzle set and clue routines, not a general puzzle solver. | `0x0D3E8` | `CTR-P-PICR` |
+| `3ds_sandlab/` | Falling-sand grid simulation; no measured console frame-rate claim here. | `0x0D3E9` | `CTR-P-SAND` |
+| `3ds_chip8/` | CHIP-8 interpreter/debugging prototype; ROM/quirk compatibility needs separate tests. | `0x0D3EA` | `CTR-P-CHP8` |
+| `3ds_solitaire/` | Klondike-style tableau/foundation rules; not a demonstrated complete solver or FreeCell implementation. | `0x0D3EB` | `CTR-P-SOLI` |
+| `3ds_pokedex/` | Small curated Pokémon stat/ability list, not a complete generation-spanning database. | `0x0D3EC` | `CTR-P-PKDX` |
+| `3ds_sokoban/` | Crate-pushing levels and undo; solution quality/progression require app-specific evidence. | `0x0D3ED` | `CTR-P-SOKO` |
+| `3ds_roulette/` | European single-zero 0–36 model; no 00/000 variants in the inspected implementation. | `0x0D3EE` | `CTR-P-ROUL` |
+| `3ds_mahjong/` | Layered tile-pair removal and available-pair hints; a hint is not a full solvability proof. | `0x0D3EF` | `CTR-P-MAHJ` |
+| `3ds_parkshift/` | **Separate local candidate**, outside root build membership: Slide + Jam, session-only, hardware acceptance pending. | `0x0D400` | `CTR-P-PARK` |
+
+`serve_3ds.py` discovers existing CIA/3DSX packages dynamically. Discovery can include projects outside `PROJECTS`, omit unbuilt projects, or find stale artifacts. QR indices are discovery-dependent, not permanent app IDs. ParkShift has no public repository/release asserted here; its README is in the separate local app checkout.
+
+## Safe local checks
+
+Run from this hub directory, with Python 3 and the app checkouts/artifacts available. The first command checks the existing hub's local discovery/HTTP/QR path; it does not install anything.
+
+<!-- check: local-smoke -->
+```sh
+python3 serve_3ds.py --self-test &&
+python3 serve_3ds.py --list
+```
+
+Expected: self-test exits 0 and the second command lists packages actually found. Printed descriptions can retain overstated package metadata (for example “Auto-Solver”); they are not feature-validation results. Empty output is not proof of a successful build. See [setup](docs/SOP.md) if app repositories or the toolchain are absent.
+
+**Known build-gate defect:** root `make 3ds` and `make verify-3ds` can conceal an earlier child failure. Do not treat root `make all` exit 0 as fleet acceptance. Use explicit per-app commands and inspect their statuses; [STATUS](docs/STATUS.md) records the still-open remediation.
+
+For a publicly available app checkout, for example PadTest:
+
+```sh
+make -C 3ds_padtest test &&
+make -C 3ds_padtest 3ds &&
+make -C 3ds_padtest verify-3ds
+```
+
+This requires its existing toolchain image and is not clean-machine provisioning or physical-device acceptance. No install or push is part of these commands. The root aggregate does not include ParkShift.
+
+## Architecture at a glance
 
 ```mermaid
 flowchart LR
-    PC["PC Host (3ds_hub)<br/>• serve_3ds.py (:8765)<br/>• sd_scanner.py<br/>• pkhex_web.py<br/>• romhack_tool.py<br/>• wigle_sync.py"]
-    FBI["3DS FBI Installer<br/>QR Camera / TCP :5000"]
-    DROP["3DS Drop (:8766)<br/>Web UI + JSON API"]
-    APPS["On-3DS Apps<br/>• PokeDash (PKHaX)<br/>• SysDash (CFW/Mods/Titles)<br/>• WiGLE 3DS (Wardriver)<br/>• PokeRNG (RNG/Cheats)<br/>• NetPass (300 Coins)<br/>• PadTest (Drift/Screen)<br/>• PieceDuel (3D Strategy)"]
-    WIGLE["WiGLE.net API v2<br/>Leaderboard & Points"]
-
-    PC -->|".cia / .3dsx QR"| FBI
-    PC <-->|"Pull Logs & Saves / Push Edits"| DROP
-    DROP <-->|"sdmc:/3ds/logs/*.log & Saves"| APPS
-    PC -->|"Upload WigleWifi-1.4 CSV"| WIGLE
+    PC[Hub and PC tools] -->|CIA URLs, operator-authorized| FBI[FBI installer]
+    PC <-->|HTTP inspection and transfers| Drop[3DS Drop]
+    App[Separate app repositories] -->|Build artifacts| PC
+    App -->|App-specific behavior, not uniform guarantees| SD[SD and system adapters]
+    Park[ParkShift local candidate] --> RAM[Session-only state, no SD diagnostics]
 ```
 
-## All 8 Nintendo 3DS Homebrew Apps (`lafiabrew`)
-
-| Project / Repo | Short Title | Short Description | UniqueId | Product Code | Purpose |
-|---|---|---|---|---|---|
-| `3ds_pieceduel/` | **PieceDuel** | `4-in-a-Row Strategy Game` | `0x0D3E0` | `CTR-P-PD3D` | Stereoscopic 3D shared-trait 4-in-a-row strategy board game (AI, Daily Puzzles, 3DS Local Wireless `nwm::UDS`, LAN P2P, and Web Cross-Play). |
-| `3ds_pokedash/` | **PokeDash** | `Pokemon Save Editor` | `0x0D3E1` | `CTR-P-PKDS` | Permissive **PKHaX Save Inspector & Surgical Editor** for Gen 3–7 & custom ROM hacks (`Checkpoint`, `TWiLightMenu++`, `open_agb_firm`/GBA) + Type/Nature/Hidden Power/Shiny calculator. Writes `<save>.bak` first and recalculates CRC-16-CCITT (`BEEF`) & Gen 3 section checksums. |
-| `3ds_sysdash/` | **SysDash** | `System & Mod Manager` | `0x0D3E2` | `CTR-P-SYSD` | Live 3DS battery/Wi-Fi/IP/SD inspector (`ptm:u`, `soc:u`), **1-button Luma3DS LayeredFS ROM-hack toggler** (`luma/titles/<TitleID>` ↔ `titles_disabled`), and **crash dump / log snapshotter** (`luma/errdisp.txt`, ARM11 `.dmp`). |
-| `3ds_drop/` | **3DS Drop** | `Wireless SD File Server` | `0x0D3E3` | `CTR-P-DROP` | Wireless LAN HTTP/JSON server (`:8766`) that displays your live **3DS IP address** on-screen and lets your PC scan the SD card, pull crash logs, and push/pull up to 1 MB saves/ROMs with `.bak` backup and `..` traversal rejection. |
-| `3ds_wigle/` | **WiGLE 3DS** | `WiFi Wardriver & Radar` | `0x0D3E4` | `CTR-P-WIGL` | 2.4 GHz Ch 1–13 spectrum analyzer (`ac:u` + `nwm::UDS` beacon scanner) that logs official **`WigleWifi-1.4` CSV** wardriving sessions (`sdmc:/3ds/wigle/wigle_3ds_session.csv`). |
-| `3ds_rngtool/` | **PokeRNG** | `RNG & Cheat Generator` | `0x0D3E5` | `CTR-P-PRNG` | Calculates Trainer Shiny Value (`TSV`) & Gen 7 `G7TID`, searches LCRNG (`0x41C64E6D * seed + 0x6073`) frames for Shiny / 6×31 IV spreads, and generates **Luma3DS Rosalina `cheats.txt`** files (`sdmc:/luma/titles/<TitleID>/cheats.txt`). |
-| `3ds_netpass/` | **NetPass** | `Play Coins & StreetPass` | `0x0D3E6` | `CTR-P-SPAS` | 1-button **300 Play Coin Maxer** (`gamecoin.dat` with `.bak` backup), Pedometer step reader (`ptm:u`), and StreetPass `CECD` inbox/outbox archiver (`sdmc:/3ds/netpass/boxes/`). |
-| `3ds_padtest/` | **PadTest** | `Stick Drift & Screen Tester` | `0x0D3E7` | `CTR-P-PADT` | Circle Pad min/max excursion & rest-drift % analyzer, recommended deadzone calculator, full-screen dead-pixel test patterns (`R`/`G`/`B`/`W`/`K`), and `hardware_report.json` exporter. |
-| `3ds_picross/` | **Picross 3DS** | `Nonogram Logic Puzzles` | `0x0D3E8` | `CTR-P-PICR` | Stylus 10×10 Nonogram/Picross logic puzzle studio with row/column RLE clue solver, mistake guard, and top-screen pixel-art preview. |
-| `3ds_sandlab/` | **SandLab 3DS** | `Falling Sand Physics Toy` | `0x0D3E9` | `CTR-P-SAND` | 60 FPS Falling-Sand cellular automata physics sandbox (`Wall`, `Sand`, `Water`, `Fire`, `Plant`, `Oil`, `Acid`) with stylus brush. |
-| `3ds_chip8/` | **CHIP-8 Studio** | `VM & Hex Disassembler` | `0x0D3EA` | `CTR-P-CHP8` | 35-opcode CHIP-8 virtual machine, live instruction disassembler, `V0..VF` register debugger, and 16-key touch hex keypad. |
-| `3ds_solitaire/` | **Solitaire 3DS** | `Klondike & Auto-Solver` | `0x0D3EB` | `CTR-P-SOLI` | Tactile Klondike card solitaire with alternating-color tableau validation, 4 suit foundations, and 1-button auto-foundation solver. |
-| `3ds_pokedex/` | **Pokedex 3DS** | `Gen 1-7 Stat Encyclopedia` | `0x0D3EC` | `CTR-P-PKDX` | Competitive & ROM-hack Pokédex encyclopedia displaying base stat bars (`HP/Atk/Def/SpA/SpD/Spe`), BST sum, abilities, and hack notes. |
-| `3ds_sokoban/` | **Sokoban 3DS** | `Warehouse Crate Puzzles` | `0x0D3ED` | `CTR-P-SOKO` | Classic warehouse crate-pushing puzzle with 64-step undo stack, move/push counters, and multi-warehouse progression. |
-| `3ds_roulette/` | **Roulette 3DS** | `Monte Carlo 37-Pocket Sim` | `0x0D3EE` | `CTR-P-ROUL` | European 37-pocket (`0..36`) Roulette wheel & felt simulator (`35:1` Straight-Up, `2:1` Dozens, `1:1` Red/Black/Even/Odd). |
-| `3ds_mahjong/` | **Mahjong 3DS** | `3D Pyramid Tile Solitaire` | `0x0D3EF` | `CTR-P-MAHJ` | 3D multi-layer Mahjong Solitaire (Bamboo, Dots, Winds, Dragon tiles) with upper-layer occlusion, free-edge check, and hint solver. |
-| `pc_companion/` + `serve_3ds.py` | **3DS Hub (`3ds_hub`)** | Host Deployment & Companion Suite | Host | Host | Universal **FBI QR & Network Installer Hub** (`serve_3ds.py` on `:8765`), wireless/local SD & crash log scanner (`sd_scanner.py`), PC PKHaX editor (`pkhex_web.py`), and `.ips`/`.bps` ROM patcher (`romhack_tool.py`). |
-
----
-
-## Quick Start Commands
-
-```bash
-# Build & verify all 8 3DS homebrew apps (host ASan/UBSan tests + ARM11 .elf/.smdh/.3dsx/.cia)
-make all
-
-# List all 8 discovered 3DS homebrew packages
-make list
-
-# Launch the Universal FBI QR & Network Installer Hub on :8765
-python3 serve_3ds.py
-
-# Wirelessly scan your 3DS SD card & harvest all app logs (sdmc:/3ds/logs/*.log + Luma dumps)
-python3 pc_companion/sd_scanner.py --url http://<3ds-ip-shown-in-3ds-drop>:8766 --dump-logs ./sd_logs
-
-# Upload 3DS WiGLE wardriving CSVs to wigle.net for leaderboard points & sync rank back to 3DS
-export WIGLE_API_NAME="AID_your_api_name"
-export WIGLE_API_TOKEN="your_api_token"
-python3 pc_companion/wigle_sync.py --url http://<3ds-ip-shown-in-3ds-drop>:8766
-```
+Do not expose the unauthenticated LAN installer or SD-transfer helpers to an untrusted network. Public profile edits and releases require their own review; this documentation update does not publish or certify any app.

@@ -1,5 +1,7 @@
 # Consolidated Documentation Audit Report — 3DS CFW, PKHaX & Diagnostic Homebrew Suite
 
+> **Historical snapshot — warning added 2026-11-03.** This report is not current operating guidance or release/device certification. Some assurances below were not supported by later source review. Read [current status](../STATUS.md); the original report is preserved below, not retroactively validated.
+
 - **Date:** 2026-11-02
 - **Scope:** Workspace root (`README.md`, `AGENTS.md`, `specs/`, `IMPLEMENTATION_PLAN.md`)
 - **Mode:** 5-role persona review (Junior Dev · Senior Dev · Principal Dev · PM · Technical Writer Consolidator)

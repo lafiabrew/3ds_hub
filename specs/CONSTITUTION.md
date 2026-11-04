@@ -23,4 +23,4 @@
 
 | Date | Principle | Approved scope | Required evidence |
 |---|---|---|---|
-| 2026-11-03 | Persistence step 1.4 | Native diagnostic logs may use checked crash-recoverable journaling instead of claiming an atomic existing-path rename; first slice is LinkLab. Save/config editing is excluded. | Prior-generation byte preservation, native-SDK fault/restart model, idempotent recovery, fail-closed corruption/resource ownership, host regressions, actual ARM build and independent reviews. Physical observations remain separate. See [the approved slice](../.wgm/native-log-journal-20261103/SPEC.md). |
+| 2026-11-03 | Persistence step 1.4 | Native diagnostic logs may use checked crash-recoverable journaling instead of claiming an atomic existing-path rename; first slice is LinkLab. Save/config editing is excluded. | Prior-generation byte preservation, native-SDK fault/restart model, idempotent recovery, fail-closed corruption/resource ownership, host regressions, actual ARM build and independent reviews. Physical observations remain separate. See [the approved slice](https://github.com/lafiabrew/3ds_hub/blob/main/.wgm/native-log-journal-20261103/SPEC.md). |
